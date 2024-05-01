@@ -10,11 +10,32 @@
     content="polyhedron, polyhedra, VRML, Platonic, Archimedian, Johnson Solid, HEDRON, Polyhedron modelling, Polyhedron software">
   <meta name="copyright" content="Copyright 1999/2007 Jim McNeill">
   <title>Polyhedra</title>
+
+  <link rel="stylesheet" href="/vrml-revival.css">
+  <style>
+    #title font {
+      font-size: 3rem;
+    }
+
+    @media (min-aspect-ratio: 5/4) {
+      #title font {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+  <script type="module">
+    import { scanPage } from "/vrml-revival.js";
+    scanPage( 'img[src="poly.gif"]' );
+  </script>
+
+  <script src="https://create3000.github.io/code/x_ite/latest/x_ite.min.js"></script>
+
 </head>
 
-<body vlink="#800080" link="#0000ff">
-  <a href="poly.wrl"> <img src="poly.gif" alt="Polyhedra" border="0" width="568" height="133"></a><br>
-  <font face="Arial" size="2">by <b>Jim McNeill</b>: last updated<b> <a href="updates.html">7 Feb 2023</a></b>.&nbsp;
+<body vlink="#800080" link="#0000ff" class="viewers">
+  <img src="poly.gif" alt="Polyhedra" border="0" width="568" height="133">
+  <font face="Arial" size="2">by <b>Jim McNeill</b>: last updated<b> <a href="updates.html">7 Feb
+        2023</a></b>.&nbsp;
   </font><span style="font-family: Arial;"> &nbsp;</span>
   <p><a href="chiral-prisms/ps73ghi.wrl"><img src="chiral-prisms/ps73ghi.gif" nosave="" border="0" width="209"
         height="184"></a> <a href="uniform/augmented/69a.wrl"><img src="uniform/augmented/69a.gif" border="0"
@@ -38,8 +59,8 @@
         <font face="Arial,Helvetica" size="3">Uniform Polyhedra:</font>
       </b></a>
     <font face="Arial" size="2">Displayed
-      as 'switchable' VRML files, i</font>
-    <font face="Arial" size="-1">ncluding
+      as 'switchable' VRML files, </font>
+    <font face="Arial" size="-1">including
       <a href="uniform/skilling.wrl">Skilling's figure</a>
       <font color="#000000">, including links to 'molecular' VRML files of all the
         uniform Polyhedra.</font>

@@ -40,7 +40,8 @@ const restructurePage = titleSelector =>
 
 const showFigure = (src) =>
 {
-  viewer .src = src;
+  if ( !! viewer )
+    viewer .src = src;
 }
 
 export const scanPage = (titleSelector,restructure=true) =>
@@ -52,8 +53,8 @@ export const scanPage = (titleSelector,restructure=true) =>
     const url = el.href;
     if ( ! url .endsWith( '.wrl' ) && ! url .endsWith( '.vrml' ) )
       return;
-    if ( first && restructure ) {
-      restructurePage( titleSelector );
+    if ( first ) {
+      restructure && restructurePage( titleSelector );
       showFigure( url );
       first = false;
     }
