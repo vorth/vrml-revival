@@ -1,0 +1,148 @@
+
+html,
+body {
+  margin: 0; /* This is essential to avoid a small white border around the whole main div. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 740px;
+  margin: auto;
+}
+.viewers {
+  position: fixed;
+  inset: 0;
+}
+
+#container {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: min-content 4fr 5fr;
+  grid-template-areas:
+    "title"
+    "figure"
+    "prose";
+}
+
+#title {
+  grid-area: title;
+  margin: auto;
+  margin-block-end: 12px;
+}
+
+#figure {
+  grid-area: figure;
+  margin-inline-start: 20px;
+}
+
+#scroller {
+  overflow: auto;
+  grid-area: prose;
+}
+
+.safe-grid-item {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.centered-scroller {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: auto;
+}
+
+.scroller-content {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  inset-block: 10px;
+}
+
+.inset-block {
+  inset-block: 10px;
+}
+
+vrml-viewer,
+x3d-canvas,
+vzome-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.model-3d {
+  background-color: rgb(204 227 254);
+  color: rgb(172, 1, 103);
+  border: 0.5px solid rgb(172, 1, 103);
+}
+.model-3d:hover {
+  text-decoration: underline;
+}
+.model-3d:not(:hover) {
+  text-decoration: inherit;
+}
+
+.model-3d-img > img, 
+img[data-design] {
+  padding: 3px;
+  border: 1px solid black;
+  background: rgb(172, 1, 103);
+}
+.model-3d-img > img:hover, 
+img[data-design]:hover {
+  background: rgb(204 227 254);
+}
+
+/* .annotation:hover {
+  opacity: 1;
+}
+
+.annotation {
+  position: absolute;
+  border: 2px solid #fbdc3e;
+  
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f1f1f1;
+  width: 100%;
+  transition: .5s ease;
+  opacity:0;
+  color: white;
+  padding: 20px;
+  text-align: center;
+} */
+
+@media (min-aspect-ratio: 5/4) {
+
+  #container {
+    grid-template-rows: min-content 1fr;
+    grid-template-columns: minmax( 400px, 740px ) 1fr;
+    grid-template-areas:
+      "title title"
+      "prose figure";
+  }
+
+  .viewers {
+    max-width: initial;
+    margin: 40px
+  }
+  
+}
