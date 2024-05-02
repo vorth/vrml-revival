@@ -100,13 +100,13 @@ vzome-viewer {
   text-decoration: inherit;
 }
 
-.model-3d-img > img, 
+.model-3d-img img, 
 img[data-design] {
   padding: 3px;
   border: 1px solid black;
   background: rgb(172, 1, 103);
 }
-.model-3d-img > img:hover, 
+.model-3d-img img:hover, 
 img[data-design]:hover {
   background: rgb(204 227 254);
 }
