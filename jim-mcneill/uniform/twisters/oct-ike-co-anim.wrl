@@ -1,0 +1,433 @@
+#VRML V2.0 utf8
+WorldInfo{
+      title "U27   Generation Date: 04-18-2003"
+      info[ 
+      "Author: Jim McNeill"
+      ]
+}
+#
+# HEDRON --- Polyhedron Generator, Version: Version 1.4.0    13-Apr-2003
+#            Copyright Jim McNeill, 1999/2003
+#            jim-mcneill@ukonline.co.uk
+#
+# Model by:  Jim McNeill   jim-mcneill@ukonline.co.uk
+#
+# Edge Deformation:       1.77635683940025E-15 
+# Polygonal Deformation:  0 
+#
+#
+#
+Background {
+  skyColor [0.003 0.003 0.003]
+}
+ 
+NavigationInfo {
+ type "EXAMINE"
+ headlight TRUE
+ avatarSize [0, 0, 0, 0, 0, 0]
+}
+Viewpoint {
+ position 0 0 3.329
+ description "Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 16.643
+ fieldOfView 0.15
+ description "Telephoto"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ description "Origin"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.0
+ description "Origin Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.57
+ description "Origin Fish-Eye"
+}
+
+PROTO HUD [
+  exposedField SFVec3f size 3.4e38 3.4e38 3.4e38
+  exposedField SFVec3f translation 0.0 0.0 -10
+  exposedField SFRotation rotation 0 0 0 0
+  field MFNode children []
+]
+{
+    Group {
+    children [
+    DEF UserPosition ProximitySensor {
+            center 0 0 0
+            size IS size
+    }
+    DEF HUD Transform
+    {
+            children [
+        Transform {
+        children [
+        Transform {
+            translation IS translation
+            rotation IS rotation
+            children IS children
+        }
+        ]
+        }
+        ]
+    }
+    ]
+    }
+    ROUTE UserPosition.position_changed TO HUD.translation
+    ROUTE UserPosition.orientation_changed TO HUD.rotation
+}
+
+HUD {
+    translation 0 -0.82 -2
+    children [
+    Transform {
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    DEF POINT Transform {
+        children [
+        Shape {
+        geometry Box {
+            size 0.2 0.05 0.001
+        }
+        appearance Appearance {
+            material Material {
+            diffuseColor 0.502 0.502 0.502
+            transparency 0.5
+            }
+        }
+        }
+        ]
+    }
+    DEF CMDTXT Switch {
+     whichChoice 0
+     choice [
+      Transform {
+       translation -0.15 -0.83 -2
+        children[
+         Shape{
+          geometry Text {
+           fontStyle FontStyle {
+            size 0.08
+            family "SANS"
+           }
+          string "snub OFF",
+     }}]}
+    ,
+      Transform {
+       translation -0.15 -0.83 -2
+        children[
+         Shape{
+          geometry Text {
+           fontStyle FontStyle {
+            size 0.08
+            family "SANS"
+           }
+          string "snub ON",
+     }}]}
+    ,
+     ]}
+    ]
+    }
+    ]
+}
+
+Transform {
+children[
+
+DEF CI CoordinateInterpolator {
+key [ 0,0.5,1]
+keyValue [
+#Oc
+          0.0 0.0 0.70710678,
+          0.0 0.0 0.70710678,
+          0.70710678 0.0 0.0,
+          0.0 0.70710678 0.0,
+          0.0 0.70710678 0.0,
+          -0.70710678 0.0 0.0,
+          0.0 -0.70710678 0.0,
+          0.0 -0.70710678 0.0,
+          0.70710678 0.0 0.0,
+          0.0 0.0 -0.70710678,
+          -0.70710678 0.0 0.0,
+          0.0 0.0 -0.70710678,
+#ike
+           0.0 0.5 0.80901699,
+          0.0 -0.5 0.80901699,
+          0.80901699 0.0 0.5,
+          0.5 0.80901699 0.0,
+          -0.5 0.80901699 0.0,
+          -0.80901699 0.0 0.5,
+          0.5 -0.80901699 0.0,
+          -0.5 -0.80901699 0.0,
+          0.80901699 0.0 -0.5,
+          0.0 0.5 -0.80901699,
+          -0.80901699 0.0 -0.5,
+          0.0 -0.5 -0.80901699,
+#co
+         0.0 0.70710678 0.70710678,
+          0.0 -0.70710678 0.70710678,
+          0.70710678 0.0 0.70710678,
+          0.70710678 0.70710678 0.0,
+          -0.70710678 0.70710678 0.0,
+          -0.70710678 0.0 0.70710678,
+          0.70710678 -0.70710678 0.0,
+          -0.70710678 -0.70710678 0.0,
+          0.70710678 0.0 -0.70710678,
+          0.0 0.70710678 -0.70710678,
+          -0.70710678 0.0 -0.70710678,
+          0.0 -0.70710678 -0.70710678,
+
+]
+}
+]
+}
+
+Group {
+  children  [
+    DEF POLY Switch {
+      whichChoice 0
+      choice [
+
+# Switch mode 0: Snub Faces
+ 
+Transform {
+children[
+
+DEF Cell Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color DEF COL Color{
+      color [
+        0 0 1,
+        1 .5 0,
+      ]
+      }
+    coord DEF C1 Coordinate{
+         point[
+0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,0 0 0,]
+    }
+    coordIndex[
+      2 , 1 , 0 ,-1,
+      3 , 2 , 0 ,-1,
+      4 , 3 , 0 ,-1,
+      5 , 4 , 0 ,-1,
+      0 , 1 , 5 ,-1,
+      7 , 5 , 1 ,-1,
+      1 , 6 , 7 ,-1,
+      1 , 2 , 6 ,-1,
+      8 , 6 , 2 ,-1,
+      2 , 3 , 8 ,-1,
+      9 , 8 , 3 ,-1,
+      3 , 4 , 9 ,-1,
+      10 , 9 , 4 ,-1,
+      4 , 5 , 10 ,-1,
+      5 , 7 , 10 ,-1,
+      11 , 7 , 6 ,-1,
+      6 , 8 , 11 ,-1,
+      11 , 10 , 7 ,-1,
+      8 , 9 , 11 ,-1,
+      9 , 10 , 11 ,-1,
+    ]
+    colorIndex[
+      1 , 0 , 1 , 0 , 1 , 0 , 1 , 0 , 1 , 1 , 
+      0 , 1 , 0 , 1 , 1 , 1 , 0 , 0 , 1 , 1 ,
+    ]
+    }
+    appearance Appearance {
+      material DEF MAT Material {
+        shininess 1
+        specularColor 1 1 1
+        }
+    }
+  }
+Transform {
+  children[
+  DEF EDGES Shape{
+    geometry IndexedLineSet{
+      colorPerVertex FALSE
+      color Color{
+color [ 0.000 0.000 0.000 ]
+      }
+    coord USE C1
+    coordIndex[
+      1 , 2 ,-1,
+      0 , 1 ,-1,
+      0 , 2 ,-1,
+      2 , 3 ,-1,
+      0 , 3 ,-1,
+      3 , 4 ,-1,
+      0 , 4 ,-1,
+      4 , 5 ,-1,
+      0 , 5 ,-1,
+      1 , 5 ,-1,
+      5 , 7 ,-1,
+      1 , 7 ,-1,
+      1 , 6 ,-1,
+      6 , 7 ,-1,
+      2 , 6 ,-1,
+      6 , 8 ,-1,
+      2 , 8 ,-1,
+      3 , 8 ,-1,
+      8 , 9 ,-1,
+      3 , 9 ,-1,
+      4 , 9 ,-1,
+      9 , 10 ,-1,
+      4 , 10 ,-1,
+      5 , 10 ,-1,
+      7 , 10 ,-1,
+      7 , 11 ,-1,
+      6 , 11 ,-1,
+      8 , 11 ,-1,
+      10 , 11 ,-1,
+      9 , 11 ,-1,
+    ]
+    colorIndex[ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    ]
+    }
+  }
+  ]
+}
+]
+}
+,
+# Switch mode 1: No Snub faces
+
+Transform {
+  children[
+  DEF Egg Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color USE COL
+    coord USE C1
+    coordIndex[
+      3 , 2 , 0 ,-1,
+      5 , 4 , 0 ,-1,
+      7 , 5 , 1 ,-1,
+      1 , 2 , 6 ,-1,
+      9 , 8 , 3 ,-1,
+      10 , 9 , 4 ,-1,
+      6 , 8 , 11 ,-1,
+      11 , 10 , 7 ,-1,
+    ]
+    colorIndex[
+   0,0,0,0,0,0,0,0,
+    ]
+    }
+    appearance Appearance {
+      material DEF MATER Material {
+        shininess 1
+        specularColor 1 1 1
+        transparency 0
+      }
+    }
+  }
+Transform {
+  children USE EDGES
+}
+]
+}
+# end of switch nodes
+]
+}
+]
+}
+
+
+DEF T TouchSensor {}
+DEF TS TimeSensor {
+cycleInterval 20.0
+loop TRUE
+}
+
+PROTO Switcher [
+   eventIn SFBool isActive
+   eventOut SFInt32 switchvalue
+   eventOut SFFloat transp
+]
+{ Script {
+  eventIn SFBool isActive IS isActive
+  eventOut SFInt32 switchvalue IS switchvalue
+  eventOut SFFloat transp IS transp
+    url [ "javascript:
+       function isActive(eventValue) {
+          if (eventValue == true) {
+            if (switchvalue == 0) {
+              switchvalue = 1;
+              }
+            else {
+              if (switchvalue == 1) {
+              switchvalue = 0;
+              }
+          } } }"
+        ]
+ } }
+
+
+PROTO Interp [
+   eventIn SFFloat fraction_changed 
+   eventOut SFFloat interp_value 
+   ]
+{ Script {
+  eventIn SFFloat fraction_changed IS fraction_changed
+  eventOut SFFloat interp_value IS interp_value 
+    url [ "javascript:
+       function fraction_changed(time) {
+          if (time < 0.1) {
+             interp_value = 0;}
+          else {
+            if (time < 0.3) {
+               interp_value = (time - 0.1)*2.5;}
+            else {
+              if (time < 0.4) {
+                interp_value = 0.5;}
+              else {
+                if (time < 0.5) {
+                  interp_value = (time - 0.3)*5;}
+                else {
+                  if (time < 0.6) {
+                    interp_value = 1;}
+                  else {
+                    if (time < 0.7) {
+                      interp_value = (0.8 - time)*5;}
+                    else {
+                      if (time < 0.8) {
+                        interp_value = 0.5;}
+                      else {
+                        interp_value = (1 - time) * 2.5;}
+                      } 
+                    }
+                  } 
+                } 
+              } 
+            } 
+          } "
+        ]
+ } }
+
+DEF VIEWER Interp { }
+
+DEF VIEWSWITCH Switcher { }
+
+ROUTE T.touchTime TO TS.startTime
+ROUTE TS.fraction_changed TO VIEWER.fraction_changed
+ROUTE VIEWER.interp_value TO CI.set_fraction
+ROUTE CI.value_changed TO C1.point
+
+ROUTE SENSOR.isActive TO VIEWSWITCH.isActive
+ROUTE VIEWSWITCH.switchvalue TO POLY.whichChoice
+ROUTE VIEWSWITCH.switchvalue TO CMDTXT.whichChoice

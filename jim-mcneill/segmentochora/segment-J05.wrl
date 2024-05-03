@@ -1,0 +1,217 @@
+#VRML V2.0 utf8
+WorldInfo{
+      title "J05-orient   Generation Date: 04-12-2003"
+      info[ 
+      "Author: Jim McNeill"
+      ]
+}
+#
+# HEDRON --- Polyhedron Generator, Version: Version 1.4.0     9-Apr-2003
+#            Copyright Jim McNeill, 1999/2003
+#            jim-mcneill@ukonline.co.uk
+#
+# Model by:  Jim McNeill   jim-mcneill@ukonline.co.uk
+#
+# Edge Deformation:       8.29336599394992E-14 
+# Polygonal Deformation:  1.04062429474729E-12 
+#
+#
+#
+Background {
+  skyColor [1 1 1]
+}
+ 
+NavigationInfo {
+ type "EXAMINE"
+ headlight TRUE
+ avatarSize [0, 0, 0, 0, 0, 0]
+}
+Viewpoint {
+ position 0 0 5.696
+ description "Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 28.481
+ fieldOfView 0.15
+ description "Telephoto"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ description "Origin"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.0
+ description "Origin Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.57
+ description "Origin Fish-Eye"
+}
+ 
+Transform {
+  children[
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color DEF COL Color{
+color [
+        0 0 0,
+       1.000 1.000 0.000, #  1 inter realm faces
+        1 1 0,      #  2 yellow   - highlighting
+        0 0 1,      #  3 blue     - triangle
+        1 .5 0,     #  4 orange   - square
+        0 1 0,      #  5 green    - pentagon
+        0 .6 1,     #  6 cyan     - hexagon
+        .8 .8 .8,   #  7 grey     - heptagon
+        1 0 1,      #  8 pink     - octagon
+        .8 .8 .8,   #  9 grey     - enneagon
+        1 0 0,      # 10 red      - decagon
+        .8 .8 .8,   # 11 grey     - hendecagon
+        .8 .8 .8,   # 12 grey     - dodecagon+
+        0 0 0,0 0 0,
+        0 .6 0,     # 15 dk green - pentagram
+        0 0 0,
+        .8 .8 .8,   # 17 grey     - heptagram
+        .5 0 .5,    # 18 purple   - octagram
+        .8 .8 .8,   # 19 grey     - enneagram
+        .7 .2 0,    # 20 brown    - decagram
+        .8 .8 .8    # 21 grey     - hendecagram
+        .8 .8 .8    # 22 grey     - dodecagram+
+        ]
+      }
+    coord DEF C1 Coordinate{
+         point[
+          1.61627777 0.07536674 -0.1752437,
+          1.26329673 1.01099721 -0.1752437,
+          1.35189564 -0.88905127 -0.1752437,
+          0.82038296 -0.22489687 0.35048741,
+          0.46740191 0.7107336 0.35048741,
+          0.42777927 1.56046111 -0.1752437,
+          0.57113533 -1.51388191 -0.1752437,
+          0.03962264 -0.84972751 0.35048741,
+          -0.53151269 0.6641544 0.35048741,
+          -0.57113533 1.51388191 -0.1752437,
+          -0.79589482 -0.30026361 0.35048741,
+          -0.42777927 -1.56046111 -0.1752437,
+          -1.35189564 0.88905127 -0.1752437,
+          -1.26329673 -1.01099721 -0.1752437,
+          -1.61627777 -0.07536674 -0.1752437,
+         ]
+    }
+    coordIndex[
+      2 , 6 , 11 , 13 , 14 , 12 , 9 , 5 , 1 , 0 ,-1,
+      3 , 4 , 8 , 10 , 7 ,-1,
+      4 , 3 , 0 , 1 ,-1,
+      4 , 1 , 5 ,-1,
+      8 , 4 , 5 , 9 ,-1,
+      8 , 9 , 12 ,-1,
+      10 , 8 , 12 , 14 ,-1,
+      10 , 14 , 13 ,-1,
+      7 , 10 , 13 , 11 ,-1,
+      7 , 11 , 6 ,-1,
+      3 , 7 , 6 , 2 ,-1,
+      3 , 2 , 0 ,-1,
+    ]
+    colorIndex[
+               10 , 3 , 4 , 2 , 4 , 2 , 4 , 2 , 4 , 2 , 4 , 2 , 
+    ]
+    }
+    appearance Appearance {
+      material Material {
+        shininess 1
+        specularColor 1 1 1
+      }
+    }
+  }
+
+Transform {
+  children[
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color USE COL 
+    coord Coordinate{
+         point[
+          3 3 -0.1752437,
+          3 -3 -0.1752437,
+          -3 -3 -0.1752437,
+          -3 3 -0.1752437,
+          3 3 0.35048741,
+          3 -3 0.35048741,
+          -3 -3 0.35048741,
+          -3 3 0.35048741,
+         ]
+    }
+    coordIndex[
+    0,1,2,3,-1,
+    4,5,6,7,-1,
+    ]
+    colorIndex[
+               10 , 3 , 
+    ]
+    }
+    appearance Appearance {
+      material Material {
+        shininess 1
+        specularColor 1 1 1
+        transparency 0.5
+      }
+    }
+  }
+]
+}
+
+Transform {
+  children[
+  DEF EDGES Shape{
+    geometry IndexedLineSet{
+      colorPerVertex FALSE
+      color Color{
+color [ 0.000 0.000 0.000 ]
+      }
+    coord USE C1
+    coordIndex[
+      2 , 6 ,-1,
+      6 , 11 ,-1,
+      11 , 13 ,-1,
+      13 , 14 ,-1,
+      12 , 14 ,-1,
+      9 , 12 ,-1,
+      5 , 9 ,-1,
+      1 , 5 ,-1,
+      0 , 1 ,-1,
+      0 , 2 ,-1,
+      3 , 4 ,-1,
+      4 , 8 ,-1,
+      8 , 10 ,-1,
+      7 , 10 ,-1,
+      3 , 7 ,-1,
+      0 , 3 ,-1,
+      1 , 4 ,-1,
+      4 , 5 ,-1,
+      8 , 9 ,-1,
+      8 , 12 ,-1,
+      10 , 14 ,-1,
+      10 , 13 ,-1,
+      7 , 11 ,-1,
+      6 , 7 ,-1,
+      2 , 3 ,-1,
+    ]
+    colorIndex[ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    ]
+    }
+  }
+  ]
+}
+]
+}
