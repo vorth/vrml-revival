@@ -1,0 +1,120 @@
+#VRML V2.0 utf8
+WorldInfo{
+      title "ii1bi Generation Date: 04-09-2002"
+      info[ 
+      "Author: Dr. Richard Klitzing"
+      ]
+}
+#
+# HEDRON --- Polyhedron Generator, Version: 3.7 - Build Date 14 February 2002
+#
+# Edge Deformation:       7.882583474838611D-15 
+# Polygonal Deformation:  6.341865985444598D-14 
+#
+#
+#
+NavigationInfo {
+ type "EXAMINE"
+ headlight TRUE
+ avatarSize [0, 0, 0]
+}
+Viewpoint {
+ position 0 0 3.116189572912399 
+ description "Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 15.58094786456199 
+ fieldOfView 0.15
+ description "Telephoto"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ description "Origin"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.0
+ description "Origin Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.57
+ description "Origin Fish-Eye"
+}
+ 
+Transform {
+  children[
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color Color{
+color [
+        0 0 0,0 0 0,
+        1 1 0,      #  2 yellow   - highlighting
+        0 0 1,      #  3 blue     - triangle
+        1 .5 0,     #  4 orange   - square
+        0 1 0,      #  5 green    - pentagon
+        0 .6 1,     #  6 cyan     - hexagon
+        .8 .8 .8,   #  7 grey     - heptagon
+        1 0 1,      #  8 pink     - octagon
+        .8 .8 .8,   #  9 grey     - enneagon
+        1 0 0,      # 10 red      - decagon
+        .8 .8 .8,   # 11 grey     - hendecagon
+        .8 .8 .8,   # 12 grey     - dodecagon+
+        0 0 0,0 0 0,
+        0 .6 0,     # 15 dk green - pentagram
+        0 0 0,
+        .8 .8 .8,   # 17 grey     - heptagram
+        .5 0 .5,    # 18 purple   - octagram
+        .8 .8 .8,   # 19 grey     - enneagram
+        .7 .2 0,    # 20 brown    - decagram
+        .8 .8 .8    # 21 grey     - hendecagram
+        .8 .8 .8    # 22 grey     - dodecagram+
+        ]
+      }
+    coord Coordinate{
+         point[
+           0.17166122 -0.41721521 -0.37676968,
+          -0.15255984  0.07501476 -0.56266312,
+           0.34480441 -0.56311128  0.59726100,
+          -0.50401736  0.72556351  0.11058567,
+           0.17385773  0.40639371  0.77286657,
+           0.41966439  0.35503199  0.20814800,
+           0.52531525 -0.24415505  0.09961779,
+           0.00071454  0.55228977 -0.20116411,
+          -0.22741982 -0.84312851 -0.17355011,
+          -0.75202053 -0.04668369 -0.47433201,
+         ]
+    }
+    coordIndex[
+      0 , 2 , 5 ,-1,
+      0 , 7 , 9 ,-1,
+      1 , 3 , 5 ,-1,
+      1 , 6 , 8 ,-1,
+      4 , 6 , 7 ,-1,
+      0 , 2 , 4 , 7 ,-1,
+      0 , 5 , 3 , 9 ,-1,
+      1 , 3 , 4 , 6 ,-1,
+      1 , 5 , 2 , 8 ,-1,
+      6 , 7 , 9 , 8 ,-1,
+      2 , 4 , 3 , 9 , 8 ,-1,
+    ]
+    colorIndex[
+               3 , 3 , 3 , 3 , 3 , 4 , 4 , 4 , 4 , 4 , 5 , 
+    ]
+    }
+    appearance Appearance {
+      material Material {
+        shininess 1
+        specularColor 1 1 1
+      }
+    }
+  }
+]
+}

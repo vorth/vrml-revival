@@ -1,0 +1,297 @@
+/* optimized so far for IE6 & FF3 */
+
+h2, h3, h4, h5, h6, li, p, td, th, dt, dd, span, blockquote, caption {
+font-family: arial, sans-serif;
+color: #000;
+}
+
+b {
+font-family: arial, sans-serif;
+font-weight: bold;
+}
+
+dt {
+	font-weight: bold;
+	margin-top: 20px;
+}
+dl.confer {
+	margin: 0px;
+}
+dl.confer dt {
+	font-weight: normal;
+	margin-top: 0px;
+	float: left;
+	clear: left;
+	width: 230px;
+}
+dl.confer dd {
+	margin-left: 220px; /* same as dt-width */
+}
+
+h1 {
+font-family: "arial black", arial, sans-serif;
+text-indent: 1cm;
+margin-bottom: 0pt;
+}
+
+sub, sup {
+font-size: 85%;
+}
+
+td {
+vertical-align: top;
+}
+
+body {
+background-color: #FFFFE0;
+}
+
+tr.header, th.header, td.header, tr.header * pre, .header pre {
+background-color: #FFF0BB;
+}
+
+pre {
+font-size: 90% !important; /* firefox only */
+font-size: 75%;
+font-family: "Courier New", monospace;
+margin-bottom: 5px;
+background-color: #FFFFF8;
+margin: 0px;
+padding: 5px;
+}
+
+/* somewhat special */
+pre h1, pre h2, pre h3, pre h4, pre h5, pre h6 {
+font-family: "Courier New", monospace;
+background-color: #FFFFE0;
+padding: 15px;
+margin: -5px; /* soll padding von pre wieder zurücknehmen */
+}
+
+pre span { /* to be used to invert the pre-tag as inline mode */
+font-size: 111% !important; /* firefox only */
+font-size: 133%;
+}
+pre .softened { /* but not in those cases */
+font-size: 100% !important; /* firefox only */
+font-size: 100%;
+font-family: "Courier New", monospace;
+}
+
+/* ... but not in headlines */
+pre h1 span, pre h2 span, pre h3 span, pre h4 span, pre h5 span, pre h6 span {
+font-size: 100%;
+}
+
+td pre {
+background-color: #FFFFE0;
+}
+
+pre span small {
+font-size: 67%;
+}
+
+/* show bold in headlines by color */
+h1 b, h2 b, h3 b, h4 b, h5 b, h6 b {
+color: #F00;
+}
+
+a {
+text-decoration: none;
+}
+
+a:visited {
+color: #800080;
+}
+
+a:link {
+color: #00F;
+}
+
+a.www, a.www:link {
+color: darkgreen;
+}
+
+a.same_page:visited {
+color: #C0F;
+}
+
+a:hover, a.same_page:hover, a.www:hover {
+color: #09F;
+}
+
+/* needed for firefox */
+a.target_only:hover {
+color: #000;
+}
+
+a, tt, .eq {
+white-space: nowrap;
+}
+
+/* WikiChoron, i.e. http://www.polychora.de/wiki/index.php, is no longer online */
+/* beware of exceptional hard comments: "war aber in WikiChoron!!" */
+.WikiChoron {
+display: none;
+}
+/* IE does not support this ...
+img[alt=WikiChoron] { display: none; }
+*/
+
+.mathworld {
+	width: 50px; /*293px;*/ /*300px;*/
+	height: 50px;
+	/*background-color: white;*/
+	background-image: url("../png/Wolfram MathWorld.png");
+	/* url(http://mathworld.wolfram.com/images/topbar/logo.png); */
+	/* früher: img src="http://mathworld.wolfram.com/images/topbar/header.gif" 
+	           span style="position:absolute;clip:rect(0px,203px,53px,0px)" */
+}
+
+/* for js toggle (to be extended for deeper levels if needed) */
+.li-0,
+.li-1,
+.li-2,
+.li-3,
+.li-4,
+.li-5,
+.level-0
+{
+font-family: arial, sans-serif;
+color: #000;
+}
+.level-1
+{
+margin-left:20;
+font-size: 75%;
+font-family: arial, sans-serif;
+color: #000;
+}
+.level-2,
+.level-3,
+.level-4,
+.level-5
+{
+margin-left:20;
+font-family: arial, sans-serif;
+color: #000;
+}
+
+.li-0 span,
+.li-1 span,
+.li-2 span,
+.li-3 span,
+.li-4 span,
+.li-5 span
+{
+margin-right:10;
+}
+
+.li-0 span a,
+.li-1 span a,
+.li-2 span a,
+.li-3 span a,
+.li-4 span a,
+.li-5 span a
+{
+text-decoration: none;
+background-color: #EEA;
+color: #777;
+border: 1px solid #888;
+padding: 0 2 0 2;
+}
+
+.caption {
+margin: 2px;
+font-size: 9pt;
+text-align: center;
+}
+
+.imag {
+font-family: "Times New Roman", times, serif;
+font-weight: bold;
+font-style: italic;
+}
+
+.small-caps {
+font-variant: small-caps;
+}
+
+.bgc /* z.B. um Bilder auf weißen Grund zu stellen */ {
+background-color: #FFF;
+}
+
+.blue {
+color: blue;
+}
+
+.serif {
+font-family: "Times New Roman", times, serif;
+}
+
+.left {
+text-align: left;
+}
+
+.center {
+text-align: center;
+}
+
+.right {
+text-align: right;
+}
+
+.top {
+vertical-align: top;
+}
+
+.middle {
+vertical-align: middle;
+}
+
+.bottom {
+vertical-align: bottom;
+}
+
+.top-connect {
+margin-top: 0px;
+}
+
+.bottom-connect {
+margin-bottom: 0px;
+}
+
+.term0, .term1 {
+color: #999;
+}
+
+/* IE10 macht keine korrekten Tabellen-Ränder mehr - dann eben per class */
+.no-border, .no-border th, .no-border td, .border .no-border, .border .no-border th, .border .no-border td {
+border-style:none;
+/* 
+IE10: ohne !important sonst dennoch border; 
+IE<10: muss vor .border + ohne important, sonst gewinnt in geschachtelten Tabellen die äußere Einstellung 
+*/
+}
+.border, .no-border .border {
+border-style:ridge;
+border-top-color:#ddd;
+border-right-color:#aaa;
+border-bottom-color:#aaa;
+border-left-color:#ddd;
+}
+.border th, .border td, .no-border .border th, .no-border .border td {
+border-style:groove;
+border-top-color:#aaa;
+border-right-color:#ddd;
+border-bottom-color:#ddd;
+border-left-color:#aaa;
+}
+
+/* weitere IE10 Änderungen */
+td p:first-of-type {
+margin-top:0px;
+}
+td p:last-of-type {
+margin-bottom:0px;
+}

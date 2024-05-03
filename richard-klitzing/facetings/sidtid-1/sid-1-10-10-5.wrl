@@ -1,0 +1,150 @@
+#VRML V2.0 utf8
+WorldInfo{
+      title "110105 Generation Date: 04-10-2002"
+      info[ 
+      "Author: Dr. Richard Klitzing"
+      ]
+}
+#
+# HEDRON --- Polyhedron Generator, Version: 3.7 - Build Date 14 February 2002
+#
+# Edge Deformation:       3.663735981263017D-15 
+# Polygonal Deformation:  2.019204491692872D-14 
+#
+#
+#
+NavigationInfo {
+ type "EXAMINE"
+ headlight TRUE
+ avatarSize [0, 0, 0]
+}
+Viewpoint {
+ position 0 0 3.031088913245537 
+ description "Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 15.15544456622769 
+ fieldOfView 0.15
+ description "Telephoto"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ description "Origin"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.0
+ description "Origin Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.57
+ description "Origin Fish-Eye"
+}
+ 
+Transform {
+  children[
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color Color{
+color [
+        0 0 0,0 0 0,
+        1 1 0,      #  2 yellow   - highlighting
+        0 0 1,      #  3 blue     - triangle
+        1 .5 0,     #  4 orange   - square
+        0 1 0,      #  5 green    - pentagon
+        0 .6 1,     #  6 cyan     - hexagon
+        .8 .8 .8,   #  7 grey     - heptagon
+        1 0 1,      #  8 pink     - octagon
+        .8 .8 .8,   #  9 grey     - enneagon
+        1 0 0,      # 10 red      - decagon
+        .8 .8 .8,   # 11 grey     - hendecagon
+        .8 .8 .8,   # 12 grey     - dodecagon+
+        0 0 0,0 0 0,
+        0 .6 0,     # 15 dk green - pentagram
+        0 0 0,
+        .8 .8 .8,   # 17 grey     - heptagram
+        .5 0 .5,    # 18 purple   - octagram
+        .8 .8 .8,   # 19 grey     - enneagram
+        .7 .2 0,    # 20 brown    - decagram
+        .8 .8 .8    # 21 grey     - hendecagram
+        .8 .8 .8    # 22 grey     - dodecagram+
+        ]
+      }
+    coord Coordinate{
+         point[
+          -0.33503812 -0.13599691  0.78692713,
+          -0.72515805  0.18863180  0.43423938,
+           0.72515805 -0.18863180 -0.43423938,
+           0.33503812  0.13599691 -0.78692713,
+           0.38243485 -0.68770771  0.36166516,
+           0.63891240 -0.16218130  0.56168333,
+          -0.63891240  0.16218130 -0.56168333,
+          -0.38243485  0.68770771 -0.36166516,
+          -0.13325402 -0.69797537 -0.49504924,
+          -0.53821293 -0.67787063 -0.02860514,
+           0.53821293  0.67787063  0.02860514,
+           0.13325402  0.69797537  0.49504924,
+          -0.21949967 -0.67152487  0.50087348,
+          -0.85072699 -0.14626457 -0.06978727,
+           0.19548972  0.17879472  0.82450968,
+          -0.43573759  0.70405502  0.25384893,
+           0.43573759 -0.70405502 -0.25384893,
+          -0.19548972 -0.17879472 -0.82450968,
+           0.85072699  0.14626457  0.06978727,
+           0.21949967  0.67152487 -0.50087348,
+          -0.53372715 -0.28860504  0.32472952,
+         ]
+    }
+    coordIndex[
+      20 , 0 , 13 , -1,
+      20 , 1 , 9 , -1,
+      20 , 13 , 12 , -1,
+      20 , 9 , 0 , -1,
+      20 , 12 , 1 , -1,
+      0 , 5 , 11 ,-1,
+      1 , 7 , 11 ,-1,
+      5 , 12 , 16 ,-1,
+      7 , 13 , 17 ,-1,
+      9 , 16 , 17 ,-1,
+      2 , 4 , 8 ,-1,
+      3 , 6 , 8 ,-1,
+      4 , 14 , 18 ,-1,
+      6 , 15 , 19 ,-1,
+      10 , 14 , 15 ,-1,
+      2 , 4 , 14 , 10 ,-1,
+      2 , 8 , 6 , 19 ,-1,
+      3 , 6 , 15 , 10 ,-1,
+      3 , 8 , 4 , 18 ,-1,
+      14 , 15 , 19 , 18 ,-1,
+      2 , 5 , 11 , 19 ,-1,
+      2 , 10 , 7 , 17 ,-1,
+      3 , 7 , 11 , 18 ,-1,
+      3 , 10 , 5 , 16 ,-1,
+      16 , 17 , 19 , 18 ,-1,
+      0 , 5 , 2 , 17 , 13 ,-1,
+      0 , 9 , 17 , 19 , 11 ,-1,
+      1 , 7 , 3 , 16 , 12 ,-1,
+      1 , 9 , 16 , 18 , 11 ,-1,
+      5 , 10 , 7 , 13 , 12 ,-1,
+    ]
+    colorIndex[
+               15 , 15 , 15 , 15 , 15 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 4 , 4 , 4 , 4 , 4 , 4 , 4 , 4 , 4 , 4 , 5 , 5 , 5 , 5 , 5 , 
+    ]
+    }
+    appearance Appearance {
+      material Material {
+        shininess 1
+        specularColor 1 1 1
+      }
+    }
+  }
+]
+}

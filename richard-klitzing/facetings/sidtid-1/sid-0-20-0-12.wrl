@@ -1,0 +1,151 @@
+#VRML V2.0 utf8
+WorldInfo{
+      title "gidtid Generation Date: 04-09-2002"
+      info[ 
+      "Author: Dr. Richard Klitzing"
+      ]
+}
+#
+# HEDRON --- Polyhedron Generator, Version: 3.7 - Build Date 14 February 2002
+#
+# Edge Deformation:       9.992007221626409D-16 
+# Polygonal Deformation:  1.079704838603106D-14 
+#
+#
+#
+NavigationInfo {
+ type "EXAMINE"
+ headlight TRUE
+ avatarSize [0, 0, 0]
+}
+Viewpoint {
+ position 0 0 3.031088913245536 
+ description "Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 15.15544456622768 
+ fieldOfView 0.15
+ description "Telephoto"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ description "Origin"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.0
+ description "Origin Wide Angle"
+}
+ 
+Viewpoint {
+ position 0 0 0
+ fieldOfView 1.57
+ description "Origin Fish-Eye"
+}
+ 
+Transform {
+  children[
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color Color{
+color [
+        0 0 0,0 0 0,
+        1 1 0,      #  2 yellow   - highlighting
+        0 0 1,      #  3 blue     - triangle
+        1 .5 0,     #  4 orange   - square
+        0 1 0,      #  5 green    - pentagon
+        0 .6 1,     #  6 cyan     - hexagon
+        .8 .8 .8,   #  7 grey     - heptagon
+        1 0 1,      #  8 pink     - octagon
+        .8 .8 .8,   #  9 grey     - enneagon
+        1 0 0,      # 10 red      - decagon
+        .8 .8 .8,   # 11 grey     - hendecagon
+        .8 .8 .8,   # 12 grey     - dodecagon+
+        0 0 0,0 0 0,
+        0 .6 0,     # 15 dk green - pentagram
+        0 0 0,
+        .8 .8 .8,   # 17 grey     - heptagram
+        .5 0 .5,    # 18 purple   - octagram
+        .8 .8 .8,   # 19 grey     - enneagram
+        .7 .2 0,    # 20 brown    - decagram
+        .8 .8 .8    # 21 grey     - hendecagram
+        .8 .8 .8    # 22 grey     - dodecagram+
+        ]
+      }
+    coord Coordinate{
+         point[
+          -0.02185393 -0.76525533  0.40485391,
+           0.46114957 -0.42933638  0.59414758,
+          -0.46114957  0.42933638 -0.59414758,
+           0.02185393  0.76525533 -0.40485391,
+          -0.80583839 -0.31631294 -0.02388737,
+          -0.45868118 -0.56313429 -0.47168989,
+           0.45868118  0.56313429  0.47168989,
+           0.80583839  0.31631294  0.02388737,
+          -0.53833270  0.55124005  0.39538880,
+          -0.37053670  0.09494663  0.77697342,
+           0.37053670 -0.09494663 -0.77697342,
+           0.53833270 -0.55124005 -0.39538880,
+          -0.53586431 -0.44123061  0.51784650,
+           0.24565177  0.10229767  0.82413008,
+           0.02584787 -0.84059594 -0.20671320,
+           0.80736395 -0.29706766  0.09957039,
+          -0.80736395  0.29706766 -0.09957039,
+          -0.02584787  0.84059594  0.20671320,
+          -0.24565177 -0.10229767 -0.82413008,
+           0.53586431  0.44123061 -0.51784650,
+         ]
+    }
+    coordIndex[
+      0 , 4 , 9 ,-1,
+      0 , 13 , 15 ,-1,
+      1 , 6 , 9 ,-1,
+      1 , 12 , 14 ,-1,
+      8 , 12 , 13 ,-1,
+      0 , 5 , 11 ,-1,
+      1 , 7 , 11 ,-1,
+      5 , 12 , 16 ,-1,
+      7 , 13 , 17 ,-1,
+      9 , 16 , 17 ,-1,
+      2 , 4 , 8 ,-1,
+      3 , 6 , 8 ,-1,
+      4 , 14 , 18 ,-1,
+      6 , 15 , 19 ,-1,
+      10 , 14 , 15 ,-1,
+      2 , 5 , 10 ,-1,
+      2 , 17 , 19 ,-1,
+      3 , 7 , 10 ,-1,
+      3 , 16 , 18 ,-1,
+      11 , 18 , 19 ,-1,
+      4 , 8 , 6 , 15 , 14 ,-1,
+      0 , 5 , 2 , 17 , 13 ,-1,
+      0 , 9 , 17 , 19 , 11 ,-1,
+      1 , 7 , 3 , 16 , 12 ,-1,
+      1 , 9 , 16 , 18 , 11 ,-1,
+      5 , 10 , 7 , 13 , 12 ,-1,
+      0 , 4 , 2 , 19 , 15 ,-1,
+      1 , 6 , 3 , 18 , 14 ,-1,
+      2 , 8 , 13 , 15 , 10 ,-1,
+      3 , 8 , 12 , 14 , 10 ,-1,
+      4 , 9 , 6 , 19 , 18 ,-1,
+      5 , 11 , 7 , 17 , 16 ,-1,
+    ]
+    colorIndex[
+               3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 , 
+    ]
+    }
+    appearance Appearance {
+      material Material {
+        shininess 1
+        specularColor 1 1 1
+      }
+    }
+  }
+]
+}
