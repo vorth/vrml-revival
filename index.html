@@ -51,6 +51,12 @@
           so you'll find VRML highlights in the text that won't work.
         </p>
 
+        <p>
+          There are a couple of entries below that link to websites that don't need any help from me;
+          the authors have already found another solution for 3D display of polyhedra.
+          I thought these noteworthy enough to be included here, in the "after" column.
+        </p>
+
         <table>
           <thead>
             <tr>
@@ -70,7 +76,9 @@
               </td>
               <td>complete</td>
               <td>
-                The first engagement, as George is an old friend.  This uses my own vrml-viewer, not X_ite.
+                The first engagement, as George is an old friend.  This uses
+                <a href="https://github.com/vorth/vrml-revival/blob/main/vrml-revival.js" target="_blank" rel="noopener noreferrer">my own vrml-viewer</a>,
+                not X_ITE.
               </td>
             </tr>
             <tr>
@@ -170,6 +178,15 @@
               </td>
             </tr>
             <tr>
+              <th scope="row">Alex Doskey</th>
+              <td>
+                <a href="https://www.doskey.com/polyhedra/" target="_blank" rel="noopener noreferrer">live</a>
+              </td>
+              <td></td>
+              <td>no contact</td>
+              <td></td>
+            </tr>
+            <tr>
               <th scope="row">Wagyx Xygaw</th>
               <td></td>
               <td>
@@ -183,20 +200,11 @@
               </td>
             </tr>
             <tr>
-              <th scope="row">Alex Doskey</th>
-              <td>
-                <a href="https://www.doskey.com/polyhedra/" target="_blank" rel="noopener noreferrer">live</a>
-              </td>
-              <td></td>
-              <td>no contact</td>
-              <td></td>
-            </tr>
-            <tr>
               <th scope="row">David McCooey</th>
+              <td></td>
               <td>
                 <a href="http://dmccooey.com/polyhedra/index.html" target="_blank" rel="noopener noreferrer">live</a>
               </td>
-              <td></td>
               <td>no contact</td>
               <td>
                 Wrote his own interactive 3D viewer and data format, directly on WebGL!  Has some slick features.
@@ -208,17 +216,71 @@
         <h2>Technology</h2>
 
         <p>
-          There is a lot more to say here about the technology, and about related efforts.  Stay tuned!  This page is very much
-          a work-in-progress.
-        </p>
-        <!-- <p>
-          Glen Whitney has <a href="https://archematics.app/g4gF59/">Archematics</a>.
+          First, let's be clear: the real heros here are the members of the
+          <a href="https://create3000.github.io/x_ite/" target="_blank" rel="noopener noreferrer">X_ITE team</a>,
+          who have put together a component that can apparently consume any VRML 2.0/97 model,
+          and render it faithfully.
+          I did create
+          <a href="https://github.com/vZome/vzome/blob/main/online/src/wc/vrml/vrml.jsx" target="_blank" rel="noopener noreferrer">my own VRML viewer component</a>,
+          still in use for
+          <a href="https://georgehart.com/virtual-polyhedra/vp.html" target="_blank" rel="noopener noreferrer">George Hart's pages</a>,
+          as part of my
+          <a href="https://docs.vzome.com/online.html" target="_blank" rel="noopener noreferrer">vZome Online</a> effort,
+          but even there I simply fixed a few bugs in the
+          <a href="https://github.com/mrdoob/three.js/blob/dev/examples/jsm/loaders/VRMLLoader.js" target="_blank" rel="noopener noreferrer">Three.js VRMLLoader</a>
+          code, and wrapped it in a web component.
+          The Three.js loader, and therefore my web component, is only able to handle a common subset of VRML,
+          and would not have been sufficient for most of the pages listed above.
         </p>
 
         <p>
-          X_ite
-        </p> -->
+          I want to also point out that Glen Whitney has worked hard to create a solution that does
+          not require any modification to existing web pages.
+          His solution, called
+          <a href="https://archematics.app/g4gF59/" target="_blank" rel="noopener noreferrer">Archematics</a>,
+          is a browser extension that anyone can install.
+          It necessarily provides a less integrated experience, but it is a good option for any sites like
+          <a href="https://www.doskey.com/polyhedra/" target="_blank" rel="noopener noreferrer">Alex Doskey's</a>
+          that have not been updated.
+          As I understand it, Archematics also unlocks some generation scripts on
+          <a href="https://georgehart.com/virtual-polyhedra/vp.html" target="_blank" rel="noopener noreferrer">George Hart's pages</a>
+          that I have not dealt with.
+        </p>
 
+        <p>
+          What I have done is produced a
+          <a href="https://github.com/vorth/vrml-revival/blob/main/vrml-revival.js" target="_blank" rel="noopener noreferrer">simple Javascript script</a>
+          that dynamically processes the HTML on a page, looking for VRML links
+          and restructuring the page if it finds any, in order to add the X_ITE component
+          to display those VRML models.
+          The script is heavily commented, so it is self-documenting.
+        </p>
+
+        <p>
+          The other essential part of the solution is a 
+          <a href="https://github.com/vorth/vrml-revival/blob/main/vrml-revival.css" target="_blank" rel="noopener noreferrer">CSS stylesheet</a>
+          that lays out the restructured page,
+          and styles the modified VRML links (text or image)
+          to hint to the user that interaction is possible.
+          I have not documented the CSS, simply because CSS itself is too subtle to document well.
+          The best way to understand the layout and styling,
+          assuming you're already pretty familiar with modern CSS,
+          is to use the browser debugger to inspect one of the polyhedra pages linked above.
+        </p>
+
+        <p>
+          These things come together as two or three additional elements in the head of each HTML page.
+          Here is the simplest form:
+          <pre>
+  &lt;head&gt;
+    ...
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;/vrml-revival/vrml-revival.css&quot;&gt;
+    &lt;script type=&quot;module&quot;&gt; import { scanPage } from &quot;/vrml-revival/vrml-revival.js&quot;; scanPage() &lt;/script&gt;
+  &lt;/head&gt;
+          </pre>
+          You can see a slightly more complicated example, with additional CSS and a selector to find the title element, on
+          <a href="https://github.com/vorth/vrml-revival/blob/main/jim-mcneill/uniform/twisters/twisters.htm" target="_blank" rel="noopener noreferrer">one of Jim McNeill's pages</a>.
+        </p>
 
         <h2>History</h2>
 
