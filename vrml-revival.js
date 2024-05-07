@@ -86,6 +86,14 @@ const showFigure = (src) =>
     viewer .src = src;
 }
 
+const checkUrl = url =>
+{
+  // Ignore any anchors that are not for VRML
+  if ( ! url .endsWith( '.wrl' ) && ! url .endsWith( '.vrml' ) )
+    return null;
+  return url;
+}
+
 // This is the main entry point, to be called exactly once for each HTML page.
 // The caller can provide a more specific (or more accurate) CSS selector to match
 //   their pattern for finding the element that should be considered the title of the page.
@@ -93,16 +101,15 @@ const showFigure = (src) =>
 // The caller can also opt-out of restructuring, if the page has been statically
 //   edited to have the right structure (or even some other structure) already.
 //
-export const scanPage = ( titleSelector='h1', restructure=true ) =>
+export const scanPage = ( titleSelector='h1', restructure=true, testUrl=checkUrl ) =>
 {
   let first = true;
 
   // Look for all anchor tags in the page
   document .querySelectorAll( 'a' ) .forEach( anchor =>
   {
-    const url = anchor.href;
-    if ( ! url .endsWith( '.wrl' ) && ! url .endsWith( '.vrml' ) )
-      // Ignore any anchors that are not for VRML
+    const url = testUrl( anchor.href );
+    if ( ! url )
       return;
 
     if ( first ) {
