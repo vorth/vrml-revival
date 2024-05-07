@@ -129,7 +129,7 @@ table {
 }
 
 thead th:nth-child(1) {
-  width: 15%;
+  width: 20%;
 }
 thead th:nth-child(2) {
   width: 13%;
@@ -138,7 +138,7 @@ thead th:nth-child(3) {
   width: 13%;
 }
 thead th:nth-child(4) {
-  width: 18%;
+  width: 13%;
 }
 thead th:nth-child(5) {
   width: 41%;
