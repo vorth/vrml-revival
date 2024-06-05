@@ -1,0 +1,82 @@
+#VRML V2.0 utf8
+
+Background {               #remove these lines
+ skyColor 0 0 0            #
+ }                         # when placing this
+ Viewpoint {               #
+  position .1 0 1          # object in a VRML world
+	orientation 0 1 0 .2     #
+   }                       #
+NavigationInfo {           # or apartment.
+ type "EXAMINE"            #
+ }                         #
+ 
+WorldInfo {
+   title "Beating Heart"
+    info [ "Copyright 1988 modeled by Kiwano [Andrew Reitemeyer] kiwano@t-online.de "
+          "This model is linkware. Non commercial users are required to link to" 
+					" http://home.t-online.de/home/kiwano4 "
+					"Commercial users must pay a small fee, details and more models from the above url"
+          "This node must remain unaltered in this code"
+          ]
+          }  
+
+DEF Cardium Transform { 
+	rotation          1 0 0 1.57 
+	children [
+		Shape {
+			appearance Appearance {
+		  	material Material {
+				ambientIntensity  0.4            
+				diffuseColor     .8 0 0 
+				emissiveColor     0 0 0          
+				shininess         0.6           
+				specularColor     1 1 1       
+				transparency      0              
+			}
+			
+		}
+		geometry  Extrusion {
+			convex           FALSE   
+			creaseAngle      1.57      
+			crossSection            
+			[ 0 .3, -.1 .2, -.2 .1, -.27 0, -.29 -.05, -.295 -.11, -.28 -.16, -.25 -.2 #7
+			-.2 -.23, -.15 -.245, -.1 -.24, -.05 -.23, 0 -.2, #12
+		  .05 -.23, .1 -.24, .15 -.245, .2 -.23, .25 -.2, .28 -.16, .295 -.11, #18
+		  .29 -.05, .27 0, .2 .1, .1 .2, 0 .3 #23
+			]
+			scale                    
+			[
+				.0001 .0001, .5 .5, .8 .8, .5 .5, .0001 .0001 
+			]
+			solid            FALSE   
+			spine                   
+			[
+				0 0 0, 0 .05 0, 0 .1 0, 0 .15 0, 0 .2 0 
+			]
+		}
+		}
+	]
+}
+
+DEF Ticker TimeSensor {
+ cycleInterval 2
+ loop TRUE
+ }
+DEF Beat PositionInterpolator {
+	key                 
+	[
+		0, .5,.6, .7 1
+	]
+	keyValue              
+	[
+		1 1 1, 1.05 1.2 1, 1 1 1, 1.05 1.2 1, 1 1 1
+	]
+	                      
+}
+
+ROUTE Ticker.fraction_changed TO Beat.set_fraction
+ROUTE Beat.value_changed TO Cardium.set_scale
+
+
+

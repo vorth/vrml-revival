@@ -23,6 +23,7 @@ body {
 }
 
 #container {
+  width: 100dvw;
   position: absolute;
   inset: 0;
   display: grid;

@@ -1,0 +1,823 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO SimpleSlider [
+eventOut     SFFloat sliderResult 
+field SFFloat initialValue 
+exposedField MFNode thumb 
+exposedField MFNode slide 
+]"slider_proto.wrl#SimpleSlider"
+
+
+
+# Oh -> Oh
+PROTO _3Cubes [
+exposedField MFNode children []
+
+]
+{
+    Transform{
+	rotation 0 1 0 0.7853
+	children[    
+	DEF TR1 Transform {
+	    children IS children
+	}
+	DEF TR2 Transform{
+	    rotation 1 0 1 1.5708
+	    children IS children
+	}
+	DEF TR3 Transform{
+	    rotation 1 0 -1 1.5708
+	    children IS children
+	}
+	]
+    }
+
+}
+
+
+# Oh -> Oh
+# Ih -> Td ()
+PROTO _4Cubes [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {
+	    rotation 1 1 1 1.0472
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 -1 1.0472
+	    children IS children
+	}
+	Transform {
+	    rotation 1 -1 -1 1.0472
+	    children IS children
+	}
+	Transform {
+	    rotation -1 -1 1 1.0472
+	    children IS children
+	}
+	]
+    }
+}
+
+
+# Oh -> Ih
+PROTO _5Cubes [
+exposedField MFNode children []
+]
+{    
+    Transform{
+	rotation 0 0 1 1.5708
+	children[    
+	Transform {
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1.618 0 1.2566
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1.618 0 -1.2566
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1.618 0 2.5132
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1.618 0 -2.5132
+	    children IS children 
+	}
+	]
+    }
+
+}
+
+
+# Oh -> Oh
+PROTO _6Cubes [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {
+	    rotation 1 1 0 1.5708
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 0 1.5708
+	    children IS children
+	}
+	Transform {
+	    rotation 0 1 1 1.5708
+	    children IS children
+	}
+	Transform {
+	    rotation 0 -1 1 1.5708
+	    children IS children
+	}
+	Transform {
+	    rotation 1 0 1 1.5708
+	    children IS children
+	}
+	Transform {
+	    rotation -1 0 1 1.5708
+	    children IS children
+	}
+	]
+    }
+}
+
+# Oh -> Ih
+PROTO _10Cubes [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	DEF C1 Transform {
+	    rotation 1 1 1 0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 1 -0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation 1 1 -1 -0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 -1 0.659058
+	    children IS children
+	}
+
+	Transform {
+	    rotation 1.618 1 0 1.2566
+	    children USE C1
+	}
+	Transform {
+	    rotation 1.618 1 0 -1.2566
+	    children USE C1
+	}
+
+	Transform {
+	    rotation 1.618 1 0 2.5132
+	    children USE C1
+	}
+	Transform {
+	    rotation 0 1.618 1 -1.2566
+	    children USE C1
+	}
+	Transform {
+	    rotation 0 1.618 1 2.5132
+	    children USE C1
+	}
+	Transform {
+	    rotation 1 0 1.618 2.5132
+	    children USE C1
+	}
+	]
+    }
+}
+
+
+# Oh -> Ih
+PROTO _15Cubes [
+exposedField MFNode children []
+]
+{
+    # it may be constructed if we will place all cubes such that 
+    # they have edges paralles to edges of dodecahedron
+    _5Cubes{
+	children _3Cubes{
+	    children IS children
+	}	
+    }
+}
+
+
+# Ih -> Oh
+
+PROTO _2Icosahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {
+	    children IS children
+	}
+	Transform {
+	    rotation 0 1 0 1.5708
+	    children IS children
+	}
+
+	]
+    }
+}
+
+
+
+# Ih -> Oh
+
+PROTO _4Icosahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {
+	    rotation 1 1 1 -0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 1 0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation 1 1 -1 0.659058
+	    children IS children
+	}
+	Transform {
+	    rotation -1 1 -1 -0.659058
+	    children IS children
+	}
+	]
+    }
+}
+
+
+# Ih -> Ih
+
+PROTO _5Icosahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform{
+	    rotation 0 0 1 1.5708
+	    children IS children
+	}
+	Transform{
+	    rotation 1 -1.618 2.618 1.5708
+	    children IS children
+	}
+	Transform{
+	    rotation 2.618 1 1.618 1.5708
+	    children IS children
+	}
+	Transform{
+	    rotation 2.618 -1 1.618 1.5708
+	    children IS children
+	}
+	Transform{
+	    rotation 1 1.618 2.618 1.5708
+	    children IS children
+	}
+	]
+    }
+}
+
+
+# Ih -> Ih
+
+PROTO _6Icosahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform{
+	    rotation 1 0 1.618 0.62831
+	    children IS children
+	}
+	Transform{
+	    rotation -1 0 1.618 -0.62831
+	    children IS children
+	}
+	Transform{
+	    rotation 0 1.618 1 0.62831
+	    children IS children
+	}
+	Transform{
+	    rotation 0 1.618 -1 -0.62831
+	    children IS children
+	}
+	Transform{
+	    rotation 1.618 1 0 0.62831
+	    children IS children
+	}
+	Transform{
+	    rotation 1.618 -1 0 -0.62831
+	    children IS children
+	}
+	]
+    }
+}
+
+
+# Ih -> Ih
+
+PROTO _10Icosahedra [
+exposedField MFNode children []
+]
+{
+    Transform{
+	rotation 0 1 0 -1.5708
+	children[
+	Switch {
+	    choice [
+	    DEF SHAPE Transform{
+		rotation 0 1 0 1.5708
+		children IS children		
+	    }
+	    ]
+	}
+
+	Transform{rotation 0 1 0 0.7295 children USE SHAPE }	
+	Transform{rotation 1 2.618 1.618 0.7295 children USE SHAPE }
+	Transform{rotation 1 2.618 -1.618 0.7295 children USE SHAPE }
+	Transform{rotation 2.618 1.618 1 0.7295 children USE SHAPE }
+	Transform{rotation 2.618 1.618 -1 0.7295 children USE SHAPE }
+
+	Transform{rotation 1.618 1 2.618 0.7295 children USE SHAPE }
+	Transform{rotation -1 2.618 1.618 0.7295 children USE SHAPE }
+	Transform{rotation  -1 2.618 -1.618 0.7295 children USE SHAPE }
+	Transform{rotation  1.618 1 -2.618   0.7295 children USE SHAPE }
+	Transform{rotation 1 0 0 0.7295 children USE SHAPE }
+
+	]
+    }
+}
+
+# Ih -> Ih
+
+PROTO _12Icosahedra [
+exposedField MFNode children []
+]
+{
+    # fi = Pi/5 - 6 icosahedra
+
+    DEF OBJ Group{
+	children[    
+	Transform{
+	    rotation 1 0 1.618 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation -1 0 1.618 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 0 1.618 1 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 0 1.618 -1 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 1.618 1 0 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 1.618 -1 0 0.0
+	    children IS children
+	}
+
+	Transform{
+	    rotation -1 0 -1.618 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 1 0 -1.618 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 0 -1.618 -1 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation 0 -1.618 1 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation -1.618 -1 0 0.0
+	    children IS children
+	}
+	Transform{
+	    rotation -1.618 1 0 0.0
+	    children IS children
+	}
+
+	Transform {
+	    translation 1.3 0 0 
+	    children [
+	    DEF SLIDER SimpleSlider  {
+		initialValue 0.0
+		thumb Shape {
+		    geometry Box{
+			size 0.1 0.1 0.1
+		    }
+		    appearance	Appearance {
+			material	Material {
+			    ambientIntensity 0.25
+			    diffuseColor 1. 0.3 0.3
+			    shininess	1
+			}
+		    }
+		}
+		slide Shape {
+		    geometry Box {
+			size 0.06 1.101 0.06 
+		    }
+		    appearance	Appearance {
+			material	Material {
+			    ambientIntensity	0.25
+			    diffuseColor	0.6 0.6 0.6
+			    shininess	1
+			}
+			
+		    }
+		    
+		}    		
+	    }
+	    ]
+	}  
+	]
+    }
+
+
+    DEF SCRIPT Script {
+	directOutput TRUE
+	field SFNode obj USE OBJ
+	eventIn SFFloat set_rotation
+
+	url [
+	"vrmlscript:
+
+	function set_rotation(value, time){
+
+	    angle = value * 2*Math.PI/5;
+	    trace(angle/(Math.PI/5));
+	    for(i =0; i < 12; i++){
+		node = obj.children[i];
+		rot = node.rotation;
+		node.rotation = new SFRotation(rot.getAxis(),angle+0.000001);
+	    }
+	}
+	"
+	]
+    }
+    
+    ROUTE SLIDER.sliderResult TO SCRIPT.set_rotation   
+
+}
+
+# Ih -> Ih
+
+PROTO _20Icosahedra [
+exposedField MFNode children []
+]
+{
+# fi = Pi/3 - 10 icosahedra
+# fi = 0.73*Pi/3 - 5 Icosahedra
+    DEF OBJ Group{
+	children[    
+	Transform{rotation 0.618 1.618 0 0.0 children IS children}
+	Transform{rotation -0.618 1.618 0 0.0 children IS children}
+	Transform{rotation 1.618 0 0.618 0.0 children IS children} 
+	Transform{rotation 1.618 0 -0.618 0.0 children IS children} 
+	Transform{rotation 0 0.618 1.618 0.0 children IS children} 
+	Transform{rotation 0 -0.618 1.618 0.0 children IS children} 
+	Transform{rotation -0.618 -1.618 0 0.0 children IS children} 
+	Transform{rotation  0.618 -1.618 0 0.0 children IS children} 
+	Transform{rotation -1.618 0 -0.618 0.0 children IS children}
+	Transform{rotation -1.618 0  0.618 0.0 children IS children}
+	Transform{rotation 0 -0.618 -1.618 0.0 children IS children}
+	Transform{rotation 0 0.618 -1.618 0.0 children IS children}
+
+	Transform{rotation  1  1 1  0.0 children IS children}
+	Transform{rotation -1  1 1  0.0 children IS children}
+	Transform{rotation  1 -1 1  0.0 children IS children}
+	Transform{rotation -1 -1 1  0.0 children IS children}
+	Transform{rotation  1  1 -1  0.0 children IS children}
+	Transform{rotation -1  1 -1  0.0 children IS children}
+	Transform{rotation  1 -1 -1  0.0 children IS children}
+	Transform{rotation -1 -1 -1  0.0 children IS children}
+
+	Transform {
+	    translation 1.3 0 0 
+	    children [
+	    DEF SLIDER SimpleSlider  {
+		initialValue 0.0
+		thumb Shape {
+		    geometry Box{
+			size 0.1 0.1 0.1
+		    }
+		    appearance	Appearance {
+			material	Material {
+			    ambientIntensity 0.25
+			    diffuseColor 1. 0.3 0.3
+			    shininess	1
+			}
+		    }
+		}
+		slide Shape {
+		    geometry Box {
+			size 0.06 1.101 0.06 
+		    }
+		    appearance	Appearance {
+			material	Material {
+			    ambientIntensity	0.25
+			    diffuseColor	0.6 0.6 0.6
+			    shininess	1
+			}
+			
+		    }
+		    
+		}    		
+	    }
+	    ]
+	}  
+	]
+    }
+
+
+    DEF SCRIPT Script {
+	directOutput TRUE
+	field SFNode obj USE OBJ
+	eventIn SFFloat set_rotation
+
+	url [
+	"vrmlscript:
+
+	function set_rotation(value, time){
+
+	    angle = value * 2*Math.PI/3;
+	    trace(angle/(Math.PI/3));
+	    for(i =0; i < 20; i++){
+		node = obj.children[i];
+		rot = node.rotation;
+		node.rotation = new SFRotation(rot.getAxis(),angle+0.000001);
+	    }
+	}
+	"
+	]
+    }
+    
+    ROUTE SLIDER.sliderResult TO SCRIPT.set_rotation   
+
+}
+
+
+# Ih -> Ih
+
+PROTO _30Icosahedra [
+exposedField MFNode children []
+]
+{
+# fi = 0.707 * Pi/2 - 6 icosahedra
+# fi =         Pi/2 - 5 Icosahedra
+DEF OBJ Group{
+    children[    
+
+    Transform{rotation  1  0  0  0.0 children IS children}
+    Transform{rotation -1  0  0  0.0 children IS children}
+    Transform{rotation  0  1  0  0.0 children IS children}
+    Transform{rotation  0 -1  0  0.0 children IS children}
+    Transform{rotation  0  0  1  0.0 children IS children}
+    Transform{rotation  0  0 -1  0.0 children IS children}
+
+    Transform{rotation  1  1.618  2.618 0.0 children IS children}
+    Transform{rotation -1  1.618  2.618 0.0 children IS children}
+    Transform{rotation  1 -1.618  2.618 0.0 children IS children}
+    Transform{rotation -1 -1.618  2.618 0.0 children IS children}
+    Transform{rotation  1  1.618 -2.618 0.0 children IS children}
+    Transform{rotation -1  1.618 -2.618 0.0 children IS children}
+    Transform{rotation  1 -1.618 -2.618 0.0 children IS children}
+    Transform{rotation -1 -1.618 -2.618 0.0 children IS children}
+
+    Transform{rotation  2.618  1  1.618 0.0 children IS children}
+    Transform{rotation  2.618 -1  1.618 0.0 children IS children}
+    Transform{rotation  2.618  1 -1.618 0.0 children IS children}
+    Transform{rotation  2.618 -1 -1.618 0.0 children IS children}
+    Transform{rotation -2.618  1  1.618 0.0 children IS children}
+    Transform{rotation -2.618 -1  1.618 0.0 children IS children}
+    Transform{rotation -2.618  1 -1.618 0.0 children IS children}
+    Transform{rotation -2.618 -1 -1.618 0.0 children IS children}
+
+    Transform{rotation  1.618  2.618  1 0.0 children IS children}
+    Transform{rotation  1.618  2.618 -1 0.0 children IS children}
+    Transform{rotation -1.618  2.618  1 0.0 children IS children}
+    Transform{rotation -1.618  2.618 -1 0.0 children IS children}
+    Transform{rotation  1.618 -2.618  1 0.0 children IS children}
+    Transform{rotation  1.618 -2.618 -1 0.0 children IS children}
+    Transform{rotation -1.618 -2.618  1 0.0 children IS children}
+    Transform{rotation -1.618 -2.618 -1 0.0 children IS children}
+    
+    Transform {
+	translation 1.3 0 0 
+	children [
+	DEF SLIDER SimpleSlider  {
+	    initialValue 0.0
+	    thumb Shape {
+		geometry Box{
+		    size 0.1 0.1 0.1
+		}
+		appearance	Appearance {
+		    material	Material {
+			ambientIntensity 0.25
+			diffuseColor 1. 0.3 0.3
+			shininess	1
+		    }
+		}
+	    }
+	    slide Shape {
+		geometry Box {
+		    size 0.06 1.101 0.06 
+		}
+		appearance	Appearance {
+		    material	Material {
+			ambientIntensity	0.25
+			diffuseColor	0.6 0.6 0.6
+			shininess	1
+		    }
+		    
+		}
+		
+	    }    		
+	}
+	]
+    }
+    ]
+}
+    
+DEF SCRIPT Script {
+    directOutput TRUE
+    field SFNode obj USE OBJ
+    eventIn SFFloat set_rotation
+    
+    url [
+    "vrmlscript:
+    
+    function set_rotation(value, time){
+	
+	angle = value * 2*Math.PI/2;
+	trace(angle/(Math.PI/2));
+	for(i =0; i < 30; i++){
+	    node = obj.children[i];
+	    rot = node.rotation;
+	    node.rotation = new SFRotation(rot.getAxis(),angle+0.000001);
+	}
+    }
+    "
+    ]
+}
+
+ROUTE SLIDER.sliderResult TO SCRIPT.set_rotation   
+
+}
+
+
+# Th -> Oh
+
+PROTO _6Tetrahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {rotation 0 1 0 0.785398 children IS children}
+	Transform {rotation 0 1 0 -0.785398 children IS children}
+	Transform {rotation 1 0 0 0.785398 children IS children}
+	Transform {rotation 1 0 0 -0.785398 children IS children}
+	Transform {rotation 0 0 1 0.785398 children IS children}
+	Transform {rotation 0 0 1 -0.785398 children IS children}
+	]
+    }
+}
+
+
+
+# Th -> Oh
+PROTO _8Tetrahedra [
+exposedField MFNode children []
+]
+{
+    Group{
+	children[    
+	Transform {scale 0.95 0.95 0.95 children IS children}
+	Transform {rotation 1 1 1 1.0472 children IS children}
+	Transform {rotation -1 1 -1 1.0472 children IS children}
+
+	Transform {rotation -1 -1 1 1.0472 children IS children}
+	Transform {rotation 1 -1 -1 1.0472 children IS children}
+
+	Transform {
+	    rotation -1 1 1 1.0472 
+	    children DEF TR Transform 
+	    {
+		rotation 0 1 0 1.5708 children IS children
+	    }
+	}
+	Transform {rotation 1 1 -1 1.0472 children USE TR}
+	Transform {rotation 1 -1 1 1.0472 children USE TR}
+	Transform {rotation -1 -1 -1 1.0472 children USE TR}
+
+	]
+    }
+}
+
+
+# Th -> Oh
+PROTO _12Tetrahedra [
+exposedField MFNode children []
+]
+{
+    Group {
+	children [
+	_6Cubes {
+	    children [
+	    Group{
+		children IS children
+	    }
+	    Transform {
+		rotation 0 1 0 1.5708
+		children IS children
+	    }
+	    ]
+	}
+	]
+    }
+}
+
+
+DEF SCRIPT Script {
+    eventIn SFTime set_time
+    url [
+    "vrmlscript:
+    function set_time(value, time){
+	Browser.setDescription('fps:'+Browser.getCurrentFrameRate());
+    }
+    "
+    ]
+}
+
+DEF TIMER TimeSensor{
+    enabled TRUE
+    loop TRUE
+}
+
+ROUTE TIMER.cycleTime TO SCRIPT.set_time
+
+
+Viewpoint{
+    position 0 0 4
+}
+
+#DirectionalLight {
+#    direction -1 -1 -1
+#}
+#DirectionalLight {
+#    direction 1 -2 -1
+#}
+
+NavigationInfo{
+    type "EXAMINE"
+}
+
+#_3Cubes {  # Oh -> Oh
+#_4Cubes {  # Oh->Oh, Ih -> Th
+#_5Cubes {  # Oh -> Ih, Th -> I
+#_6Cubes {  # Oh -> Oh
+#_10Cubes {  # Oh -> Ih
+#_15Cubes {  # Oh -> Ih
+#_2Icosahedra { # Ih -> Oh
+#_4Icosahedra { # Ih -> Oh
+_5Icosahedra { # Ih -> Ih
+#_6Icosahedra { # Ih -> Ih
+#_10Icosahedra { # Ih -> Ih
+#_6Tetrahedra { # Th -> Oh,  T -> O
+#_8Tetrahedra { # Th -> Oh,  T -> O
+#_12Tetrahedra { # Th -> Oh,  T -> O
+    children Group{
+	children [
+	Inline {
+	    url "u31.wrl.gz"
+	    bboxSize 1 1 1 
+	}
+	]
+    }    
+}
+
+#Inline {    
+#    url "poly/u28r.wrl.gz"
+#    bboxSize 1 1 1 
+#}

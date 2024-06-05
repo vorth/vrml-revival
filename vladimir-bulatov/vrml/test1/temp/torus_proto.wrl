@@ -1,0 +1,72 @@
+#VRML V2.0 utf8
+WorldInfo{
+    title "proto of torus"
+    info [
+    "Copyright 1997 - Vladimir Bulatov"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+NavigationInfo { 
+    type "EXAMINE" 
+    headlight TRUE
+} 
+
+Viewpoint {
+    description "start"
+    position    0 0 20 
+    fieldOfView 0.15
+}
+
+PROTO Torus [
+field SFFloat r 0.1
+field SFFloat R 1
+field SFFloat angle 6.283
+field SFInt32 n 8
+field SFInt32 N 32
+]
+{
+    DEF TORUS Extrusion{
+	creaseAngle 1
+	beginCap FALSE
+	endCap FALSE
+	solid FALSE
+	ccw FALSE
+	#crossSection[]	
+	#spine []    
+    }
+
+    DEF SCRIPT Script{
+	directOutput TRUE
+
+	field SFNode torus USE TORUS
+
+	field SFFloat r IS r
+	field SFFloat R IS R
+	field SFFloat angle IS angle
+	field SFInt32 n IS n
+	field SFInt32 N IS N
+	
+	eventOut MFVec2f crossSection
+	eventOut MFVec3f spine
+	
+
+	url "vrmlscript:
+	function initialize(value, time){
+	    cs = new MFVec2f();
+	    sp = new MFVec3f();
+	    for(i=0; i<=n; i++ ){
+		cs[i] = new SFVec2f(-r*Math.cos(6.283*i/n),
+		                     r*Math.sin(6.283*i/n));
+	    }
+	    for(i=0; i<=N; i++ ){
+		sp[i] = new SFVec3f(R*Math.cos(angle*i/N),
+		                    R*Math.sin(angle*i/N),
+		                    0);
+	    }
+	    torus.set_crossSection = cs;
+	    torus.set_spine = sp;
+	}
+	"
+    }    
+}

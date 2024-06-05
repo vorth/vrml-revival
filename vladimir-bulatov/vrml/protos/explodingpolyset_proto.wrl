@@ -1,0 +1,297 @@
+#VRML V2.0 utf8
+
+
+NavigationInfo {
+	type "WALK"
+#	type "EXAMINE"
+	headlight FALSE
+}
+
+
+WorldInfo {
+    title "ExplodingPolySet proto"
+    info [
+    "author V.Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+#
+#PROTO accepts parameters similar to those of IndexedFaceSet 
+# and makes a set of separated polygons
+# when it receives explode event, it explodes 
+# when fragments reach ground (y == 0), they stop.
+# 
+PROTO ExplodingPolySet [
+
+field MFInt32 coordIndex []
+field SFNode coord Coordinate {}  
+
+field SFFloat rspeed 4  # speed of random rotation of fragments
+field SFFloat cspeed 40 # speed of fragments
+field SFTime duration 1 # duration of explosion
+field SFFloat gravitation 9.81    # gravitational acceleration
+field SFFloat scale 1
+eventIn SFFloat set_scale 
+eventIn SFBool explode
+eventOut SFTime explode_time 
+]{
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	coordIndex []
+	coord Coordinate {
+	    point []
+	}
+    }
+
+    DEF TIMER TimeSensor {    
+	cycleInterval IS duration
+    }
+
+    DEF ExplodingPolySet Script {
+
+	eventIn SFFloat set_scale IS set_scale 
+	eventIn SFBool explode IS explode
+	eventIn SFTime set_time 
+	eventOut SFTime explode_time IS explode_time
+
+	field MFInt32 coordIndex IS coordIndex
+	field SFNode coord IS coord
+	field SFNode ifs USE IFS
+	field MFInt32 ci []
+	field MFVec3f vertex []
+	field SFFloat scale IS scale
+	field SFInt32 pcount 0
+	field MFVec3f centers []
+	field MFVec3f speed []
+	field MFInt32 faces []
+	field MFRotation rot []
+	field MFVec3f vertex0 []
+
+	field SFBool first_time TRUE
+	field SFNode timer USE TIMER 
+	field SFTime t0 0 # time of explosion
+	
+	field SFFloat rspeed IS rspeed 
+	field SFFloat cspeed IS cspeed 
+	field SFFloat gravitation IS gravitation
+
+	url [
+
+	"javascript:
+
+	function set_scale(v,t){
+	    scale = v;
+	    init();
+	}
+
+	function initialize(){
+	    init();
+	}
+
+	function init(){
+
+	    var fcount = 0;
+	    var vcount = 0;
+	    var ci_count = 0;
+	    var fv = new MFVec3f();
+	    var center = new SFVec3f(0,0,0);
+
+	    for(i = 0; i < coordIndex.length; i++){
+		if(coordIndex[i] != -1){
+
+		    fv[fcount++] = coord.point[coordIndex[i]];
+
+		} else { // new face 
+		    center.x = center.y = center.z = 0;
+		    for( j = 0; j < fcount; j++){
+			center.x += fv[j].x;
+			center.y += fv[j].y;
+			center.z += fv[j].z;
+		    }
+		    center.x /= fcount;
+		    center.y /= fcount;
+		    center.z /= fcount;
+
+		    // first index of current face 		    		    
+		    faces[2*pcount] = vcount;
+		    for( j = 0; j < fcount; j++){			
+			vertex0[vcount] = new SFVec3f(
+			         (fv[j].x-center.x)*scale,
+			         (fv[j].y-center.y)*scale,
+			         (fv[j].z-center.z)*scale);
+			vertex[vcount] = vertex0[vcount].add(center);
+
+			ci[ci_count++] = vcount;
+			//trace(vertex[vcount]);
+			vcount++;
+		    }
+		    ci[ci_count++] = -1;
+		    fcount = 0;
+
+		    // center of current face
+		    centers[pcount] = new SFVec3f(center.x, center.y, center.z);
+		    speed[pcount] = centers[pcount].normalize().multiply(cspeed);
+		    // transformation of current face
+		    rot[pcount] 
+                       = new SFRotation(
+                           new SFVec3f(Math.random(),Math.random(),Math.random()),0);
+		    // last index of current face 		    
+		    faces[2*pcount+1] = vcount;
+		    pcount ++;		    
+		}
+	    }
+	    ifs.coord.set_point = vertex;
+	    ifs.set_coordIndex = ci;	    
+	}
+
+	function explode(v,t){
+	    if(first_time){
+		timer.set_startTime = t;
+		//timer.set_stopTime = t+1;
+		timer.set_enabled = TRUE;
+		first_time = FALSE;
+		explode_time = t;		
+		t0 = t;
+	    }	    
+	}
+
+	function set_time(v,t){
+	    //trace(fraction);
+	    var time = t-t0;
+	    var center = new SFVec3f(0,0,0);
+	    var vert = new SFVec3f(0,0,0);
+
+	    for(var p = 0; p < pcount; p++){
+		center = centers[p];		
+		center.x += speed[p].x*time;
+		center.y += speed[p].y*time - gravitation*time*time;
+		center.z += speed[p].z*time;
+		if(center.y < 0){
+		    continue;		    
+		}
+		for(var f = faces[2*p]; f < faces[2*p+1];f++){
+		    var r = rot[p];
+		    r.angle = time*rspeed;
+		    vert = r.multVec(vertex0[f]);		    
+		    vert.x += center.x;
+		    vert.y += center.y;
+		    vert.z += center.z; 
+		    vertex[f] = vert;
+		    //trace(f);
+		}
+	    }
+
+	    ifs.coord.set_point = vertex;	    
+	}
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO ExplodingPolySet.set_time
+}
+
+#
+# example of use 
+#
+DEF TRANS Transform {
+    scale 2 2 2
+    children [
+    DEF TOUCH TouchSensor{
+    }
+    Shape {
+	geometry DEF POLY ExplodingPolySet {	
+	    duration 4
+	    cspeed 1
+	    gravitation 1
+	    coord Coordinate {
+		point [
+		0 0 1, .5878 0 .809, -.2764 .4472 .8507, .2629 .5257 .809,
+		.7236 .4472 .5257, -.5878 0 .809, .9511 0 .309, -.1625 .8507 .5,
+		0 1 0, .4253 .8507 .309, -.6882 .5257 .5, -.8944 .4472 0,
+		-.5257 .8507 0, .4253 .8507 -.309, .7236 .4472 -.5257, .8507 .5257 0,
+		-.1625 .8507 -.5, -.2764 .4472 -.8507, .2629 .5257 -.809,
+		.9511 0 -.309, .5878 0 -.809, 0 0 -1, -.5878 0 -.809,
+		-.6882 .5257 -.5, -.9511 0 -.309, -.9511 0 .309
+		]
+	    }
+	    coordIndex [
+	    0 2 3 -1, 1 3 4 -1, 0 3 1 -1, 0 5 2 -1, 6 1 4 -1, 2 7 3 -1, 7 8 9 -1,
+	    3 9 4 -1, 7 9 3 -1, 2 10 7 -1, 10 11 12 -1, 7 12 8 -1, 10 12 7 -1,
+	    8 13 9 -1, 13 14 15 -1, 9 15 4 -1, 13 15 9 -1, 8 16 13 -1, 16 17 18 -1,
+	    13 18 14 -1, 16 18 13 -1, 14 19 15 -1, 15 6 4 -1, 19 6 15 -1,
+	    14 20 19 -1, 21 17 22 -1, 20 14 18 -1, 21 18 17 -1, 20 18 21 -1,
+	    17 23 22 -1, 23 11 24 -1, 23 24 22 -1, 17 16 23 -1, 16 8 12 -1,
+	    23 12 11 -1, 16 12 23 -1, 11 25 24 -1, 11 10 25 -1, 10 2 5 -1,
+	    10 5 25 -1
+	    ]
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 1 1 0
+	    }
+	}
+    }
+    ]
+}
+
+Switch {
+    whichChoice 0
+    choice [
+    
+    DEF BUM_SOUND Sound {
+        direction 0 0 1
+        intensity 1
+        location 0 0 0
+	maxBack  100
+	maxFront 100
+	minBack  5
+	minFront 5
+        priority 1
+        spatialize TRUE
+        source DEF BUM_CLIP AudioClip {
+            url "bum.wav"
+            pitch 1
+            loop FALSE
+        }
+    }
+    ]
+}
+
+Shape {
+    geometry Box {
+	size 100 0.01 100
+    }
+    appearance Appearance {
+	material Material {
+	    diffuseColor 0.2 0.6 0.3
+	}
+    }
+}
+
+ROUTE TOUCH.isActive TO POLY.explode
+ROUTE POLY.explode_time TO BUM_CLIP.set_startTime
+
+
+Viewpoint {
+    position 0 1.5 20
+}
+DirectionalLight{
+    ambientIntensity 0
+    direction 0.3 -1 -0.1
+}
+DEF BACKGROUND Background {
+    groundAngle [ 0.9, 1.5, 1.57 ]
+    groundColor [
+    0 0.333 0,
+    0 0.4 0,
+    0 0.5 0,
+    0.62 0.67 0.60
+    ]
+    skyAngle [ 0.9, 1.5, 1.57 ]
+    skyColor [
+    0.21 0.18 0.66,
+    0.2 0.44 0.85,
+    0.51 0.81 0.95,
+    0.77 0.8 0.82
+    ]
+}

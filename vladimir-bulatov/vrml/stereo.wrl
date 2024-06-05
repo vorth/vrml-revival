@@ -1,0 +1,536 @@
+#VRML V2.0 utf8
+WorldInfo {
+    title "Stereo Viewer"
+    info [
+    "written by Vladimir Bulatov, bulatov@dots.physics.orst.edu, 01.09.1998"
+    ]
+
+}
+Viewpoint{
+    position 0 0 10
+    description "entry"
+    fieldOfView 0.45
+}
+
+NavigationInfo {
+    headlight FALSE
+    type "NONE"
+}
+
+PROTO Roller [
+exposedField MFNode object Group{}
+exposedField SFRotation rotation 1 0 0 0
+exposedField SFRotation offset  1 0 0 0
+field SFBool automatic TRUE
+]
+{
+    Group{
+        children[
+        DEF PLANE Transform{
+	    
+	    children[
+	    DEF ROTATOR PlaneSensor { 
+		autoOffset        FALSE #TRUE
+		enabled           TRUE
+		#offset IS offset
+	    }
+
+	    Transform {
+		translation 0 0 2
+		children [
+		Shape {
+		    geometry Box {
+			size 10 10 0.1
+		    }
+		    appearance Appearance {
+			material Material {
+			    transparency 1
+			    diffuseColor 0.5 0.6 0.9
+			}
+		    }
+		}
+		]
+
+	    }
+
+	    DEF ROTATOR_TRANSFORM Transform{
+		rotation IS rotation
+		scaleOrientation IS offset # dummy 
+		children IS object
+	    }
+	    ]
+            
+        }
+
+	]
+    }
+
+    # to watch for 
+    DEF PROXI ProximitySensor{
+	size 1.e10 1.e10 1.e10
+    }
+
+    DEF ANIMATOR TimeSensor{
+	enabled FALSE
+	loop TRUE
+    }
+
+    DEF SCRIPT Script{
+
+	directOutput TRUE
+	eventIn SFVec3f set_rotation
+	eventIn SFVec3f set_rotation_roller
+	eventIn SFBool set_active
+	eventIn SFVec3f set_position
+	eventIn SFTime set_time
+
+	field SFVec3f mouse0  0 0 0
+	field SFVec3f mouse1  0 0 0
+	field SFTime time0 0
+	field SFTime time1 0
+	field SFBool start TRUE
+	field SFRotation rotation 1 0 0 0
+	field SFRotation offset 1 0 0 0
+	field SFBool start_position_flag TRUE
+	field SFVec3f start_position  0 0 0
+	field SFNode plane USE PLANE
+	field SFNode rotator USE ROTATOR_TRANSFORM
+	field SFVec3f speed 0 0 0
+	field SFNode animator USE ANIMATOR
+	field SFBool automatic IS automatic
+	
+	field SFRotation r 1 0 0 0
+	field SFRotation r_neg 1 0 0 0
+	field SFRotation r1 1 0 0 0
+	field SFRotation r2 1 0 0 0
+	field SFRotation r1_neg 1 0 0 0
+	field SFRotation result 1 0 0 0
+	field SFRotation result1 1 0 0 0
+
+	field SFFloat radius 1
+
+	url[
+	"javascript:
+
+	function from_quaternion(q) {
+	    angle = Math.acos(q[3]) * 2.0;
+	    s = Math.sin(angle / 2.0);
+	    if(s == 0.0){
+	      s     = 1;
+              angle = 0.0;
+	    }
+	    q[0]/=s;q[1]/=s; q[2]/=s;
+	    q[3] = angle;
+	}
+
+	function to_quaternion(r){
+	    s = Math.sin(r[3]/2.0);
+	    r[0] *= s; r[1] *= s; r[2] *= s; r[3] = Math.cos(r[3] / 2.0);
+	}
+
+	function multiply_quaternion(q1, q2, result) {
+	    result[0] = q2[3] * q1[0] + q2[0] * q1[3] +
+	    q2[1] * q1[2] - q2[2] * q1[1];
+	    result[1] = q2[3] * q1[1] + q2[1] * q1[3] +
+               q2[2] * q1[0] - q2[0] * q1[2];
+            result[2] = q2[3] * q1[2] + q2[2] * q1[3] +
+               q2[0] * q1[1] - q2[1] * q1[0];
+	    result[3] = q2[3] * q1[3] - q2[0] * q1[0] -
+               q2[1] * q1[1] - q2[2] * q1[2];
+	}
+
+	function cross(p,q,result){
+	    result[0] = p[1]*q[2]-p[2]*q[1];
+	    result[1] = p[2]*q[0]-p[0]*q[2];
+	    result[2] = p[0]*q[1]-p[1]*q[0];
+	}
+
+	function dot(p,q){
+	    s = p[0]*q[0]+p[1]*q[1]+p[2]*q[2];
+	    return s;
+	}
+	
+
+	function normalize(p){
+	    s = p[0]*p[0]+p[1]*p[1]+p[2]*p[2];
+	    q = p;
+	    if(s != 0.0){
+		s = Math.sqrt(s);
+		q[0] = q[0]/s;
+		q[1] = q[1]/s;
+		q[2] = q[2]/s;
+	    }
+	    return q;
+	}
+
+	function set_position(val,time){
+	    value = val; // to protect formal variable
+	    if(start_position_flag){
+		start_position_flag = FALSE;
+		start_position = normalize(value);
+	    } else {		
+
+		value = normalize(value);
+		cross(start_position,value,result);
+		result = normalize(result);
+		angle = Math.acos(dot(start_position,value));
+		
+		r[0] = result[0];
+		r[1] = result[1];
+		r[2] = result[2];
+		r[3] = angle;
+		to_quaternion(r);
+		r_neg[0] = -r[0];
+		r_neg[1] = -r[1];
+		r_neg[2] = -r[2];
+		r_neg[3] =  r[3];
+		
+		r1 = plane.rotation;
+		to_quaternion(r1);
+		r1_neg[0] = -r1[0];
+		r1_neg[1] = -r1[1];
+		r1_neg[2] = -r1[2];
+		r1_neg[3] = r1[3];
+		
+		multiply_quaternion(r1,r,result);
+		from_quaternion(result);
+		plane.rotation = result;
+				
+                // to compensation rotator's rotation
+                // 
+		r2 = rotator.rotation;
+		to_quaternion(r2);
+
+		multiply_quaternion(r2,r1,result);
+		multiply_quaternion(result,r_neg,result1);
+		multiply_quaternion(result1,r1_neg,result);
+		from_quaternion(result);
+		rotator.rotation = result;
+		start_position = value;
+
+	    }
+	    //trace(value + ' '+ plane.rotation);
+	}
+
+	function set_rotation_roller(value, time){
+
+	    if(start == TRUE){
+
+		mouse1 = value;
+		mouse0 = value;
+		start = FALSE;
+		time0 = time;
+		time1 = time;
+
+	    } else{
+
+		mouse0 = mouse1;
+		mouse1 = value;
+		//radius = mouse1.length();
+		//trace(mouse1);
+		dx = (mouse1[0]-mouse0[0])/radius;
+		dy = (mouse1[1]-mouse0[1])/radius;
+		r1 = rotator.rotation_changed;
+		to_quaternion(r1);
+		r2[0] = -dy;
+		r2[1] = dx;
+		r2[2] = 0;
+                r2[3] = Math.sqrt(dx*dx+dy*dy);
+		r2 = normalize(r2);
+		to_quaternion(r2);
+		multiply_quaternion(r1,r2,result);
+		from_quaternion(result);
+                rotator.set_rotation = result;
+		time0 = time1;
+		time1 = time;
+
+		dt = time1 - time0;
+		var factor = Math.exp(-2*dt);
+		var f1 = 1-factor;
+		if(dt != 0){		    
+		    speed[0] = factor*speed[0] + f1*dx/dt;
+		    speed[1] = factor*speed[1] + f1*dy/dt;
+		} else {
+		    speed[0] = factor*speed[0];
+		    speed[1] = factor*speed[1];
+		}
+	    }	    
+
+	}
+
+	function set_active(value, time){
+
+	    //trace('set_active ' + value);
+
+	    if(value){
+
+		start = TRUE;
+		animator.enabled = FALSE;
+		time0 = time;
+		time1 = time;
+		speed[0] = 0;
+		speed[1] = 0;
+		animator.enabled = FALSE;
+
+	    } else if(time1 != time0){ // if there was a drag
+
+		dt = time - time0;
+		//trace('time1 != time0: '+ dt);
+		// speed of automatic should be calculated now
+		// to limit speed in case fast movementy and stop
+		
+		if(dt != 0.0){
+		    var factor = Math.exp(-10*dt);
+		    var f1 = 1-factor;
+		    speed[0] = factor*speed[0];
+		    speed[1] = factor*speed[1];
+		    //trace('dt: '+ dt +  ' factor: ' + factor);
+		} else {
+		    speed[0] = 0;
+		    speed[1] = 0;
+		    //trace('dt == 0.0');
+		}
+		
+		if(automatic && // arbitrary limitation of speed
+                   (Math.abs(speed[0]) > 0.01 || 
+		    Math.abs(speed[1]) > 0.01)){
+		    animator.enabled = TRUE;
+		    //trace('start'+ speed);
+		} else {
+		    //trace('stop' + speed);
+		}		
+	    }
+	}
+	
+	function set_time(value,time){
+
+	    dt = (time-time0);
+
+	    dx = speed[0]*dt;
+	    dy = speed[1]*dt;
+
+	    r1 = rotator.rotation;
+	    
+	    to_quaternion(r1);
+	    r2[0] = -dy; r2[1] = dx; r2[2] = 0;
+	    r2[3] = Math.sqrt(dx*dx+dy*dy);
+	    r2 = normalize(r2);
+	    to_quaternion(r2);
+	    multiply_quaternion(r1,r2,result);
+	    from_quaternion(result);
+	    rotator.rotation = result;
+	    //rotator.rotation = rotator.rotation.multiply(r2);
+
+	    time0 = time;
+	    //Browser.setDescription(' ' + Browser.getCurrentFrameRate());
+	}
+
+	"
+	]
+
+    }
+
+    ROUTE ROTATOR.trackPoint_changed  TO SCRIPT.set_rotation_roller
+    ROUTE ROTATOR.isActive  TO SCRIPT.set_active
+    ROUTE PROXI.position_changed  TO SCRIPT.set_position
+    ROUTE ANIMATOR.time TO SCRIPT.set_time
+}
+
+DirectionalLight{
+    ambientIntensity 0.3
+    direction 0.2 -0.2 -1
+}
+
+PROTO Poly[
+]{
+
+  Shape{
+    geometry IndexedFaceSet{
+      solid FALSE
+      convex FALSE
+      colorPerVertex FALSE
+      color Color{
+        color [
+        0 0 0,0 0 0,0 0 0,
+        0.0 0.72 0.6, 
+        0.9 0.5 0.3,  
+        0.7 0.7 1.0,  
+        0.5 0.0 0.05, 
+        0.6 0.2 0.9,  
+        0.7 0.3 0.3,  
+        0.4 0.4 1,    
+        0.5 0.5 0.5,  
+        1.0 0.5 0.3,
+        0.8 0.6 1.0,
+        0 0 0,
+        0 0 0,
+        0.9 0.5 0.3,
+        0 0 0,
+        0.7 0.4 0.3,
+        ]
+      }
+    coord Coordinate{
+         point[
+           -0.223919 0.948536 0.223919,
+           0.223919 0.948536 0.223919,
+           -0.223919 0.948536 -0.223919,
+           -0.586227 0.810146 0.000000,
+           -0.362309 0.724617 0.586227,
+           0.223919 0.948536 -0.223919,
+           0.586227 0.810146 0.000000,
+           0.362309 0.724617 0.586227,
+           -0.362309 0.724617 -0.586227,
+           -0.724617 0.586227 0.362309,
+           -0.724617 0.586227 -0.362309,
+           -0.000000 0.586227 0.810146,
+           -0.586227 0.362309 0.724617,
+           0.362309 0.724617 -0.586227,
+           0.724617 0.586227 0.362309,
+           0.724617 0.586227 -0.362309,
+           0.586227 0.362309 0.724617,
+           -0.000000 0.586227 -0.810146,
+           -0.586227 0.362309 -0.724617,
+           -0.948536 0.223919 0.223919,
+           -0.948536 0.223919 -0.223919,
+           -0.223919 0.223919 0.948536,
+           0.223919 0.223919 0.948536,
+           -0.810146 0.000000 0.586227,
+           0.586227 0.362309 -0.724617,
+           0.948536 0.223919 0.223919,
+           0.948536 0.223919 -0.223919,
+           0.810146 0.000000 0.586227,
+           -0.223919 0.223919 -0.948536,
+           0.223919 0.223919 -0.948536,
+           -0.810146 0.000000 -0.586227,
+           -0.948536 -0.223919 0.223919,
+           -0.948536 -0.223919 -0.223919,
+           -0.223919 -0.223919 0.948536,
+           0.223919 -0.223919 0.948536,
+           -0.586227 -0.362309 0.724617,
+           0.810146 0.000000 -0.586227,
+           0.948536 -0.223919 0.223919,
+           0.948536 -0.223919 -0.223919,
+           0.586227 -0.362309 0.724617,
+           -0.223919 -0.223919 -0.948536,
+           0.223919 -0.223919 -0.948536,
+           -0.586227 -0.362309 -0.724617,
+           -0.724617 -0.586227 0.362309,
+           -0.724617 -0.586227 -0.362309,
+           -0.000000 -0.586227 0.810146,
+           -0.362309 -0.724617 0.586227,
+           0.586227 -0.362309 -0.724617,
+           0.724617 -0.586227 0.362309,
+           0.724617 -0.586227 -0.362309,
+           0.362309 -0.724617 0.586227,
+           -0.000000 -0.586227 -0.810146,
+           -0.362309 -0.724617 -0.586227,
+           -0.586227 -0.810146 0.000000,
+           -0.223919 -0.948536 0.223919,
+           0.362309 -0.724617 -0.586227,
+           0.586227 -0.810146 -0.000000,
+           0.223919 -0.948536 0.223919,
+           -0.223919 -0.948536 -0.223919,
+           0.223919 -0.948536 -0.223919,
+         ]
+    }
+    coordIndex[
+      2,5,1,0,-1,
+      3,2,0,-1,
+      4,9,3,0,-1,
+      0,1,7,11,4,-1,
+      1,6,14,7,-1,
+      1,5,6,-1,
+      8,17,13,5,2,-1,
+      2,3,10,8,-1,
+      3,9,19,20,10,-1,
+      12,9,4,-1,
+      4,11,21,12,-1,
+      13,15,6,5,-1,
+      15,26,25,14,6,-1,
+      16,22,11,7,-1,
+      7,14,16,-1,
+      18,28,17,8,-1,
+      8,10,18,-1,
+      9,12,23,19,-1,
+      20,30,18,10,-1,
+      22,21,11,-1,
+      12,21,33,35,23,-1,
+      24,15,13,-1,
+      13,17,29,24,-1,
+      25,27,16,14,-1,
+      15,24,36,26,-1,
+      27,39,34,22,16,-1,
+      17,28,29,-1,
+      30,42,40,28,18,-1,
+      31,32,20,19,-1,
+      19,23,31,-1,
+      32,30,20,-1,
+      21,22,34,33,-1,
+      35,43,31,23,-1,
+      24,29,41,47,36,-1,
+      37,27,25,-1,
+      25,26,38,37,-1,
+      26,36,38,-1,
+      27,37,48,39,-1,
+      40,41,29,28,-1,
+      30,32,44,42,-1,
+      43,53,44,32,31,-1,
+      45,46,35,33,-1,
+      33,34,45,-1,
+      34,39,50,45,-1,
+      46,43,35,-1,
+      47,49,38,36,-1,
+      37,38,49,56,48,-1,
+      39,48,50,-1,
+      51,41,40,-1,
+      40,42,52,51,-1,
+      51,55,47,41,-1,
+      42,44,52,-1,
+      43,46,54,53,-1,
+      53,58,52,44,-1,
+      50,57,54,46,45,-1,
+      55,49,47,-1,
+      56,57,50,48,-1,
+      49,55,59,56,-1,
+      51,52,58,59,55,-1,
+      53,54,58,-1,
+      54,57,59,58,-1,
+      59,57,56,-1,
+    ]
+    colorIndex[
+      4, 3, 4, 5, 4, 3, 5, 4, 5, 3, 4, 4, 5, 4, 3, 4, 3, 4, 4, 3, 5, 3, 4, 4, 4, 5, 3, 5, 4, 3, 3, 4, 4, 5, 3, 4, 3, 4, 4, 4, 5, 4, 3, 4, 3, 4, 5, 3, 3, 4, 4, 3, 4, 4, 5, 3, 4, 4, 5, 3, 4, 3, 
+    ]
+    }
+    appearance Appearance {
+      material Material { 
+      }
+    }
+}
+
+}
+
+
+
+
+
+Group{
+    children[
+    Transform {
+	translation -1 0 0
+	rotation 0 1 0 0.15
+	children [
+	DEF ROLLER Roller {
+	    object Transform {
+		scale 0.8 0.8 0.8
+		children Poly{}		    
+	    }
+	}
+	]
+    }
+    Transform {
+	rotation 0 1 0 -0.15
+	translation 1 0 0
+	children USE ROLLER
+    }
+    ]
+}

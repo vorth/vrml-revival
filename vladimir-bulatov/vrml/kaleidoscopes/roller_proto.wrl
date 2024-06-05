@@ -1,0 +1,303 @@
+#VRML V2.0 utf8
+
+
+PROTO Roller [
+exposedField MFNode object Group{}
+exposedField SFRotation rotation 1 0 0 0
+exposedField SFRotation offset  1 0 0 0
+field SFBool automatic TRUE
+]
+{
+    Group{
+        children[
+        DEF PLANE Transform{
+	    
+	    children[
+	    DEF ROTATOR PlaneSensor { 
+		autoOffset        FALSE #TRUE
+		enabled           TRUE
+		#offset IS offset
+	    }
+
+	    DEF ROTATOR_TRANSFORM Transform{
+		rotation IS rotation
+		scaleOrientation IS offset # dummy 
+		children IS object
+	    }
+	    ]
+            
+        }
+
+	]
+    }
+
+    # to watch for 
+    DEF PROXI ProximitySensor{
+	size 1.e10 1.e10 1.e10
+    }
+
+    DEF ANIMATOR TimeSensor{
+	enabled FALSE
+	loop TRUE
+    }
+
+    DEF SCRIPT Script{
+
+	directOutput TRUE
+	eventIn SFVec3f set_rotation
+	eventIn SFVec3f set_rotation_roller
+	eventIn SFBool set_active
+	eventIn SFVec3f set_position
+	eventIn SFTime set_time
+
+	field SFVec3f mouse0  0 0 0
+	field SFVec3f mouse1  0 0 0
+	field SFTime time0 0
+	field SFTime time1 0
+	field SFBool start TRUE
+	field SFRotation rotation 1 0 0 0
+	field SFRotation offset 1 0 0 0
+	field SFBool start_position_flag TRUE
+	field SFVec3f start_position  0 0 0
+	field SFNode plane USE PLANE
+	field SFNode rotator USE ROTATOR_TRANSFORM
+	field SFVec3f speed 0 0 0
+	field SFNode animator USE ANIMATOR
+	field SFBool automatic IS automatic
+	
+	field SFRotation r 1 0 0 0
+	field SFRotation r_neg 1 0 0 0
+	field SFRotation r1 1 0 0 0
+	field SFRotation r2 1 0 0 0
+	field SFRotation r1_neg 1 0 0 0
+	field SFRotation result 1 0 0 0
+	field SFRotation result1 1 0 0 0
+
+	field SFFloat radius 0.5
+
+	url[
+	"javascript:
+
+	function from_quaternion(q) {
+	    angle = Math.acos(q[3]) * 2.0;
+	    s = Math.sin(angle / 2.0);
+	    if(s == 0.0){
+	      s     = 1;
+              angle = 0.0;
+	    }
+	    q[0]/=s;q[1]/=s; q[2]/=s;
+	    q[3] = angle;
+	}
+
+	function to_quaternion(r){
+	    s = Math.sin(r[3]/2.0);
+	    r[0] *= s; r[1] *= s; r[2] *= s; r[3] = Math.cos(r[3] / 2.0);
+	}
+
+	function multiply_quaternion(q1, q2, result) {
+	    result[0] = q2[3] * q1[0] + q2[0] * q1[3] +
+	    q2[1] * q1[2] - q2[2] * q1[1];
+	    result[1] = q2[3] * q1[1] + q2[1] * q1[3] +
+               q2[2] * q1[0] - q2[0] * q1[2];
+            result[2] = q2[3] * q1[2] + q2[2] * q1[3] +
+               q2[0] * q1[1] - q2[1] * q1[0];
+	    result[3] = q2[3] * q1[3] - q2[0] * q1[0] -
+               q2[1] * q1[1] - q2[2] * q1[2];
+	}
+
+	function cross(p,q,result){
+	    result[0] = p[1]*q[2]-p[2]*q[1];
+	    result[1] = p[2]*q[0]-p[0]*q[2];
+	    result[2] = p[0]*q[1]-p[1]*q[0];
+	}
+
+	function dot(p,q){
+	    s = p[0]*q[0]+p[1]*q[1]+p[2]*q[2];
+	    return s;
+	}
+	
+
+	function normalize(p){
+	    s = p[0]*p[0]+p[1]*p[1]+p[2]*p[2];
+	    q = p;
+	    if(s != 0.0){
+		s = Math.sqrt(s);
+		q[0] = q[0]/s;
+		q[1] = q[1]/s;
+		q[2] = q[2]/s;
+	    }
+	    return q;
+	}
+
+	function set_position(val,time){
+	    value = val; // to protect formal variable
+	    if(start_position_flag){
+		start_position_flag = FALSE;
+		start_position = normalize(value);
+	    } else {		
+
+		value = normalize(value);
+		cross(start_position,value,result);
+		result = normalize(result);
+		angle = Math.acos(dot(start_position,value));
+		
+		r[0] = result[0];
+		r[1] = result[1];
+		r[2] = result[2];
+		r[3] = angle;
+		to_quaternion(r);
+		r_neg[0] = -r[0];
+		r_neg[1] = -r[1];
+		r_neg[2] = -r[2];
+		r_neg[3] =  r[3];
+		
+		r1 = plane.rotation;
+		to_quaternion(r1);
+		r1_neg[0] = -r1[0];
+		r1_neg[1] = -r1[1];
+		r1_neg[2] = -r1[2];
+		r1_neg[3] = r1[3];
+		
+		multiply_quaternion(r1,r,result);
+		from_quaternion(result);
+		plane.rotation = result;
+				
+                // to compensation rotator's rotation
+                // 
+		r2 = rotator.rotation;
+		to_quaternion(r2);
+
+		multiply_quaternion(r2,r1,result);
+		multiply_quaternion(result,r_neg,result1);
+		multiply_quaternion(result1,r1_neg,result);
+		from_quaternion(result);
+		rotator.rotation = result;
+		start_position = value;
+
+	    }
+	    //trace(value + ' '+ plane.rotation);
+	}
+
+	function set_rotation_roller(value, time){
+
+	    if(start == TRUE){
+
+		mouse1 = value;
+		mouse0 = value;
+		start = FALSE;
+		time0 = time;
+		time1 = time;
+
+	    } else{
+
+		mouse0 = mouse1;
+		mouse1 = value;
+		//radius = mouse1.length();
+		//trace(mouse1);
+		dx = (mouse1[0]-mouse0[0])/radius;
+		dy = (mouse1[1]-mouse0[1])/radius;
+		r1 = rotator.rotation_changed;
+		to_quaternion(r1);
+		r2[0] = -dy;
+		r2[1] = dx;
+		r2[2] = 0;
+                r2[3] = Math.sqrt(dx*dx+dy*dy);
+		r2 = normalize(r2);
+		to_quaternion(r2);
+		multiply_quaternion(r1,r2,result);
+		from_quaternion(result);
+                rotator.set_rotation = result;
+		time0 = time1;
+		time1 = time;
+
+		dt = time1 - time0;
+		var factor = Math.exp(-2*dt);
+		var f1 = 1-factor;
+		if(dt != 0){		    
+		    speed[0] = factor*speed[0] + f1*dx/dt;
+		    speed[1] = factor*speed[1] + f1*dy/dt;
+		} else {
+		    speed[0] = factor*speed[0];
+		    speed[1] = factor*speed[1];
+		}
+	    }	    
+
+	}
+
+	function set_active(value, time){
+
+	    //trace('set_active ' + value);
+
+	    if(value){
+
+		start = TRUE;
+		animator.enabled = FALSE;
+		time0 = time;
+		time1 = time;
+		speed[0] = 0;
+		speed[1] = 0;
+		animator.enabled = FALSE;
+
+	    } else if(time1 != time0){ // if there was a drag
+
+		dt = time - time0;
+		//trace('time1 != time0: '+ dt);
+		// speed of automatic should be calculated now
+		// to limit speed in case fast movementy and stop
+		
+		if(dt != 0.0){
+		    var factor = Math.exp(-10*dt);
+		    var f1 = 1-factor;
+		    speed[0] = factor*speed[0];
+		    speed[1] = factor*speed[1];
+		    //trace('dt: '+ dt +  ' factor: ' + factor);
+		} else {
+		    speed[0] = 0;
+		    speed[1] = 0;
+		    //trace('dt == 0.0');
+		}
+		
+		if(automatic && // arbitrary limitation of speed
+                   (Math.abs(speed[0]) > 0.01 || 
+		    Math.abs(speed[1]) > 0.01)){
+		    animator.enabled = TRUE;
+		    //trace('start'+ speed);
+		} else {
+		    //trace('stop' + speed);
+		}		
+	    }
+	}
+	
+	function set_time(value,time){
+
+	    dt = (time-time0);
+
+	    dx = speed[0]*dt;
+	    dy = speed[1]*dt;
+
+	    r1 = rotator.rotation;
+	    
+	    to_quaternion(r1);
+	    r2[0] = -dy; r2[1] = dx; r2[2] = 0;
+	    r2[3] = Math.sqrt(dx*dx+dy*dy);
+	    r2 = normalize(r2);
+	    to_quaternion(r2);
+	    multiply_quaternion(r1,r2,result);
+	    from_quaternion(result);
+	    rotator.rotation = result;
+	    //rotator.rotation = rotator.rotation.multiply(r2);
+
+	    time0 = time;
+	    //Browser.setDescription(' ' + Browser.getCurrentFrameRate());
+	}
+
+	"
+	]
+
+    }
+
+    ROUTE ROTATOR.trackPoint_changed  TO SCRIPT.set_rotation_roller
+    ROUTE ROTATOR.isActive  TO SCRIPT.set_active
+    ROUTE PROXI.position_changed  TO SCRIPT.set_position
+    ROUTE ANIMATOR.time TO SCRIPT.set_time
+}

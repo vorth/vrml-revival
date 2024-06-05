@@ -1,0 +1,291 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Easter Egg"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+EXTERNPROTO Roller [
+exposedField MFNode object 
+]"roller_proto.wrl"
+
+PROTO Symmetry_Cn [
+
+# shape to be transformed
+  field MFNode children []
+  field SFInt32 order 6
+
+]{
+    DEF GROUP Transform{
+	children []
+    }
+    DEF SYMMETRY_P Script {
+	directOutput TRUE
+	
+	field SFNode group USE GROUP
+	field MFNode children IS children
+	field SFInt32 order IS order
+
+	field MFNode nodes [] # this should be declared here to stop Cosmo's crush
+
+	url [
+	"javascript:
+
+	function initialize(){
+
+	    nodes = new MFNode();
+	    
+	    var i = 0;
+	    var tr;
+	    for( n3 = 0; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		tr = new SFNode('Transform{rotation 0 1 0  '+fi +'}');
+		tr.addChildren = children;
+		nodes[i] = tr;
+		i++;
+	    }
+	    
+	    group.children = nodes;
+
+	}
+	"
+	]
+    }
+}
+
+EXTERNPROTO TextureManupulator [
+eventIn SFVec3f set_point
+eventIn SFBool set_active
+field SFNode textureTransform 
+field SFFloat scale 
+field SFFloat speed 
+]"texture_manipulator.wrl"
+
+
+PROTO SphereSegment22 [
+field SFInt32 order 6
+field SFInt32 nsteps 7
+
+exposedField SFNode texture ImageTexture {
+    url[""]
+}
+
+]{
+    Group {
+	children [
+	
+	Switch {
+	    choice [
+	    DEF SHAPE Transform {
+		children [
+		Shape {
+		    geometry DEF IFS IndexedFaceSet{
+			ccw TRUE
+			solid FALSE #TRUE
+			coord DEF COORD Coordinate{
+			    point [
+			    ]
+			}			
+			coordIndex [
+			]
+			texCoord DEF TEX_COORD TextureCoordinate {
+			    point []
+			}
+			texCoordIndex [
+			]
+			normal Normal {
+			    vector [
+			    ]
+			}
+		    }
+		    appearance Appearance{
+			texture IS texture
+			material Material{
+			    diffuseColor  0.5 0.5 0.5
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+			textureTransform DEF TTRANSFORM TextureTransform {	    			    
+			}
+		    }
+		}
+		]
+	    }
+	    ]
+	}
+	
+	Transform {
+	    children USE SHAPE
+	}
+	Transform {
+	    rotation 1 0 0 3.1415926 
+	    children USE SHAPE
+	}
+	DEF TEXMANIP TextureManupulator {
+	    textureTransform USE TTRANSFORM 
+	    speed 0.2
+	}
+	]
+    }
+
+    DEF SPHERE_SEGMENT Script {
+	directOutput TRUE
+	
+	eventIn SFTime set_time
+	
+	field SFNode ifs USE IFS
+	field SFInt32 order IS order
+	field SFInt32 nsteps IS nsteps
+	field SFVec2f p1 2 2 
+	field SFVec2f p2 0 0 
+	field MFVec2f tcoord []
+	field SFTime t0 0
+
+	url [
+
+	"javascript:
+	
+	function initialize(){
+
+	    var cindex = new MFInt32();
+	    var point = new MFVec3f();
+	    var tindex = new MFInt32();
+	    tcoord = new MFVec2f();
+	    
+	    var fi = Math.PI/order;
+	    var sinfi = Math.sin(fi);
+	    var cosfi = Math.cos(fi);
+
+	    var count = 0;
+	    var tcount = 0;
+
+	    for(st = 0; st < nsteps; st++){
+		
+		var teta = Math.PI/(2*(nsteps-1))*st;
+		var sintet = Math.sin(teta);
+		var costet = Math.cos(teta);
+
+		var x = teta/Math.PI;
+		var y = Math.sin(teta)/order;
+		tcoord[tcount++] = new SFVec2f((1-x)*p1[0]+x*p2[0]-(p2[1]-p1[1])*y,
+		                               (1-x)*p1[1]+x*p2[1]+(p2[0]-p1[0])*y);
+		tcoord[tcount++] = new SFVec2f((1-x)*p1[0]+x*p2[0],(1-x)*p1[1]+x*p2[1]);
+		tcoord[tcount++] = tcoord[tcount-3];
+
+		point[count++] = new SFVec3f( cosfi*sintet,-costet, sinfi*sintet); 
+		point[count++] = new SFVec3f(       sintet,-costet, 0); 
+		point[count++] = new SFVec3f( cosfi*sintet,-costet, -sinfi*sintet); 		
+	    }
+
+	    trace(count);
+	    count = 0;
+	    for(st = 0; st < nsteps-1; st++){
+
+		cindex[count++] = 3*st;
+		cindex[count++] = 3*(st)+1;
+		cindex[count++] = 3*(st+1)+1;
+		cindex[count++] = 3*(st+1);
+		cindex[count++] = -1;
+
+		cindex[count++] = 3*st+1;
+		cindex[count++] = 3*(st)+2;
+		cindex[count++] = 3*(st+1)+2;
+		cindex[count++] = 3*(st+1)+1;
+		cindex[count++] = -1;
+	    }
+	    tcount = 0;
+	    for(st = 0; st < nsteps-1; st++){
+
+		tindex[tcount++] = 3*st;
+		tindex[tcount++] = 3*(st)+1;
+		tindex[tcount++] = 3*(st+1)+1;
+		tindex[tcount++] = 3*(st+1);
+		tindex[tcount++] = -1;
+
+		tindex[tcount++] = 3*st+1;
+		tindex[tcount++] = 3*(st)+2;
+		tindex[tcount++] = 3*(st+1)+2;
+		tindex[tcount++] = 3*(st+1)+1;
+		tindex[tcount++] = -1;
+	    }
+	    trace(count);
+	    
+	    ifs.coord.set_point = point;
+	    ifs.normal.set_vector = point;
+	    ifs.set_coordIndex = cindex;
+	    ifs.set_texCoordIndex = tindex;
+	    ifs.texCoord.set_point = tcoord;
+	    
+	}
+	"
+	]
+    }
+}
+
+
+Roller {
+    object 
+Transform {
+    scale 1 1 1
+    children Symmetry_Cn {
+	order 2
+	children [ 
+	DEF TRIANGLE Transform {
+	    children 
+	    SphereSegment22 {
+		order 2
+		nsteps 8
+		texture ImageTexture {
+		    url["tex/random7.jpg"]
+		}   
+	    }
+	}
+	]
+	
+    }
+}
+}
+
+
+
+Viewpoint { 
+position 0 0 3
+description "view 2"
+}
+
+
+NavigationInfo {
+    type "NONE"
+    headlight TRUE
+}
+
+Transform {
+    scale 3.5 3.5 3.5
+    translation 0 0 -2
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Transform {
+	translation 0 0 -0.1
+	children Shape {
+	    geometry Box {
+		size 5 5 0.01
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 0 0 0
+		    #transparency 1
+		}
+		texture ImageTexture {
+		    url [
+		    "tex/random3.jpg"
+		    ]
+		}
+		
+		textureTransform DEF TTRANSFORM1 TextureTransform {
+		}
+	    }
+	}
+    }
+    ]
+}

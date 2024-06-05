@@ -1,0 +1,153 @@
+#VRML V2.0 utf8
+
+
+NavigationInfo {
+	type "EXAMINE"
+	headlight TRUE
+}
+
+
+WorldInfo {
+    title "Geodesic Dome proto"
+    info [
+    "author V.Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+
+PROTO GeoTriangle [
+
+field SFInt32 order 1
+field MFVec3f coord [1 0 0, 0 1 0, 0 0 1]
+
+]{
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	coordIndex []
+	coord Coordinate {
+	    point []
+	}
+    }
+
+    DEF GeoTriangle Script {
+		
+	field SFInt32 order IS order
+	field MFVec3f coord IS coord
+
+	field SFNode ifs USE IFS
+
+	field MFInt32 ci []
+	field MFVec3f vertex []	
+
+	url [
+
+	"javascript:
+
+	function initialize(){
+	    var p12 = coord[2].subtract(coord[1]).multiply(1./(order+1));
+	    var p1 = coord[1].subtract(coord[0]).multiply(1./(order+1));
+	    var p2 = coord[2].subtract(coord[0]).multiply(1./(order+1));
+	    var p0 = coord[0];
+	    var vcount = 0;
+	    var ccount = 0;
+	    for(var j = 0; j <= order; j++){
+		var pz = p0.add(p1.multiply(j));
+		for(var i = 0; i <= j; i++){
+		    var p = pz.add(p12.multiply(i));
+		    vertex[vcount] = p.normalize();
+		    vertex[vcount+1] = p.add(p1).normalize();
+		    vertex[vcount+2] = p.add(p2).normalize();
+		    ci[ccount++] = vcount;
+		    ci[ccount++] = vcount+1;
+		    ci[ccount++] = vcount+2;
+		    ci[ccount++] = -1;
+		    vcount+= 3;
+		}
+	    }
+	    
+	    for(var j = 0; j < order; j++){
+		var pz = p0.add(p1.multiply(j+1));
+		for(var i = 0; i <= j; i++){
+		    var p = pz.add(p12.multiply(i));
+		    vertex[vcount] = p.normalize();
+		    vertex[vcount+1] = p.add(p2).normalize();
+		    vertex[vcount+2] = p.add(p12).normalize();
+		    ci[ccount++] = vcount;
+		    ci[ccount++] = vcount+1;
+		    ci[ccount++] = vcount+2;
+		    ci[ccount++] = -1;
+		    vcount+= 3;
+		}
+	    }
+	    
+
+	    ifs.coord.set_point = vertex;
+	    ifs.set_coordIndex = ci;	    
+	}
+	"
+	]
+    }
+}
+
+
+PROTO IcosahedronFromTriangle[
+field MFNode children []
+]{
+    Group {
+	children [
+	DEF S10 Group {
+	    children [
+	    DEF S2 Group {
+		children [
+		Group {
+		    children IS children 
+		}
+		Transform {
+		    rotation 1 0 1.61803398 1.256637061
+		    children IS children 
+		}
+		]
+	    }
+	    Transform {
+		rotation 0 1.61803398 1 1.256637061
+		children USE S2
+	    }
+	    Transform {
+		rotation 0 1.61803398 1 -1.256637061
+		children USE S2
+	    }
+	    Transform {
+		rotation 0 1.61803398 1 -2.513274122
+		children USE S2
+	    }
+	    Transform {
+		rotation 0 1.61803398 1 2.513274122
+		children USE S2
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 0 0 3.1415926
+	    children USE S10
+	}
+	]
+    }
+}
+
+#
+# example of use 
+#
+
+IcosahedronFromTriangle {
+    children DEF S Shape {
+	geometry GeoTriangle {	
+	    order 3
+	    coord [1 0 1.61803398, -1 0 1.61803398, 0 1.61803398 1 ]
+	}   
+	appearance Appearance {
+	    material Material {
+		diffuseColor 1 1 0
+	    }
+	}
+    }
+}

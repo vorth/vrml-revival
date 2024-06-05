@@ -1,0 +1,173 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+PROTO Polygon [
+  field MFVec3f vertices []
+  eventIn MFVec3f set_vertices 
+  eventOut SFBool isReady
+] {
+
+    DEF IFS IndexedFaceSet {
+      solid FALSE
+      convex FALSE
+      coordIndex []
+      coord Coordinate {
+        point []
+      }
+    }
+    
+    DEF Polygon Script {
+
+      directOutput TRUE
+
+      eventOut SFBool isReady IS isReady
+      eventIn MFVec3f set_vertices IS set_vertices 
+      field SFNode ifs USE IFS
+      field MFVec3f vertices IS vertices
+
+      field MFInt32 ci []
+      field MFVec3f vertex []
+      
+      url "Polygon.js"	
+    }
+}
+
+Transform {
+    children [ 
+    Transform {
+	translation 0 0 0.5
+	children [
+	Shape {
+	    geometry DEF POLY Polygon {
+		vertices [2 0 0 , -1 1 0, 1 -1 0, 1 1 0]
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 1 0.5 0.3
+		    ambientIntensity 0.5
+		}
+	    }
+	}
+	]
+    }
+    Transform {
+	translation 0 0 -0.5
+	children [
+	Shape {
+	    geometry DEF POLY1 Polygon {
+		vertices [2 0 0 , -1 1 0, 1 -1 0, 1 1 0]
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor  0.3  0.5 1.0
+		    ambientIntensity 0.5
+		}
+	    }
+	}
+	]
+    }
+    ]
+}
+
+NavigationInfo {
+	type "EXAMINE"
+	headlight TRUE
+}
+
+
+DEF TIMER TimeSensor {
+    loop TRUE
+    cycleInterval 50
+    enabled TRUE
+}
+
+DEF SCRIPT Script {
+    directOutput TRUE 
+
+    eventIn SFFloat set_fraction
+    eventIn SFTime start
+
+    field SFNode poly USE POLY
+    field SFNode poly1 USE POLY1
+    field SFInt32 order 5
+    field SFInt32 skip 1
+    field SFNode timer USE TIMER
+
+    url [
+    "javascript:
+    function initialize(){
+	rot = new MFRotation();
+	for(var i = 0; i < order; i++){
+	    rot[i] = new SFRotation(0,0,1,skip*i*Math.PI*2/order);
+	}
+    }
+
+    function start(v,t){
+	if(timer.enabled){
+	    timer.set_enabled = false;
+	} else {
+	    timer.set_enabled = true;
+	}
+    }
+
+    function set_fraction(v,t){
+	/*
+	if(poly.isReady == false){
+	    trace(poly.isReady);
+	    return;
+	}
+	*/
+	//trace(poly.isReady);
+	//timer.set_enabled = false;
+	//return;
+	vert = new MFVec3f();
+	
+	f = v*2*Math.PI;
+	
+	vert[0] = new SFVec3f(Math.cos(f), Math.sin(f),0);
+	vert[2*order-1] = new SFVec3f(vert[0].x, -vert[0].y, vert[0].z);
+	
+	for(var i = 1; i < order; i++){
+	    vert[2*i-1] = rot[i].multVec(vert[2*order-1]);
+	    vert[2*i] = rot[i].multVec(vert[0]);	    
+	}
+	poly.set_vertices = vert;
+	var vert1 = new MFVec3f();
+	vert1[0] = new SFVec3f(Math.cos(f), Math.sin(f),0);
+	vert1[2*order-1] = new SFVec3f(vert1[0].x, -vert1[0].y, vert1[0].z);
+	for(var i = 1; i < order; i++){
+	    vert1[2*i-1] = rot[(2*i)%order].multVec(vert[2*order-1]);
+	    vert1[2*i] = rot[(2*i)%order].multVec(vert[0]);	    
+	}
+	poly1.set_vertices = vert1;
+    }
+    "
+    ]
+}
+
+ROUTE TIMER.fraction_changed TO SCRIPT.set_fraction
+
+Group {
+    children [
+    DEF TS TouchSensor {
+    }
+    Shape {
+	geometry Sphere {
+	    radius 0.1
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 1 0 1
+	    }
+	}
+    }
+    ]
+}
+ROUTE TS.touchTime TO SCRIPT.start
+Viewpoint {
+    position 0 0 3
+}

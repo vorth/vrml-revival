@@ -1,0 +1,582 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "inclined plane demo"
+    info [
+    "author"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+NavigationInfo { 
+    type "EXAMINE" 
+    headlight TRUE
+    type "NONE"
+} 
+
+Viewpoint {
+    position 0 2 10
+}
+
+EXTERNPROTO RadioButton [
+eventOut SFBool isPressed
+eventOut SFTime timePressed 
+eventIn  SFBool set_pressed
+field MFNode shapeRaised 
+field MFNode shapePressed 
+field SFString description
+]"radio_button_proto.wrl#RadioButton"
+
+EXTERNPROTO Figure [
+field MFVec2f shape 
+eventIn MFVec2f set_shape 
+exposedField SFColor color
+]"figure_proto.wrl#Figure"
+
+
+EXTERNPROTO Arrow [
+field SFVec2f origin
+field SFFloat angle
+field SFFloat width
+field SFFloat length 
+eventIn SFFloat set_angle
+eventIn SFFloat set_length
+exposedField SFColor color
+]"figure_proto.wrl#Arrow"
+
+EXTERNPROTO SAP_Sensor [
+field MFNode children 
+field MFString description 
+exposedField SFBool enabled 
+eventOut MFString text 
+]"sap_sensor_proto.wrl#SAP_Sensor"
+
+EXTERNPROTO SAP_Controller [
+eventIn MFString say
+field MFNode children 
+field MFNode sensors 
+eventIn SFBool enableSpeech 
+]"sap_sensor_proto.wrl#SAP_Controller"
+
+
+PROTO Wedge [
+field SFVec2f top 1 1
+eventIn SFVec2f set_top
+exposedField SFColor color 1 0 0 
+]{
+    DEF FIG Figure {
+	color IS color
+    }
+    Script {
+	directOutput TRUE
+	field SFNode fig USE FIG
+	field SFVec2f top IS top
+	eventIn SFVec2f set_top IS set_top
+	url[
+	"javascript:
+	function initialize(value, time){
+	    cs = new MFVec2f();
+	    cs[0] = new SFVec2f(0,0);
+	    cs[1] = new SFVec2f(top[0],top[1]);
+	    cs[2] = new SFVec2f(top[0],0);
+	    fig.set_shape = cs;
+	}
+
+	function set_top(value, time){
+	    cs = new MFVec2f();
+	    cs[0] = new SFVec2f(0,0);
+	    cs[1] = new SFVec2f(value[0],value[1]);
+	    cs[2] = new SFVec2f(value[0],0);
+	    fig.set_shape = cs;	    
+	}
+	"
+	]
+    }
+}
+
+PROTO Handle [
+field SFVec2f maxPosition 8.5 6
+field SFVec2f minPosition 0.1 0
+
+field SFVec2f position 0 0
+exposedField SFBool enabled TRUE
+exposedField MFNode shape Figure {
+    shape [-0.1 -0.1, -0.1 0.1, 0.1 0.1, 0.1 -0.1]
+    color 1 1 0.5
+}
+eventOut SFVec2f position_changed
+]{
+    DEF TRANSFORM Transform {
+	children [
+	DEF SENSOR PlaneSensor {
+	    enabled IS enabled
+	    autoOffset TRUE
+	}
+	Group {
+	    children IS shape
+	}
+	]
+    }
+
+    DEF SCRIPT Script {
+
+	field SFVec2f pos IS position
+	field SFNode tr USE TRANSFORM
+	field SFNode sensor USE SENSOR
+	field SFVec2f maxPosition IS maxPosition 
+	field SFVec2f minPosition IS minPosition 
+
+	eventOut SFVec2f position_changed IS position_changed
+	eventIn SFVec3f set_position 
+
+	url[
+	"javascript:
+
+	function initialize(calue, time){
+	    offset = new SFVec3f(pos[0],pos[1],0);
+	    tr.set_translation = offset;
+	    sensor.set_offset = offset;
+	}
+
+	function set_position(value, time){
+	    var v = value;
+	    if(v[0] < minPosition[0]){
+		v[0] = minPosition[0];
+	    }
+	    if(v[1] < minPosition[1]){
+		v[1] = minPosition[1];
+	    }
+	    if(v[0] > maxPosition[0]){
+		v[0] = maxPosition[0];
+	    }
+	    if(v[1] > maxPosition[1]){
+		v[1] = maxPosition[1];
+	    }
+	    tr.set_translation = v;
+	    position_changed = new SFVec2f(v[0],v[1]);
+	}
+	"
+	]
+    }
+    ROUTE SENSOR.translation_changed TO SCRIPT.set_position
+}
+
+PROTO Slider [
+exposedField SFBool enabled TRUE
+eventOut     SFFloat value_changed
+field SFFloat value 0.5
+field SFFloat maxValue 1
+field SFFloat minValue 0
+
+exposedField MFNode slide Figure{
+    shape [-0.04 0, -0.04 1, 0.04 1, 0.04 0]
+    color 0.5 0.5 0.5
+}
+exposedField MFNode thumb Transform {
+    translation 0 0 0.01 
+    children Figure{
+	shape [-0.05 -0.05, -0.05 0.05, 0.05 0.05, 0.05 -0.05]
+	color 1 1 0.5
+    }
+}
+]
+{
+    Group {
+        children [        
+        
+        Transform {
+            children IS slide           
+        }
+        
+        Group {
+            children [
+            DEF SENSOR PlaneSensor {
+		enabled IS enabled
+		maxPosition 0 1
+		minPosition 0 0
+                offset  0 0 0
+                autoOffset  TRUE
+            }
+            DEF THUMB Transform {
+                children IS thumb                   
+            }
+            ]
+        }
+        ]
+    }
+
+    DEF SCRIPT Script {
+
+	directOutput TRUE 
+	eventOut SFFloat value_changed IS value_changed	
+	eventIn  SFVec3f set_translation
+	
+	field SFFloat value IS value
+	field SFNode sensor USE SENSOR
+	field SFNode thumb USE THUMB
+
+	field SFFloat maxValue IS maxValue
+	field SFFloat minValue IS minValue
+	field SFFloat len  1
+	
+	url [
+	"javascript:
+	function set_translation(val, time) {
+	    var v = val[1]*len + minValue;
+	    value_changed = v;
+	    thumb.set_translation = val;
+	}
+
+	function initialize(val, time){
+	    len = maxValue - minValue;
+	    var v = new SFVec3f(0,(value-minValue)/len,0);
+	    thumb.set_translation = v;
+	    sensor.set_offset = v;
+	}
+	"
+	]
+        }
+
+    ROUTE SENSOR.translation_changed TO SCRIPT.set_translation
+}
+
+Switch {
+    choice [
+    
+    DEF BUM_SOUND Sound {
+	direction 0 0 1
+	intensity 1
+	location 0 0 0
+	maxBack  20
+	maxFront 20
+	minBack  5
+	minFront 5
+	priority 1
+	spatialize TRUE
+	source DEF BUM_CLIP AudioClip {
+	    url "bum.wav"
+	    pitch 1
+	    loop FALSE
+	}
+    }
+    DEF MOVE_SOUND Sound {
+	direction 0 0 1
+	intensity 0.5
+	location 0 0 0
+	maxBack  20
+	maxFront 20
+	minBack  5
+	minFront 5
+	priority 0
+	spatialize TRUE
+	source DEF MOVE_CLIP AudioClip {
+	    url "move.wav"
+	    pitch 1
+	    loop TRUE
+	}
+    }
+    ]
+}
+
+DEF SAP001 SAP_Sensor {
+    description ["background" "background.wav"]
+    children DEF EARTH Figure {
+	shape [-10 0, 10 0, 10 -10, -10 -10]
+	color 0.3 0.5 0.2
+    }
+}
+
+Transform {
+    translation -4 0 0
+    children [
+
+    DEF BOX_ROTATION Transform {
+	rotation 0 0 1 0.358770670270
+	children DEF BOX Transform {	    
+	    translation 4 0 0	    
+	    children [
+	    DEF BOX_SENSOR PlaneSensor {
+		offset 4 0 0
+	    }
+	    DEF SAP002 SAP_Sensor {
+		description ["block" "block.wav"]
+		children 	    
+		Figure {
+		    shape [0 0, 0 1, 2 1, 2 0]
+		    color 0.2 0.5 0.5
+		}
+	    }
+	    Transform {
+		translation 0 0 0.001
+		children [
+		DEF SAP003 SAP_Sensor {
+		    description ["reaction force", "reaction.wav"]
+		    children DEF REACTION Arrow {
+			origin 1 0.5
+			length 1
+			angle 1.5708
+		    }
+		}
+		DEF SAP004 SAP_Sensor {
+		    description ["friction force" "friction.wav"]
+		    children DEF FRICTION Arrow {
+			origin 1 0.5
+			length 0.5
+			angle 0
+		    }
+		}
+		DEF SAP005 SAP_Sensor {
+		    description ["gravitation force", "gravitation.wav"]
+		    children DEF GRAVITATION Arrow {
+			origin 1 0.5
+			length 2
+			angle -1.9295
+		    }
+		}
+		DEF SAP006 SAP_Sensor {
+		    description ["resulting force", "force.wav"]
+		    children DEF FORCE Arrow {
+			origin 1 0.5
+			length 2
+			angle 3.1415
+			color 1 0.8 0.3
+		    }
+		}
+		]
+	    }
+	    Group{
+		children USE MOVE_SOUND
+	    }
+	    Group{
+		children USE BUM_SOUND
+	    }
+	    ]
+	}
+    }
+    
+#    DEF WEDGE Figure {
+#	shape [0 0, 8 3, 8 0]
+#	color 0.5 0.3 0.2
+#    }
+
+    DEF SAP007 SAP_Sensor {
+	description ["wedge", "wedge.wav"]
+	children DEF WEDGE Wedge {
+	    top 8 3
+	    color 0.5 0.3 0.2
+	}
+    }
+
+    DEF SAP008 SAP_Sensor {
+	description ["handle for inclined plane modifications", "handle.wav"]
+	children     DEF HANDLE Handle {
+	    position 8 3
+	}    	
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {
+    
+    loop TRUE
+}
+
+
+DEF SCRIPT Script {
+
+    directOutput TRUE
+    eventIn SFVec2f set_top 
+    eventIn SFFloat set_f_coeff
+    eventIn SFTime set_time
+    eventIn SFVec3f set_translation
+    eventIn SFBool set_active
+
+    field SFNode box_rotation USE BOX_ROTATION 
+    field SFNode box USE BOX 
+    field SFNode gravitation USE GRAVITATION
+    field SFNode reaction USE REACTION
+    field SFNode friction USE FRICTION
+    field SFNode force USE FORCE
+    field SFNode timer USE TIMER
+    field SFNode bum_clip USE BUM_CLIP
+    field SFNode move_clip USE MOVE_CLIP
+    field SFNode box_sensor USE BOX_SENSOR
+    field SFFloat f_coeff 0.5
+    field SFFloat g_length 2
+    field SFFloat angle 0
+    field SFFloat Force 0
+    field SFFloat Velocity 0
+    field SFVec3f Position 4 0 0
+    field SFTime time0 0
+    field SFBool start TRUE
+    field SFBool isActive FALSE
+    field SFBool readyToBum TRUE
+
+    url [
+
+    "javascript:
+
+    function set_active(value, time){
+	if(value){
+	    Velocity = 0;
+	    isActive = TRUE;
+	    move_clip.stopTime = time;
+	    start = TRUE;
+	} else {
+	    isActive = FALSE;
+	}
+    }
+
+    function set_translation(value, time){
+	Position[0] = value[0];
+	box.set_translation = Position;	
+    }
+
+    function set_time(value, time){
+	if(time0 == 0){
+	    time0 = time;
+	    return;
+	}
+	dt = time - time0;
+	time0 = time;
+
+	if(isActive){
+	    return;
+	}
+
+	Position[0] -= Velocity*dt;
+	Velocity += Force*dt;
+	if(Velocity < 0){
+	    Velocity = 0;
+	}
+
+	if(Position[0] <= 0){
+	    Position[0] = 0;
+	    Velocity = 0;
+	    //	    timer.set_enabled = FALSE;
+            if(readyToBum){
+		bum_clip.startTime = time;
+		readyToBum = FALSE;
+	    }
+	} else {
+	    readyToBum = TRUE;
+	}
+	if(Velocity == 0){
+	    move_clip.stopTime = time;
+	    start = TRUE;
+	} 
+	if(Velocity > 0 && start){
+	    move_clip.startTime = time;
+	    start = FALSE;
+	}
+	
+	//trace(Position);
+	update_forces();
+	box.set_translation = Position;
+	box_sensor.set_offset = Position;
+    }
+
+    function update_forces(){
+	var freact = g_length*Math.cos(angle);
+	reaction.set_length = freact;
+	var g_sin = g_length*Math.sin(angle);
+	var ffrict = freact*f_coeff;
+	if( Velocity > 0){
+	    friction.set_length = ffrict;
+	    Force = g_sin - ffrict;	    
+	} else if(Velocity < 0){
+	    Force = g_sin + ffrict;	    
+	} else if(g_sin < ffrict){
+	    friction.set_length = g_sin;
+	    Force = 0;
+	} else {
+	    friction.set_length = ffrict;
+	    Force = g_sin - ffrict;
+	}
+	//trace(Force);
+	force.set_length = Force;	    
+    }
+
+    function set_top(value, time){
+
+	angle = Math.atan(value[1]/value[0]);
+	box_rotation.set_rotation = new SFRotation(0,0,1,angle);
+	gravitation.set_angle = -(Math.PI/2 + angle);
+	update_forces();
+    }
+
+    function initialize(value, time){
+
+	angle = Math.atan(3/8);
+	box_rotation.set_rotation = new SFRotation(0,0,1,angle);
+	gravitation.set_angle = -(Math.PI/2 + angle);
+	var freact = g_length*Math.cos(angle);
+	reaction.set_length = freact;
+	var g_sin = g_length*Math.sin(angle);
+	var ffrict = freact*f_coeff;
+
+	if(g_sin < ffrict){
+	    friction.set_length = g_sin;
+	    force.set_length = 0;
+	} else {
+	    friction.set_length = ffrict;
+	    force.set_length = g_sin - ffrict;
+	    timer.set_enabled = TRUE;
+	}
+    }
+     
+    function set_f_coeff(value, time){
+	f_coeff = value;
+	update_forces();	
+    }
+    "
+    ]
+}
+
+DEF SAP009 SAP_Sensor {
+    description ["slider for friction coefficient modification", "slider.wav"]
+    
+    children [
+    Transform {
+	scale 4 4 4
+#	rotation 0 0 1 -1.5708	translation 0 -1 0.1
+	translation 5 0 0
+	children DEF SLIDER Slider {}
+    }
+    ]
+}
+
+ROUTE HANDLE.position_changed TO WEDGE.set_top
+ROUTE HANDLE.position_changed TO SCRIPT.set_top
+ROUTE SLIDER.value_changed TO SCRIPT.set_f_coeff
+ROUTE TIMER.time TO SCRIPT.set_time
+ROUTE BOX_SENSOR.translation_changed TO SCRIPT.set_translation
+ROUTE BOX_SENSOR.isActive TO SCRIPT.set_active
+
+DEF CONTROLLER SAP_Controller {
+    children [
+    USE SAP001
+    USE SAP002
+    USE SAP003
+    USE SAP004
+    USE SAP005
+    USE SAP006
+    USE SAP007
+    USE SAP008
+    USE SAP009
+    ]
+    sensors [
+    USE BOX_SENSOR
+    USE HANDLE
+    USE SLIDER
+    ]
+}
+
+Transform {
+    translation 4.1 -1.8 0
+    children DEF SPEECHBUTTON RadioButton {
+	description "click to change speaking mode"
+    }
+}
+
+ROUTE SPEECHBUTTON.isPressed TO CONTROLLER.enableSpeech

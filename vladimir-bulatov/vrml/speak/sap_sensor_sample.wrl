@@ -1,0 +1,122 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "test of vrml speak"
+    info [
+    "author"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+EXTERNPROTO RadioButton [
+eventOut SFBool isPressed
+eventOut SFTime timePressed 
+eventIn  SFBool set_pressed
+field MFNode shapeRaised 
+field MFNode shapePressed 
+field SFString description
+]"radio_button_proto.wrl#RadioButton"
+
+EXTERNPROTO SAP_Sensor [
+field MFNode children 
+field MFString description 
+exposedField SFBool enabled 
+eventOut MFString text 
+]"sap_sensor_proto.wrl#SAP_Sensor"
+
+EXTERNPROTO SAP_Controller [
+eventIn MFString say
+field MFNode children 
+field MFNode sensors 
+eventIn SFBool enableSpeech 
+]"sap_sensor_proto.wrl#SAP_Controller"
+
+
+DEF SAP01 SAP_Sensor {
+    description [
+    "first object"
+    ]
+    children[
+    Transform {
+	translation 1 0 0 
+	children Shape {
+	    geometry Sphere {
+		radius 1
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 1 0.3 0.3
+		}
+	    }
+	}
+    }
+    ]
+}
+
+DEF SAP02 SAP_Sensor {
+    enabled TRUE
+    description [
+    "second object"
+    ]
+    children [
+    Transform {
+	translation -1 0 0 
+	children [
+	Shape {
+	    geometry Sphere {
+		radius 1
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 0.3 1 0.3
+		}
+	    }
+	}
+	DEF TOUCH01 TouchSensor {
+	    enabled FALSE
+	}
+	]
+    }
+    ]
+}
+
+DEF BUM_SOUND Sound {
+    direction 0 0 1
+    intensity 1
+    location 0 0 0
+    maxBack  20
+    maxFront 20
+    minBack  5
+    minFront 5
+    priority 1
+    spatialize TRUE
+    source DEF BUM_CLIP AudioClip {
+	url "bum.wav"
+	pitch 1
+	loop FALSE
+    }
+}
+
+
+ROUTE TOUCH01.touchTime TO BUM_CLIP.startTime
+
+
+
+DEF CONTROLLER SAP_Controller {
+    children [
+    USE SAP01
+    USE SAP02
+    ]
+    sensors [
+    USE TOUCH01 
+    ]
+}
+
+Transform {
+    translation 0 -1 0
+    children DEF SPEECHBUTTON RadioButton {
+	description "click to change speaking mode"
+    }
+}
+
+ROUTE SPEECHBUTTON.isPressed TO CONTROLLER.enableSpeech

@@ -1,0 +1,149 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "2x3x6 Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+EXTERNPROTO TextureManupulator [
+eventIn SFVec3f set_point
+eventIn SFBool set_active
+field SFNode textureTransform 
+]"texture_manipulator.wrl"
+
+PROTO Kaleidoscope_2_3_6 [
+
+# shape to be transformed
+exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	DEF ROW Group {
+	    children [
+	    DEF CELL Group {
+		children [
+		DEF P Group {
+		    children [
+		    Transform { children IS children}
+		    Transform { rotation 0 0 1  2.0943951 children IS children}
+		    Transform { rotation 0 0 1 -2.0943951 children IS children}
+		    ]
+		}
+		Transform {rotation 0 0 1 -1.0471975 center 0.866025 -0.5 0 children USE P}
+		]
+	    }
+	    Transform {translation 3.46410161 0 0 children USE CELL}
+	    Transform {translation 1.73205080 0 0 children USE CELL}
+	    Transform {translation -1.73205080 0 0 children USE CELL}
+	    Transform {translation -3.46410161 0 0 children USE CELL}
+	    ]
+	}
+	Transform { translation 0.866025 1.5 0 children USE ROW	}
+	Transform { translation -0.866025 -1.5 0 children USE ROW}
+	]
+    }  
+}
+
+
+PROTO Triangle_2_3_6 [
+exposedField MFVec2f point [0 0, 0.5 0, 0 0.5]
+exposedField SFNode texture ImageTexture {
+    url["t12.jpg"]
+}
+exposedField SFNode textureTransform TextureTransform {}
+]{
+Group {
+    children [
+
+    Switch {
+	choice [
+	DEF SHAPE Transform {
+	    children [
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw TRUE
+		    solid TRUE
+		    coord DEF COORD Coordinate{
+			point [
+			0 0 0,  -0.866025 -0.5 0, 0 -0.5 0,0.866025 -0.5 0
+			]
+		    }
+		    
+		    coordIndex [
+		    0, 1, 2,-1,
+		    0, 2, 3,-1,
+		    ]
+		    texCoord DEF TEX_COORD TextureCoordinate {
+			point IS point
+		    }
+		    texCoordIndex [
+		    0, 1, 2, -1,
+		    0, 2, 1,-1,
+		    ]
+		}
+		appearance Appearance{
+
+		    texture IS texture
+		    textureTransform IS textureTransform
+
+		    material Material{
+			shininess 0.1
+		    }
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TRANSFORM Transform {
+	children USE SHAPE
+    }
+    ]
+}
+
+}
+
+Group {
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Kaleidoscope_2_3_6 {
+	children [
+	DEF TRIANGLE Triangle_2_3_6 {
+	    texture DEF TEXTURE ImageTexture {
+		url["tex/t16.jpg"]
+		#url["bac_724.jpg"]
+	    }	
+	    textureTransform DEF TTRANSFORM TextureTransform {	    
+	    }
+	}
+	]
+    }
+    ]
+}
+
+DEF TEXMANIP TextureManupulator {
+    textureTransform USE TTRANSFORM 
+}
+
+ROUTE SENSOR.hitPoint_changed TO TEXMANIP.set_point
+ROUTE SENSOR.isActive TO TEXMANIP.set_active
+
+
+Viewpoint { 
+position 0.001 0 5
+description "view 3"
+}
+
+Viewpoint { 
+position -0.866025 -0.5 5
+description "view 6"
+}
+
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}

@@ -1,0 +1,342 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+NavigationInfo {
+	type "NONE"
+	headlight FALSE
+}
+
+EXTERNPROTO APP [
+exposedField SFColor color 
+]"utils_proto.wrl#APP"
+
+EXTERNPROTO Polygon [
+field MFVec3f vertices 
+eventIn MFVec3f set_vertices 
+eventOut SFBool isReady 
+]"polygon_proto.wrl#Polygon"
+
+EXTERNPROTO OctahedronFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children 
+]"utils_proto.wrl#OctahedronFaces"
+
+EXTERNPROTO CubeFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children 
+]"utils_proto.wrl#CubeFaces"
+
+EXTERNPROTO CubeEdges [
+# accept rectangle parallel to cube edge centered at (0 1 1)
+exposedField MFNode children 
+]"utils_proto.wrl#CubeEdges"
+
+EXTERNPROTO SymmetryOctahedral [
+# rotational symmetry of tetrahedron 
+exposedField MFNode children 
+]"utils_proto.wrl#SymmetryOctahedral"
+
+PROTO Isogonal_O [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0 0 1 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+field SFString type "1"
+  # possible types - vertex figure
+
+eventIn SFInt32 set_visible   # this event turns On/Off visiblity of faces' group
+                              # if (set_visible & 0x80000000), it turns ON face[set_visible | 0x7FFFFFFF]
+                              # else it turns OFF face[set_visible]
+eventOut MFNode faces_changed 
+]{
+  Group {
+      children [
+      Switch {
+	  whichChoice -1
+	  choice [
+	  Group {
+	      children [
+	      DEF T1 Switch {
+		  whichChoice 0
+		  choice [
+		  Shape {
+		      geometry DEF P1 Polygon { 
+		      }	  
+		      appearance APP{
+			  color 0.80 0.68 0.27
+		      }
+		  }
+		  ]
+	      }
+	      DEF T2 Switch {
+		  whichChoice 0
+		  choice [
+		  Shape {
+		      geometry DEF P2 Polygon { 
+		      }	  
+		      appearance APP{
+			  color 0.26 0.26 0.77
+		      }
+		  }
+		  ]
+	      }
+	      DEF T3 Switch {
+		  whichChoice 0
+		  choice [
+		  Shape {
+		      geometry DEF P3 Polygon { 
+		      }	  
+		      appearance APP{
+			  color 0.87 0.44 0.30
+		      }
+		  }
+		  ]
+	      }
+	      DEF T4 Switch {
+		  whichChoice 0
+		  choice [
+		  Shape {
+		      geometry DEF P4 Polygon { 
+		      }	  
+		      appearance APP{
+			  color 0.81 0.47 0.66
+		      }
+		  }
+		  ]
+	      }
+	      DEF T5 Switch {
+		  whichChoice 0
+		  choice [
+		  Shape {
+		      geometry DEF P5 Polygon { 
+		      }	  
+		      appearance APP{
+			  color 0.27 0.79 0.42
+		      }
+		  }
+		  ]
+	      }
+	      ]
+	  }
+	  ]
+      }
+
+      DEF SCF CubeFaces {
+      }
+      DEF SCE CubeEdges {
+      }
+      DEF SOF OctahedronFaces {
+      }
+      DEF SO SymmetryOctahedral {
+      }
+      ]
+  }
+
+  DEF ISOGONAL_O Script {
+      eventIn SFVec3f set_point IS set_point
+      eventIn SFInt32 set_visible IS set_visible
+      eventOut SFInt32 face_types IS face_types
+      eventOut SFVec3f point_changed IS point_changed
+      eventOut MFNode faces_changed IS faces_changed
+      field SFVec3f point IS  point
+      field MFNode poly [USE P1 USE P2 USE P3 USE P4 USE P5]
+      field MFNode trans [USE T1 USE T2 USE T3 USE T4 USE T5]
+
+      field SFNode scf USE SCF
+      field SFNode sce USE SCE
+      field SFNode sof USE SOF
+      field SFNode so USE SO 
+
+      field SFString type IS type
+      
+      url [
+      "javascript:
+      function initialize(){
+	  point = point.normalize();
+	  init_f = new Array();
+	  set_point_f = new Array();
+	  init_f['1'] = init_1;
+	  set_point_f['1'] = set_point_1;
+	  init_f['2'] = init_2;
+	  set_point_f['2'] = set_point_2;
+	  init_f['3'] = init_3;
+	  set_point_f['3'] = set_point_3;
+	  init_f['4'] = init_4;
+	  set_point_f['4'] = set_point_4;
+
+	  init_f[type]();
+	  set_point_f[type](point,0);
+	  point_changed = point;
+      }
+      
+      function set_point(p,t){
+	  set_point_f[type](p,t);
+	  point_changed = point;
+      }
+
+      function set_visible(v,t){
+	  if(v & 0x80000000){
+	      trans[v & 0x7FFFFFFF].whichChoice = 0;
+	  } else {
+	      trans[v].whichChoice = -1;
+	  }
+      }
+
+      function init_1(){
+	  
+	  var p0 = new MFNode();
+	  p0[0] = trans[0];
+	  scf.set_children = p0;	  
+
+	  var p1 = new MFNode();
+	  p1[0] = trans[1];
+	  sof.set_children = p1;	  
+
+	  var p2 = new MFNode();
+	  p2[0] = trans[2];
+	  so.set_children = p2;	  
+
+	  face_types = 3;
+	  faces_changed = new MFNode(trans[0],trans[1],trans[2]);
+      }
+            
+      // kind of snub cube 
+      function set_point_1(p,t){
+
+	  var v0 = new MFVec3f();
+	  var rot0 = new SFRotation(0,0,1,Math.PI/2);
+	  v0[0] = p;
+	  for(var i = 1; i < 4; i++){
+	      v0[i] = rot0.multVec(v0[i-1]);   
+	  }
+	  poly[0].set_vertices = v0;
+
+	  var v1 = new MFVec3f();
+	  var rot1 = new SFRotation(1,1,1,Math.PI*2/3);
+	  v1[0] = p;
+	  for(var i = 1; i < 3; i++){
+	      v1[i] = rot1.multVec(v1[i-1]);   
+	  }
+	  poly[1].set_vertices = v1;
+
+	  var v2 = new MFVec3f();
+	  v2[0] = p;
+	  v2[1] = v0[1];
+	  v2[2] = v1[2];
+
+	  poly[2].set_vertices = v2;
+      }
+
+      function init_2(){
+	  
+	  var p0 = new MFNode();
+	  p0[0] = trans[0];
+	  sof.set_children = p0;	  
+
+	  var p1 = new MFNode();
+	  p1[0] = trans[1];
+	  so.set_children = p1;	  
+
+	  face_types = 2;
+	  faces_changed = new MFNode(trans[0],trans[1]);
+      }
+      // 4 prizms 3 order   
+      function set_point_2(p,t){
+	  
+	  var v0 = new MFVec3f();
+	  var rot0 = new SFRotation(1,1,1,Math.PI*2/3);
+	  v0[0] = p;
+	  for(var i = 1; i < 3; i++){
+	      v0[i] = rot0.multVec(v0[i-1]);   
+	  }
+	  poly[0].set_vertices = v0;
+	  
+	  var v1 = new MFVec3f();
+	  var rot1 = new SFRotation(-1,0,1,Math.PI);
+	  v1[0] = p;
+	  v1[1] = rot1.multVec(p);
+	  v1[2] = rot0.multVec(v1[1]);
+	  poly[1].set_vertices = v1;
+	  
+      }
+
+      function init_3(){
+	  
+	  var p0 = new MFNode();
+	  p0[0] = trans[0];
+	  scf.set_children = p0;	  
+
+	  var p1 = new MFNode();
+	  p1[0] = trans[1];
+	  so.set_children = p1;	  
+
+	  face_types = 2;
+	  faces_changed = new MFNode(trans[0],trans[1]);
+      }
+            
+      // 3 prizms 4 order   
+      function set_point_3(p,t){
+
+	  var v0 = new MFVec3f();
+	  var rot0 = new SFRotation(0,0,1,Math.PI/2);
+	  v0[0] = p;
+	  for(var i = 1; i < 4; i++){
+	      v0[i] = rot0.multVec(v0[i-1]);   
+	  }
+	  poly[0].set_vertices = v0;
+	  
+	  var v1 = new MFVec3f();
+	  var rot1 = new SFRotation(1,1,0,Math.PI);
+	  v1[0] = p;
+	  v1[1] = rot1.multVec(p);
+	  v1[2] = rot1.multVec(v0[1]);
+	  poly[1].set_vertices = v1;	  
+      }
+
+      function init_4(){
+	  
+	  var p0 = new MFNode();
+	  p0[0] = trans[0];
+	  p0[1] = trans[1];
+	  p0[2] = trans[2];
+	  so.set_children = p0;	  
+
+	  face_types = 3;
+	  faces_changed = new MFNode(trans[0],trans[1],trans[2]);
+      }
+            
+      // XOR combination of 1, 2, 3
+      function set_point_4(p,t){
+
+	  var v0 = new MFVec3f();
+	  var rot0 = new SFRotation(0,0,1,Math.PI/2);
+	  var rot1 = new SFRotation(1,1,0,Math.PI);
+	  v0[0] = p;
+	  v0[1] = rot1.multVec(p);
+	  v0[2] = rot1.multVec(rot0.multVec(v0[0]));
+	  poly[0].set_vertices = v0;	  
+
+	  var rot0 = new SFRotation(1,1,1,Math.PI*2/3);
+	  var v1 = new MFVec3f();
+	  var rot1 = new SFRotation(-1,0,1,Math.PI);
+	  v1[0] = p;
+	  v1[1] = rot1.multVec(p);
+	  v1[2] = rot0.multVec(v1[1]);
+	  poly[1].set_vertices = v1;
+
+	  var v2 = new MFVec3f();
+	  v2[0] = p;
+	  v2[1] = (new SFRotation(0,0,1,Math.PI/2)).multVec(p);
+	  v2[2] = (new SFRotation(1,1,1,-Math.PI*2/3)).multVec(p);
+	  poly[2].set_vertices = v2;
+      }
+
+
+      "
+      ]
+  }  
+}

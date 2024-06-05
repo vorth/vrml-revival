@@ -1,0 +1,230 @@
+#VRML V2.0 utf8
+NavigationInfo {
+	type "EXAMINE"
+	headlight TRUE 
+}
+
+Viewpoint {
+    position 0 0 5
+}
+
+Background {
+    groundAngle [ 1.57 ]
+    groundColor [
+    0.5 0.0 0.99
+    0.99 0.99 0.00
+    ]
+    skyAngle [  1.57 ]
+    skyColor [
+    0.99 0.2 0.00
+    0.99 0.99 0.00
+    ]
+}
+
+
+PROTO Tetra [
+  field SFFloat height 1
+  field SFFloat width 1
+]{
+    Shape {
+	geometry IndexedFaceSet {
+	    solid FALSE
+	    coord DEF COORD Coordinate {
+		point [0 0 0,0 0 0,0 0 0,0 0 0]
+	    }
+	    coordIndex [ 0 1 2 -1, 0 2 3 -1, 1 3 2 -1, 0 3 1 -1]
+	    texCoord TextureCoordinate {
+		point [0 0, 0.5 0.88, 1 0 ]
+	    }
+	    texCoordIndex [0 1 2 -1, 0 1 2 -1, 0 1 2 -1, 0 1 2 -1 ]
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 1 0 0 
+	    }
+	    texture ImageTexture {
+		url [
+		"triangle.png"
+		]
+	    }
+	}
+    }
+
+    DEF TETRA Script {
+
+	directOutput TRUE 
+	field SFNode coord USE COORD
+	field SFFloat h IS height
+	field SFFloat w IS width
+	url [
+	"javascript:
+	function initialize(){
+	    v = new MFVec3f();
+	    v[0] = new SFVec3f(-h/2,0,w/2);
+	    v[1] = new SFVec3f(h/2,-w/2,0);
+	    v[2] = new SFVec3f(h/2,w/2,0);
+	    v[3] = new SFVec3f(-h/2,0,-w/2);
+	    coord.set_point = v;
+	}
+	"
+	]
+    }
+    
+}
+
+
+#
+#Transform {
+#    rotation 0 0 1 0.78539815
+#    children [
+#    USE AX
+#    ]
+#}
+
+Switch {
+    whichChoice -1
+    choice [
+    DEF T1 Transform {
+	translation 1 0.5 0
+	children [
+	Transform {
+	    rotation 0 0 1 -1.57
+	    children [
+	    Tetra {
+		width 1.41
+		height 1
+	    }
+	    ]
+	}
+	]
+    }
+    ]
+}
+
+Transform  {
+    rotation 1 0 0 -0.78
+    children [
+DEF TR Transform {
+    #translation 0.45 0 0 
+    children [
+    DEF TR2 Transform {
+	rotation 1 0 0 0
+	center 1 0 0 
+	children [
+	DEF TR1 Transform {
+	    rotation 0 1 0 0
+	    center 1 0 0 
+	    children [
+	    USE T1 
+#	    DEF AX Transform {
+#		translation 1 0 0 
+#		children Shape {
+#		    geometry Box {
+#			size 0.5 0.05 0.05
+#		    }
+#		    appearance Appearance {
+#			material Material {
+#			    diffuseColor 0.5 0.5 0.5 
+#			}
+#		    }
+#		    
+#		}
+#	    }	    
+#	    Transform {
+#		translation 0 1 0 
+#		rotation 0 1 0 1.5708
+#		center 1 0 0 
+#		children USE AX 		
+#	    }
+	    ]
+	}
+	]
+    }
+    DEF TR21 Transform {
+	rotation 1 0 0 0
+	center 1 0 0 
+	children [
+	DEF TR11 Transform {
+	    rotation 0 1 0 0
+	    center 1 0 0 
+	    children Transform {
+		rotation 1 0 0 3.1415
+		children USE T1 
+	    }
+	}
+	]
+    }
+    ]
+}
+Transform {
+    rotation 0 0 1 1.5708
+    children USE TR
+}
+Transform {
+    rotation 0 0 1 -1.5708
+    children USE TR
+}
+Transform {
+    rotation 0 0 1 3.1415
+    children USE TR
+}
+]
+}
+
+DEF TIMER TimeSensor {
+    loop TRUE     
+}
+
+DEF MAIN Script {
+    directOutput TRUE 
+    eventIn SFTime set_time    
+
+    field SFNode tr1 USE TR1
+    field SFNode tr2 USE TR2
+    field SFNode tr11 USE TR11
+    field SFNode tr21 USE TR21
+    field SFNode tr USE TR
+    field SFFloat a 0.5
+    field SFTime t0 0
+
+    url [
+    "javascript:
+
+    function set_time(v,t){
+	if(t0 == 0){
+	    t0 = t;
+	}
+	dt = t0 - t; 
+	a = dt *0.2;
+	set_shape();
+    }
+
+    function initialize(){
+	set_shape();
+    }    
+    function set_shape(){
+	var rot1 = new SFRotation(0,1,0,a);
+	tr1.set_rotation = rot1;
+
+	var sina = Math.sin(a);
+	var cosa = Math.cos(a);
+	// Cos[b] Sin[a] Sin[alpha]+Cos[alpha] Sin[b] == 0
+	// sinb/Cosb = sin[a]*sin[alpha]/Cos[alpha];
+	var alpha = Math.PI/4;
+	var sinalpha = Math.sin(alpha);
+	var cosalpha = Math.cos(alpha);
+	b = Math.atan2(-sina*sinalpha,cosalpha);
+	tr2.set_rotation = new SFRotation(cosa,0,-sina,b);
+	var sinb = Math.sin(b);
+	var cosb = Math.cos(b);
+	var t = (cosalpha/sinalpha)*cosb - sina*sinb-1;
+	trace(t);
+	tr.set_translation = new SFVec3f(t,0,0);
+	tr11.set_rotation = rot1;
+	tr21.set_rotation = new SFRotation(cosa,0,-sina,-b);
+    }
+    "
+    ]
+}
+
+ROUTE TIMER.time TO MAIN.set_time

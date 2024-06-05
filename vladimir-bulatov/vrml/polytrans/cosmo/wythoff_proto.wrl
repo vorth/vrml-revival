@@ -1,0 +1,1030 @@
+#VRML V2.0 utf8
+WorldInfo {
+    title "Polyhedral Transformations"
+    info ["Author: V.Bulatov bulatov@dots.physics.orast.edu"]
+}
+NavigationInfo {
+	type "NONE"
+	headlight FALSE
+}
+
+PROTO APP [
+exposedField SFColor color 0.87 0.54 0.30
+]{
+    Appearance {
+	material Material {
+	    diffuseColor IS color
+	    ambientIntensity 0.3
+	}	
+    }
+}
+
+PROTO APP3[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.80 0.31 0.28
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP4[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.80 0.68 0.27
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP6[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.87 0.54 0.30
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP8[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.24 0.59 0.71
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP8_3[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.80 0.80 0.28
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP10[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.58 0.26 0.77
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+PROTO APP10s[
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 0.26 0.26 0.77
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+
+PROTO Point [
+exposedField SFVec3f translation 0 0 0
+]
+{
+    Transform {
+    translation IS translation 
+	children [
+#	Shape {
+#	    geometry Sphere {
+#		radius 0.05
+#	    }
+#	    appearance Appearance {
+#		material Material {
+#		    diffuseColor 0.4 0.3 1
+#		}
+#	    }
+#	}
+	]
+    }
+}
+
+#PROTO Polygon [
+#field MFVec3f vertices []
+#eventIn MFVec3f set_vertices 
+#eventOut SFBool isReady
+#] {
+#
+#    DEF IFS IndexedFaceSet {
+#	solid FALSE
+#	convex FALSE
+#	coordIndex []
+#	coord Coordinate {
+#	    point []
+#	}
+#    }
+#    
+#    DEF Polygon Script {
+#
+#	directOutput TRUE
+#
+#	eventOut SFBool isReady IS isReady
+#	eventIn MFVec3f set_vertices IS set_vertices 
+#	field SFNode ifs USE IFS
+#	field MFVec3f vertices IS vertices
+#
+#	field MFInt32 ci []
+#	field MFVec3f vertex []
+#	
+#	url [
+#	"PolygonNode.class"
+#	]	
+#    }
+#}
+
+EXTERNPROTO Polygon [
+field MFVec3f vertices 
+eventIn MFVec3f set_vertices 
+eventOut SFBool isReady 
+]"polygon.wrl#Polygon"
+
+PROTO DodecahedronFaces[
+# accepts pentagon centered at (1, 0, tau)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group{
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 0 1 3.1415926
+		children IS children 
+	    }	
+	    ]
+	}
+	Transform {
+	    rotation 1 1 1 2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 1 1 -2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation -1 1 1 -2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 -1 1 2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1
+	}	
+	]
+    }    
+}
+PROTO IcosahedronFaces [
+# accepts triangle centered at (0, tau, 1/tau)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation 1 0 1.618034 -2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation -1 0 1.618034 1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation -1 0 1.618034 -2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation 0 1.618034 1 2.51327412  
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 -1 1 2.094395 
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926 
+	    children USE S1 
+	}
+	
+	]
+
+    }
+}
+
+PROTO IcosahedronEdges [
+# accepts edge centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 -1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 -2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 1 1 -2.0943951
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 -1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 -1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1 
+	}
+	Transform {
+	    rotation 1 1 1 -2.0943951
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 -1 1 2.0943951
+	    children IS children 
+	}
+	]
+    }
+}
+
+PROTO TetrahedronEdges [
+# accept rectangle parallel to tetrahedron edge centered at (0 0 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1 1 2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 1 1 1 -2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation -1 -1 1 2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation -1 -1 1 -2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 	    
+	}
+	]
+    }
+}
+
+PROTO TetrahedronFaces [
+# accepts hexagon centered at (1,1,1) or at (1,-1,1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 0 0 1 3.1415926
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 1 0 0 3.1415926
+	    children IS children 	    
+	}
+	]
+    }    
+}
+
+
+
+PROTO OctahedronFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 1.5708
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 -1.5708
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 3.1415926
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 0 1 3.1415926
+	    children USE S 
+	}
+	]
+    }
+}
+
+PROTO CubeFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 -1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 0 0 -1.5708
+	    children IS children 
+	}
+	]
+    }
+}
+
+PROTO CubeEdges [
+# accept rectangle parallel to cube edge centered at (0 1 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 0 1 1.5708
+		children IS children 	    
+	    }
+	    Transform {
+		rotation 0 0 1 3.1415
+		children IS children 	    
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 -1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 0 0 -1.5708
+	    children USE S1
+	}
+	]
+    }
+}
+
+
+PROTO Wythoff [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0 0 1 # point.y should be 0
+field MFString mirrors ["I","g1","c2","b1"]
+]{
+  Group {
+      children [
+      Switch {
+	  whichChoice -1
+	  choice [
+	  Group {
+	      children [
+	      DEF T1 Transform {
+		  children [
+		  Shape {
+		      geometry DEF P1 Polygon { 
+			  vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ]
+		      }	  
+		      appearance APP{
+			  color 0.80 0.68 0.27
+		      }
+		  }
+		  ]
+	      }
+	      DEF T2 Transform {
+		  children [
+		  Shape {
+		      geometry DEF P2 Polygon { 
+			  vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ]
+		      }	  
+		      appearance APP{
+			  color 0.26 0.26 0.77
+		      }
+		  }
+		  ]
+	      }
+	      DEF T3 Transform {
+		  children [
+		  Shape {
+		      geometry DEF P3 Polygon { 
+			  vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ]
+		      }	  
+		      appearance APP{
+			  color 0.58 0.26 0.77
+		      }
+		  }
+		  ]
+	      }
+	      DEF T4 Transform {
+		  children [
+		  Shape {
+		      geometry DEF P4 Polygon { 
+			  vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ]
+		      }	  
+		      appearance APP{
+			  color 0.81 0.47 0.66
+		      }
+		  }
+		  ]
+	      }
+	      DEF T5 Transform {
+		  children [
+		  Shape {
+		      geometry DEF P5 Polygon { 
+			  vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ]
+		      }	  
+		      appearance APP{
+			  color 0.27 0.79 0.42
+		      }
+		  }
+		  ]
+	      }
+	      ]
+	  }
+	  ]
+      }
+
+      DEF DF DodecahedronFaces {
+      }
+      DEF IF IcosahedronFaces {
+      }
+      DEF IE IcosahedronEdges {
+      }
+      DEF TF TetrahedronFaces {
+      }
+      DEF TE TetrahedronEdges {
+      }
+      DEF CF CubeFaces {
+      }
+      DEF OF OctahedronFaces {
+      }
+      DEF CE CubeEdges {
+      }
+
+      ]
+  }
+
+  DEF WYTHOFF Script {
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+      field MFNode poly [USE P1 USE P2 USE P3 USE P4 USE P5]
+      field MFNode trans [USE T1 USE T2 USE T3 USE T4 USE T5]
+
+      field SFNode i10 USE DF
+      field SFNode i6 USE IF
+      field SFNode i4 USE IE
+
+      field SFNode o8 USE CF
+      field SFNode o6 USE OF
+      field SFNode o4 USE CE
+
+      field SFNode t4 USE TE
+      field SFNode t6 USE TF
+
+      field MFString mirrors IS mirrors
+      
+      url [
+      "javascript:
+      function initialize(){
+	  // array of initialization functions
+	  // for different symmetries
+	  // symmetry may be I,O,T
+	  init_s = new Array();
+	  init_s['I'] = init_I;
+	  init_s['O'] = init_O;
+	  init_s['T'] = init_T;
+
+	  init();
+	  set_point(point,0);
+      }
+
+      function init(){
+
+	  order = new MFInt32();
+	  axis = new MFVec3f();
+	  mirr1 = new MFVec3f();
+	  mirr2 = new MFVec3f();
+
+	  init_s[mirrors[0]]();
+
+	  vert = new Array();
+	  for(var j = 0; j < npoly; j++){
+	      vert[j] = new MFVec3f();
+	      for(var i = 0; i < order[j]; i++){
+		  vert[j][i] = new SFVec3f(0,0,0);  
+	      }	      
+	      axis[j] = axis[j].normalize();
+	      mirr1[j] = orthonorm(axis[(j+1)%npoly],axis[j]);
+	      mirr2[j] = orthonorm(axis[(j-1+npoly)%npoly],axis[j]);
+	  }
+      }
+      
+      // Axis constructor 
+      function Axis(axis, transform, order){
+	  this.axis = axis;
+	  this.transform = transform;
+	  this.order = order;
+      }
+      
+      function init_I(){
+	  init_dataI();
+	  init_mirrorsI();	  
+      }
+      function init_O(){
+	  init_dataO();
+	  init_mirrorsO();	  
+      }
+      function init_T(){
+	  init_dataT();
+	  init_mirrorsT();	  
+      }
+
+      function init_dataI(){
+	  s_axes = new Array();
+	  var t = (Math.sqrt(5)+1.)/2;
+	  var p = Math.PI;
+	  s_axes['b1'] = new Axis(new SFVec3f(0,0,1),new SFRotation(1,0,0,0),4);
+	  s_axes['b2'] = new Axis(new SFVec3f(1,-1-1/t,1+t),new SFRotation(1,0,t,-2*p/5),4);
+	  s_axes['b3'] = new Axis(new SFVec3f(-1,-1-1/t,1+t),new SFRotation(-1,0,t,2*p/5),4);
+	  s_axes['b4'] = new Axis(new SFVec3f(1,1+1/t,1+t),new SFRotation(1,0,t,2*p/5),4);
+	  s_axes['b5'] = new Axis(new SFVec3f(-1,1+1/t,1+t),new SFRotation(-1,0,t,-2*p/5),4);
+ 	  s_axes['b6'] = new Axis(new SFVec3f(1+t,-1,t),new SFRotation(1,0,t,-4*p/5),4);
+	  s_axes['b7'] = new Axis(new SFVec3f(1+t,1,t),new SFRotation(1,0,t,4*p/5),4);
+ 	  s_axes['b8'] = new Axis(new SFVec3f(-(1+t),-1,t),new SFRotation(-1,0,t,4*p/5),4);
+ 	  s_axes['b9'] = new Axis(new SFVec3f(-(1+t),1,t),new SFRotation(1,0,t,-4*p/5),4);
+
+ 	  s_axes['b10'] = new Axis(new SFVec3f(t,-(1+t),1),new SFRotation(1,-(1+1/t),1+t,p),4);
+ 	  s_axes['b11'] = new Axis(new SFVec3f(-t,-(1+t),1),new SFRotation(-1,-(1+1/t),1+t,p),4);
+ 	  s_axes['b12'] = new Axis(new SFVec3f(t,1+t,1),new SFRotation(1,1+1/t,1+t,p),4);
+ 	  s_axes['b13'] = new Axis(new SFVec3f(-t,1+t,1),new SFRotation(-1,1+1/t,1+t,p),4);
+
+
+	  s_axes['b14'] = new Axis(new SFVec3f(1,0,0),new SFRotation(1,1,1,-2*p/3),4);
+	  s_axes['b15'] = new Axis(new SFVec3f(0,1,0),new SFRotation(1,1,1,2*p/3),4);
+
+	  s_axes['g1'] = new Axis(new SFVec3f(1,0,t),new SFRotation(1,0,0,0),10);
+	  s_axes['g2'] = new Axis(new SFVec3f(-1,0,t),new SFRotation(0,0,1,p),10);
+	  s_axes['g3'] = new Axis(new SFVec3f(0,-t,1),new SFRotation(0,-1/t,t,2*p/3),10);
+	  s_axes['g4'] = new Axis(new SFVec3f(0,t,1),new SFRotation(0,1/t,t,-2*p/3),10);
+	  s_axes['g5'] = new Axis(new SFVec3f(t,-1,0),new SFRotation(0,-t,1,2*p/5),10);
+	  s_axes['g6'] = new Axis(new SFVec3f(t,1,0),new SFRotation(0,t,1,-2*p/5),10);
+
+	  s_axes['c1'] = new Axis(new SFVec3f(0,-1/t,t),new SFRotation(0,0,1,p),6);
+	  s_axes['c2'] = new Axis(new SFVec3f(0,1/t,t),new SFRotation(0,0,1,0),6);
+	  s_axes['c3'] = new Axis(new SFVec3f(1,-1,1),new SFRotation(1,0,t,-4*p/5),6);
+	  s_axes['c4'] = new Axis(new SFVec3f(-1,-1,1),new SFRotation(-1,0,t,4*p/5),6);
+	  s_axes['c5'] = new Axis(new SFVec3f(1,1,1),new SFRotation(1,0,t,2*p/5),6);
+	  s_axes['c6'] = new Axis(new SFVec3f(-1,1,1),new SFRotation(-1,0,t,-2*p/5),6);
+	  s_axes['c7'] = new Axis(new SFVec3f(t,0,1/t),new SFRotation(1,0,t,4*p/5),6);
+	  s_axes['c8'] = new Axis(new SFVec3f(-t,0,1/t),new SFRotation(-1,0,t,-4*p/5),6);
+	  s_axes['c9'] = new Axis(new SFVec3f(-1/t,t,0),new SFRotation(0,t,1,4*p/5),6);
+	  s_axes['c10'] = new Axis(new SFVec3f(-1/t,-t,0),new SFRotation(0,t,1,-4*p/5),6);
+      }
+      
+      function init_mirrorsI(){
+	  npoly = mirrors.length-1;
+	  var part10 = new MFNode();
+	  var part6 = new MFNode();
+	  var part4 = new MFNode();
+	  var c10 = 0;
+	  var c6 = 0;
+	  var c4 = 0;
+
+	  for(var i = 0; i < npoly; i++){
+	      var s = s_axes[mirrors[i+1]];
+	      order[i] = s.order;
+	      trans[i].set_rotation = s.transform;
+	      axis[i] = s.axis;
+	      if(s.order == 4){
+		part4[c4++] = trans[i];  
+	      } else if(s.order == 6){
+		part6[c6++] = trans[i];  
+	      }if(s.order == 10){
+		part10[c10++] = trans[i];  
+	      }
+	  }
+	  if(c4 != 0) i4.set_children = part4;
+	  if(c6 != 0) i6.set_children = part6;
+	  if(c10 != 0) i10.set_children = part10;
+      }
+
+      function init_dataT(){
+	  s_axes = new Array();
+	  var p = Math.PI;
+
+	  s_axes['b1'] = new Axis(new SFVec3f(0,0,1),new SFRotation(1,0,0,0),4);
+	  s_axes['b2'] = new Axis(new SFVec3f(1,0,0),new SFRotation(1,1,1,-2*p/3),4);
+	  s_axes['b3'] = new Axis(new SFVec3f(0,1,0),new SFRotation(1,1,1,2*p/3),4);
+
+	  s_axes['c1'] = new Axis(new SFVec3f(1,-1,1),new SFRotation(0,0,1,p),6);
+	  s_axes['c2'] = new Axis(new SFVec3f(1,1,1),new SFRotation(0,0,1,0),6);
+	  s_axes['c3'] = new Axis(new SFVec3f(-1,1,1),new SFRotation(0,0,1,0),6);
+	  s_axes['c4'] = new Axis(new SFVec3f(-1,-1,1),new SFRotation(0,0,1,p),6);
+      }
+      
+      function init_mirrorsT(){
+	  npoly = mirrors.length-1;
+	  var part6 = new MFNode();
+	  var part4 = new MFNode();
+	  var c6 = 0;
+	  var c4 = 0;
+
+	  for(var i = 0; i < npoly; i++){
+	      var s = s_axes[mirrors[i+1]];
+	      order[i] = s.order;
+	      trans[i].set_rotation = s.transform;
+	      axis[i] = s.axis;
+	      if(s.order == 4){
+		part4[c4++] = trans[i];  
+	      } else if(s.order == 6){
+		part6[c6++] = trans[i];  
+	      }
+	  }
+	  if(c4 != 0) t4.set_children = part4;
+	  if(c6 != 0) t6.set_children = part6;
+      }
+
+      function init_dataO(){
+	  s_axes = new Array();
+	  var p = Math.PI;
+
+	  s_axes['a1'] = new Axis(new SFVec3f(0,0,1),new SFRotation(0,0,1,0),8);
+	  s_axes['a2'] = new Axis(new SFVec3f(0,-1,0),new SFRotation(1,0,0,-p/2),8);
+	  s_axes['a3'] = new Axis(new SFVec3f(1,0,0),new SFRotation(0,1,0,-p/2),8);
+
+	  s_axes['b1'] = new Axis(new SFVec3f(0,-1,1),new SFRotation(0,0,1,p),4);
+	  s_axes['b2'] = new Axis(new SFVec3f(1,0,1),new SFRotation(0,0,1,p/2),4);
+	  s_axes['b3'] = new Axis(new SFVec3f(0,1,1),new SFRotation(0,0,1,0),4);
+	  s_axes['b4'] = new Axis(new SFVec3f(-1,0,1),new SFRotation(0,0,1,-p/2),4);
+	  s_axes['b5'] = new Axis(new SFVec3f(1,1,0),new SFRotation(0,1,0,-p/2),4);
+	  s_axes['b6'] = new Axis(new SFVec3f(-1,1,0),new SFRotation(0,1,0,p/2),4);
+
+	  s_axes['c1'] = new Axis(new SFVec3f(1,-1,1),new SFRotation(0,0,1,p/2),6);
+	  s_axes['c2'] = new Axis(new SFVec3f(-1,-1,1),new SFRotation(0,0,1,p),6);
+	  s_axes['c3'] = new Axis(new SFVec3f(1,1,1),new SFRotation(0,0,1,0),6);
+	  s_axes['c4'] = new Axis(new SFVec3f(-1,1,1),new SFRotation(0,0,1,-p/2),6);
+
+      }
+      
+      function init_mirrorsO(){
+	  npoly = mirrors.length-1;
+	  var part8 = new MFNode();
+	  var part6 = new MFNode();
+	  var part4 = new MFNode();
+	  var c8 = 0;
+	  var c6 = 0;
+	  var c4 = 0;
+
+	  for(var i = 0; i < npoly; i++){
+	      var s = s_axes[mirrors[i+1]];
+	      order[i] = s.order;
+	      trans[i].set_rotation = s.transform;
+	      axis[i] = s.axis;
+	      if(s.order == 4){
+		part4[c4++] = trans[i];  
+	      } else if(s.order == 6){
+		part6[c6++] = trans[i];  
+	      } else if(s.order == 8){
+		part8[c8++] = trans[i];  
+	      }
+	  }
+	  if(c4 != 0) o4.set_children = part4;
+	  if(c6 != 0) o6.set_children = part6;
+	  if(c8 != 0) o8.set_children = part8;
+      }
+
+      
+      function set_point(v,t){
+	  for(var i = 0; i < npoly; i++){
+	      make_reflections(v,axis[i], mirr1[i], mirr2[i], 
+	                       order[i], vert[i]);
+	      poly[i].set_vertices = vert[i];
+	  }
+      }        
+            
+      function orthonorm(vect, axis){
+	  return (vect.subtract(axis.multiply(axis.dot(vect)))).normalize();
+      }
+ 
+      // makes mirroring in two mirrors, which intersects along axis
+      // axis, mirr1, mirr2 are assumed normalized
+      // and mirr1 and mirr2 are orthogonal to axis
+      // vert - array of resulting vertices
+      function make_reflections(pnt,axis, mirr1, mirr2, order, vert){
+	  // projection on axis
+	  var PA = axis.multiply(axis.dot(pnt));
+	  // part orthogonal to axis
+	  var P = pnt.subtract(PA);
+	  var Q = new SFVec3f(mirr1.x,mirr1.y,mirr1.z);
+	  var R = new SFVec3f(mirr2.x,mirr2.y,mirr2.z);
+	  var rq = R.dot(Q);
+	  var pq = P.dot(Q);
+	  var pq_old = P.dot(R);
+	  
+	  vert[0].x = pnt.x;
+	  vert[0].y = pnt.y;
+	  vert[0].z = pnt.z;
+	  //trace(P);
+	  for(var i = 1; i < order; i++){
+	      var x, y, z;
+	      P.x = 2*Q.x*pq-P.x;
+	      P.y = 2*Q.y*pq-P.y;
+	      P.z = 2*Q.z*pq-P.z;
+
+	      vert[i].x = P.x + PA.x;
+	      vert[i].y = P.y + PA.y;
+	      vert[i].z = P.z + PA.z;
+	      //trace('V:' + vert[i]);
+	      R.x = 2*Q.x*rq-R.x;
+	      R.y = 2*Q.y*rq-R.y;
+	      R.z = 2*Q.z*rq-R.z;
+	      
+	      var t = pq;
+	      pq = pq_old;
+	      pq_old = t;
+
+	      var T = Q;
+	      Q = R;
+	      R = T;
+	  }
+      }
+
+      "
+      ]
+  }
+  
+}
+PROTO Animator2 [
+field SFNode poly NULL
+field SFNode transform NULL
+]{
+    
+    DEF TIMER1 TimeSensor {
+	loop TRUE
+	enabled FALSE
+    }
+    DEF TIMER2 TimeSensor {
+	loop TRUE
+	enabled FALSE
+    }
+    
+    DEF ANIMATOR Script {
+	directOutput TRUE
+	field SFNode poly IS poly
+	field SFNode transform IS transform 
+	
+	field SFNode timer1 USE TIMER1
+	field SFNode timer2 USE TIMER2
+
+	eventIn SFTime set_time1
+	eventIn SFTime set_time2
+	field SFTime t1 0
+	field SFTime t2 0
+	field SFFloat phi 0 
+	field SFFloat tet 0 
+	field MFFloat angles []
+	field SFInt32 index 0
+
+	field SFTime tmax  3
+	field SFTime tmax2  4
+
+	field SFVec3f point 0.2 0.1 0.8 
+	field SFVec3f p1 0 0 0 
+	field SFVec3f p 0 0 0 
+	field SFVec3f vspeed 0 0 0 
+
+	url [
+	"javascript:
+	var rot;
+	function initialize(){
+	    var t = (Math.sqrt(5)+1)/2;	    
+	    var f3 = Math.atan2(1/t,t);	    
+	    var f5 = Math.atan2(t,1);
+	    var f2 = Math.PI/2;
+	    angles[0] = 0;
+	    angles[1] = f3;
+	    angles[2] = f5;
+	    angles[3] = f2;
+	    angles[4] = Math.PI - f5;
+	    angles[5] = Math.PI - f3;
+	    angles[6] = Math.PI;
+	    angles[7] = Math.PI + f3;
+	    angles[8] = Math.PI + f5;
+	    angles[9] = Math.PI + f2;
+	    angles[10] = 2*Math.PI - f5;
+	    angles[11] = 2*Math.PI - f3;
+	    angles[12] = 2*Math.PI;
+	    max_index = 12;
+	    point = (new SFVec3f(Math.random()-0.5,
+	                        Math.random()-0.5,
+	                        Math.random()-0.5)).normalize();
+	    timer1.enabled = TRUE;
+	    timer2.enabled = FALSE;
+	    poly.set_point = point;
+	}
+
+	function set_time1(v,t){
+	    if(!timer1.enabled){
+	      return;
+	    }
+	    if(t1 == 0){
+		t1 = t;
+		tmax = 15*(angles[index+1] - angles[index])/Math.PI;
+	    }
+	    var dt = (t - t1)/tmax;
+
+	    if(dt > 1){
+		phi = angles[(index+1)];
+		index ++;
+		if(index == max_index){
+		    index = 0;
+		}
+		timer1.enabled = FALSE;
+		timer2.enabled = TRUE;
+		t1 = 0;		
+	    } else {
+		phi = (1-dt)*angles[index] + dt*angles[index+1];
+	    }
+	    transform.set_rotation = new SFRotation(1,0,0,phi);
+	}
+
+	function set_time2(v,t){
+	    if(!timer2.enabled){
+	      return;
+	    }
+	    if(t2 == 0){
+		t2 = t;
+		p1 = make_newpoint(point,0.3);
+		return;
+	    }	    
+	    var dt = (t - t2)/tmax2;
+	    //trace('dt2:' + dt);
+	    if(dt > 1){
+		p = p1;
+		timer1.enabled = TRUE;		
+		timer2.enabled = FALSE;
+		t2 = 0;
+		point = p;
+	    } else {
+		p.x = (1-dt)*point.x + dt*p1.x;
+		p.y = (1-dt)*point.y + dt*p1.y;
+		p.z = (1-dt)*point.z + dt*p1.z;
+	    }
+	    poly.set_point = p;
+	}
+	// returns normalized vector, which is close to pnt
+	function make_newpoint(pnt,rnd){
+	    var p = new SFVec3f(Math.random()-0.5,
+	                        Math.random()-0.5,
+	                        Math.random()-0.5);
+	    var dot = point.dot(p);
+	    
+	    p.x -= dot*point.x;
+	    p.y -= dot*point.y;
+	    p.z -= dot*point.z;
+	    p = point.add(p.normalize().multiply(rnd)).normalize();
+	    return p;
+	}
+	"
+	]
+    }
+    
+    ROUTE TIMER1.time TO ANIMATOR.set_time1
+    ROUTE TIMER2.time TO ANIMATOR.set_time2
+}

@@ -1,0 +1,219 @@
+#VRML V2.0 utf8
+WorldInfo{
+    title "trefoil-icosahedron"
+    info [
+    "Copyright 1997 - Vladimir Bulatov"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+NavigationInfo { 
+    type "EXAMINE" 
+    headlight TRUE
+} 
+
+Viewpoint {
+    description "start"
+    position    0 0 20 
+    fieldOfView 0.15
+}
+
+EXTERNPROTO SimpleSlider [
+eventOut     SFFloat sliderResult
+field        SFFloat initialValue
+] "slider_proto.wrl#SimpleSlider"
+
+EXTERNPROTO Trefoil [
+field        SFNode appearance
+] "trefoil_proto.wrl#Trefoil"
+
+EXTERNPROTO Tetrahedron [
+field        SFNode appearance
+] "segment_proto.wrl#Tetrahedron"
+
+EXTERNPROTO Triangle [
+field        SFNode appearance
+] "segment_proto.wrl#Triangle"
+
+EXTERNPROTO IcosahedronSymmetry [
+exposedField SFVec3f segmentScale 
+exposedField SFRotation segmentRotation 
+field MFNode segment 
+] "symmetry_proto.wrl#IcosahedronSymmetry"
+
+EXTERNPROTO TetrahedronSymmetry [
+exposedField SFVec3f segmentScale 
+exposedField SFRotation segmentRotation 
+field MFNode segment 
+] "symmetry_proto.wrl#TetrahedronSymmetry"
+
+EXTERNPROTO OctahedronSymmetry [
+exposedField SFVec3f segmentScale 
+exposedField SFRotation segmentRotation 
+field MFNode segment 
+] "symmetry_proto.wrl#OctahedronSymmetry"
+
+
+Group{
+    children [
+#    DEF icosaObject IcosahedronSymmetry{
+#	segment Trefoil{
+#	}
+#    }
+     DEF object Transform {
+	 rotation 1 0 0 0
+	 children [
+	 DEF icosaObject IcosahedronSymmetry {
+	     segment Trefoil {
+	     }
+	 }
+	 ]
+     }
+     DEF rotator SphereSensor { 
+	 autoOffset        TRUE
+	 enabled           TRUE
+	 offset            0 1 0 0  # [-1,1],(-,)
+	 #eventOut     SFBool     isActive
+	 #eventOut     SFRotation rotation_changed
+	 #eventOut     SFVec3f    trackPoint_changed
+     }
+     
+    ]
+}
+
+Group{
+#Billboard{
+#    axisOfRotation 0 0 0
+    children [
+    Transform {
+	translation 1.2 0 2
+	children [
+	Transform {
+	    translation 0.07 0  0
+	    children [
+	    DEF slider1 SimpleSlider {
+		initialValue 0.35
+	    }
+	    ]
+	}
+	Transform {
+	    translation -0.07 0  0
+	    children [
+	    DEF slider2 SimpleSlider {
+		initialValue 0.5
+	    }
+	    ]
+	}
+	Shape {
+	    geometry Box{ 
+		size 0.4 1.2 0.01
+	    }
+	    appearance Appearance {
+		material Material { 
+		    diffuseColor 0.5 0.5 1 
+		    shininess 1
+		}                   
+	    }	
+	}
+	]
+    }
+    ]
+}
+
+DEF ANIMATOR TimeSensor{
+    enabled FALSE
+    loop TRUE    
+}
+
+DEF script Script {
+    directOutput TRUE
+
+    eventOut SFVec3f scale 
+    eventOut SFRotation rotation
+    eventOut SFRotation objectRotation
+
+    eventIn  SFFloat set_scale
+    eventIn  SFFloat set_rotation
+    eventIn  SFRotation set_objectRotation
+    eventIn  SFBool  startDrag
+    eventIn  SFTime  animate
+    
+    field SFNode animator USE ANIMATOR
+    field SFRotation speed 0 0 0 0
+    field SFRotation rot0 0 0 0 0
+    
+    field SFFloat time0 0
+    field SFRotation quat 1 0 0 0
+
+    url	"vrmlscript:
+    
+    function set_scale(value, time){
+	scale[0] = 2*value;
+	scale[1] = 2*value;
+	scale[2] = 2*value;
+    }
+
+    function set_rotation(value, time){
+	rotation[0] = 0;
+	rotation[1] = 0;
+	rotation[2] = 1;
+	rotation[3] = 6.283*value;
+    }    
+    function set_objectRotation(rot, time){
+	objectRotation = rot;
+	quat[0] = rot[0]*Math.sin(rot[3]/2);
+	quat[1] = rot[1]*Math.sin(rot[3]/2);
+	quat[2] = rot[2]*Math.sin(rot[3]/2);
+	quat[3] = Math.cos(rot[3]/2);
+	norm = quat[0]*quat[0]+quat[1]*quat[1]+
+	quat[2]*quat[2]+quat[3]*quat[3];
+
+	dt = (time-time0);
+	if(dt != 0.){
+	    for(i=0;i<4;i++){
+		speed[i] = (rot[i] - rot0[i])/dt;
+		rot0[i] = rot[i];
+	    }
+	    time0 = time;
+	}
+	//trace(quat + ' norm: '+ norm);
+	//trace('r:'+rot+' s:' + speed + ',  t:' +time);
+    }
+    function animate(value,time){
+	dt = time-time0;
+	for(i=0;i<4;i++){
+	    objectRotation[i] += speed[i]*dt;
+	}
+	time0 = time;
+	//trace(objectRotation);
+	
+    }
+    function startDrag(start,time){
+	if(start == TRUE){
+	    animator.enabled = FALSE;
+	    rot0 = new SFRotation(0,1,0,0);
+	    speed = new SFRotation(0,0,0,0);
+	    time0 = time;
+	} else {
+	    time0 = time;
+	    if(speed[0] != 0.0 || speed[1] != 0.0 || 
+	       speed[2] != 0.0 || speed[3] != 0.0){
+		animator.enabled = TRUE;	    
+	    }
+	}
+	//trace('stopDrag:'+start + 'animator:' + animator);
+	//trace('speed: '+speed);
+    }
+    "
+}
+
+
+ROUTE slider1.sliderResult TO script.set_scale
+ROUTE slider2.sliderResult TO script.set_rotation
+ROUTE script.scale  TO icosaObject.set_segmentScale
+ROUTE script.rotation  TO icosaObject.set_segmentRotation
+ROUTE rotator.rotation_changed  TO script.set_objectRotation
+ROUTE script.objectRotation  TO object.set_rotation
+ROUTE script.objectRotation  TO rotator.set_offset
+ROUTE rotator.isActive  TO script.startDrag
+ROUTE ANIMATOR.time  TO script.animate

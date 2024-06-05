@@ -1,0 +1,99 @@
+#VRML V2.0 utf8
+NavigationInfo {
+	type "EXAMINE"
+	headlight TRUE
+}
+
+PROTO IndexedPolySet [
+field MFInt32 coordIndex []
+field SFNode coord Coordinate {}  
+field SFFloat scale 0.9
+]{
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	coordIndex []
+	coord Coordinate {
+	    point []
+	}
+    }
+    DEF IndexedPolySet Script {
+
+	field MFInt32 coordIndex IS coordIndex
+	field SFNode coord IS coord
+	field SFNode ifs USE IFS
+	field MFInt32 ci []
+	field MFVec3f vertex []
+	field SFFloat scale IS scale
+
+	url [
+
+	"javascript:
+
+	function initialize(){
+
+	    var fcount = 0;
+	    var vcount = 0;
+	    var ci_count = 0;
+	    var fv = new MFVec3f();
+	    var center = new SFVec3f(0,0,0);
+
+	    for(i = 0; i < coordIndex.length; i++){
+		if(coordIndex[i] != -1){
+
+		    fv[fcount++] = coord.point[coordIndex[i]];
+
+		} else { // new face 
+
+		    center.x = center.y = center.z = 0;
+		    for( j = 0; j < fcount; j++){
+			center.x += fv[j].x;
+			center.y += fv[j].y;
+			center.z += fv[j].z;
+		    }
+		    center.x /= fcount;
+		    center.y /= fcount;
+		    center.z /= fcount;
+
+		    for( j = 0; j < fcount; j++){			
+			vertex[vcount] = new SFVec3f(
+			         center.x+(fv[j].x-center.x)*scale,
+			         center.y+(fv[j].y-center.y)*scale,
+			         center.z+(fv[j].z-center.z)*scale);
+			ci[ci_count++] = vcount;
+			//trace(vertex[vcount]);
+			vcount++;
+		    }
+		    ci[ci_count++] = -1;
+		    fcount = 0;
+		}
+	    }
+	    ifs.coord.set_point = vertex;
+	    ifs.set_coordIndex = ci;	    
+	}
+	"
+	]
+    }
+}
+
+
+Shape {
+    geometry IndexedPolySet {	
+#	solid FALSE
+	coordIndex [
+	0 1 2 3 -1
+	4 5 6 7 -1
+	1 5 6 2 -1
+	0 4 7 3 -1
+	2 6 7 3 -1
+	1 5 4 0 -1	
+	]
+	coord Coordinate {
+	    point [0 0 0, 1 0 0, 1 1 0, 0 1 0 0 0 1, 1 0 1, 1 1 1, 0 1 1 ]
+	}
+    }   
+    appearance Appearance {
+	material Material {
+	    diffuseColor 1 1 0
+	}
+    }
+}

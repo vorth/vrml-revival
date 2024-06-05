@@ -1,0 +1,229 @@
+#VRML V2.0 utf8
+
+
+PROTO DynaBox [
+exposedField MFNode children []
+]
+{
+    DEF dynaBox Transform {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    children	[
+	    DEF up Transform {
+		rotation 1 0 0 -1.5708
+		children	[
+		DEF upPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		DEF FACE Shape {
+		    appearance DEF A_5 Appearance {
+			material	Material {
+			    transparency	0.61
+			}		    
+		    }		
+		    geometry	DEF _3 IndexedFaceSet {
+			coord	Coordinate {
+			    point	[ -1 -1 1, 1 -1 1, 1 1 1, -1 1 1 ]
+			}		    
+			coordIndex	[ 0, 1, 2, 3, -1 ]
+		    }		
+		}
+		]
+	    }
+	    DEF right Transform {
+		rotation	0 1 0  1.5708
+		children	[
+		DEF rightPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		USE FACE
+		]
+	    }
+	    DEF back Transform {
+		rotation 0 1 0 3.1415
+		children	[
+		DEF backPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		USE FACE
+		]
+	    }
+	    DEF left Transform {
+		rotation 0 1 0 -1.5708
+		children	[
+		DEF leftPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		USE FACE
+		]
+	    }
+	    DEF front Transform {
+		children	[
+		DEF frontPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		USE FACE
+		]
+	    }
+	    DEF down Transform {
+		rotation 1 0 0 1.5708
+		children	[
+		DEF downPlaneSensor PlaneSensor {
+		    autoOffset	FALSE
+		}
+		USE FACE
+		]
+	    }
+	    DEF wireframe Transform {
+		children	Shape {
+		    appearance	Appearance {
+			material	Material {
+			    emissiveColor	1 1 1
+			    transparency	0.61
+			}		
+		    }	    
+		    geometry	IndexedLineSet {
+			coord	Coordinate {
+			    point	[ 
+			    -1 1  1, -1 -1  1,  1 -1  1,  1  1  1,
+			    1 -1 -1,  1  1 -1, -1  1 -1, -1 -1 -1 
+			    ]
+			}		
+			coordIndex	[ 
+			0, 1, 2, 3, 0, -1, 3, 2,
+			4, 5, 3, -1, 6, 0, 3, 5,
+			6, -1, 5, 4, 7, 6, 5, -1,
+			1, 7, 4, 2, 1, -1, 6, 7,
+			1, 0, 6, -1 ]
+		    }	    
+		}	
+	    }
+	    ]
+	}
+	
+	]
+    }
+    
+    DEF adjuster Script {
+    eventIn      SFVec3f	set_frontPlaneTranslation 
+    eventIn      SFVec3f	set_rightPlaneTranslation
+    eventIn      SFVec3f	set_upPlaneTranslation
+    eventIn      SFVec3f	set_leftPlaneTranslation
+    eventIn      SFVec3f	set_backPlaneTranslation
+    eventIn      SFVec3f	set_downPlaneTranslation
+    eventIn      SFBool	isDragging
+    eventOut     SFVec3f	translation_changed
+    field        SFVec3f	boxPositionBeforeDrag	0 0 0
+    field        SFVec3f	lastOffset	0 0 0
+    url	"javascript:
+    // Handler for event set_translation of type SFVec3f.
+    function set_frontPlaneTranslation (value, timestamp)
+    {
+	//print ('new xlation from sensor is ' +value);
+	lastOffset = value;
+	//print ('box position is ' +boxPositionBeforeDrag); 
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    // Handler for event isDoneDragging of type SFBool.
+    function isDragging (value, timestamp)
+    {
+	if (value == false)       //false when done dragging.
+	{
+	    boxPositionBeforeDrag = boxPositionBeforeDrag.add(lastOffset);
+	    lastOffset.x = 0;
+	    lastOffset.y = 0;
+	    lastOffset.z = 0;   
+	    //print ('new box position is ' +boxPositionBeforeDrag);
+	}
+    }
+    
+    // Handler for event set_rightPlaneTranslation of type SFVec3f.
+    function set_rightPlaneTranslation (value, timestamp)
+    {
+	value.z = -value.x;
+	value.x = 0;
+	lastOffset = value;
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    // Handler for event set_upPlaneTranslation of type SFVec3f.
+    function set_upPlaneTranslation (value, timestamp)
+    {
+	value.z = -value.y;
+	value.y = 0;
+	lastOffset = value;
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    // Handler for event set_leftPlaneTranslation of type SFVec3f.
+    function set_leftPlaneTranslation (value, timestamp)
+    {
+	value.z = value.x;
+	value.x = 0;
+	lastOffset = value;
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    // Handler for event set_backPlaneTranslation of type SFVec3f.
+    function set_backPlaneTranslation (value, timestamp)
+    {
+	value.x = -value.x;
+	lastOffset = value;
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    // Handler for event set_downPlaneTranslation of type SFVec3f.
+    function set_downPlaneTranslation (value, timestamp)
+    {
+	value.z = value.y;
+	value.y = 0;
+	lastOffset = value;
+	translation_changed = boxPositionBeforeDrag.add(value);
+    }
+    
+    "
+}
+
+ROUTE frontPlaneSensor.translation_changed TO adjuster.set_frontPlaneTranslation
+ROUTE rightPlaneSensor.translation_changed TO adjuster.set_rightPlaneTranslation
+ROUTE upPlaneSensor.translation_changed TO adjuster.set_upPlaneTranslation
+ROUTE leftPlaneSensor.translation_changed TO adjuster.set_leftPlaneTranslation
+ROUTE backPlaneSensor.translation_changed TO adjuster.set_backPlaneTranslation
+ROUTE downPlaneSensor.translation_changed TO adjuster.set_downPlaneTranslation
+ROUTE upPlaneSensor.isActive TO adjuster.isDragging
+ROUTE rightPlaneSensor.isActive TO adjuster.isDragging
+ROUTE backPlaneSensor.isActive TO adjuster.isDragging
+ROUTE leftPlaneSensor.isActive TO adjuster.isDragging
+ROUTE frontPlaneSensor.isActive TO adjuster.isDragging
+ROUTE downPlaneSensor.isActive TO adjuster.isDragging
+ROUTE adjuster.translation_changed TO dynaBox.set_translation
+}
+
+
+DynaBox {
+    children Shape {
+	appearance	Appearance {
+	    material	Material {
+	    }	    
+	}	
+	geometry	Sphere {
+	}	
+    }    
+}
+
+NavigationInfo {
+    avatarSize	[ 0.25, 1.6, 0.75 ]
+    headlight	TRUE
+    speed	1
+    type	[ 
+    "EXAMINE",
+    "ANY" ]
+    visibilityLimit	0
+}
+
+DEF Author-notes WorldInfo {
+    info	[ 
+    "By Jed Hartman. http://www.kith.org/logos/things/VRML/",
+    "modified and fixed by V.Bulatov http://www.physics.orst.edu/~bulatov/",
+    "Attempts to mimic the translation behavior of the DynaBox(TM) manipulator in Cosmo(R) Worlds",
+    ]
+}

@@ -1,0 +1,185 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "cylinder with ends"
+    info [
+    "Copyright 1997 - Vladimir Bulatov"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+NavigationInfo { 
+    type "EXAMINE" 
+    headlight TRUE
+} 
+
+Viewpoint {
+    position 0 0 10
+}
+
+PROTO Edge [
+field SFVec3f start 0 -1 0
+field SFVec3f end   0  1 0
+field SFFloat radius 1
+exposedField SFNode appearance Appearance {
+    material Material{
+	diffuseColor 0.6 0.4 0.4
+    }
+}
+]{
+    DEF TRANSFORM Transform{
+	children [
+	DEF CYLINDER Shape{
+	    geometry Cylinder{}
+	    appearance IS appearance
+	}
+	]
+    }
+    
+    Script {
+	directOutput TRUE
+	field SFVec3f start IS start
+	field SFVec3f end IS end
+	field SFFloat radius IS radius
+	field SFNode cylinder USE CYLINDER
+	field SFNode transform USE TRANSFORM
+	url ["vrmlscript:
+	function initialize(){
+	    transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),start.subtract(end));
+	    transform.set_translation = start.add(end).multiply(0.5);
+	    var len = start.subtract(end).length();
+	    cylinder.set_geometry = 
+	    Browser.createVrmlFromString(
+	    'Cylinder { radius '
+	          +radius + ' height '+len+	    
+	    '}'
+	    )[0];
+	}	
+	"]
+
+    }
+}
+
+PROTO Edge1 [
+field SFVec3f start 0 -1 0
+field SFVec3f end   0  1 0
+field SFFloat radius 0.1
+exposedField SFNode appearance Appearance {
+    material Material{
+	diffuseColor 0.6 0.4 0.4
+    }
+}
+field SFInt32 n 4
+field SFFloat creaseAngle 1
+]
+{
+    DEF TRANSFORM Transform{
+	children [
+	Shape {
+	    geometry DEF EDGE Extrusion{
+		creaseAngle IS creaseAngle
+		beginCap FALSE
+		endCap FALSE
+		solid TRUE
+		ccw TRUE
+		#crossSection[]	
+		#spine []    
+	    }
+	    appearance IS appearance
+	}
+	]
+    }
+
+    DEF SCRIPT Script{
+	directOutput TRUE
+
+	field SFNode edge USE EDGE
+	field SFNode transform USE TRANSFORM
+
+	field SFVec3f start IS start
+	field SFVec3f end IS end
+	field SFFloat radius IS radius
+
+	field SFInt32 n IS n
+	
+	url "javascript:
+	function initialize(value, time){
+	    transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),start.subtract(end));
+	    transform.set_translation = start.add(end).multiply(0.5);
+	    len = start.subtract(end).length();
+
+	    cs = new MFVec2f();
+	    sp = new MFVec3f();
+	    fi = Math.PI*2/n;
+	    for(i=0; i<=n; i++ ){
+		cs[i] = new SFVec2f(-radius*Math.cos(fi*i),
+		                     radius*Math.sin(fi*i));
+	    }
+
+	    sp[0] = new SFVec3f(0,-len/2,0);
+	    sp[1] = new SFVec3f(0,len/2,0);
+
+	    edge.set_crossSection = cs;
+	    edge.set_spine = sp;
+	}
+	"
+    }    
+}
+
+PROTO Edge2 [
+field SFVec3f start 0 -1 0
+field SFVec3f end   0  1 0
+field SFFloat radius 1
+exposedField SFNode appearance Appearance {
+    material Material{
+	diffuseColor 0.6 0.4 0.4
+    }
+}
+]{
+    DEF TRANSFORM Transform{
+	children [
+	DEF CYLINDER Shape{
+	    geometry Box {size 1 1 1}
+	    appearance IS appearance
+	}
+	]
+    }
+    
+    Script {
+	directOutput TRUE
+	field SFVec3f start IS start
+	field SFVec3f end IS end
+	field SFFloat radius IS radius
+	field SFNode cylinder USE CYLINDER
+	field SFNode transform USE TRANSFORM
+	url ["vrmlscript:
+	function initialize(){
+	    transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),start.subtract(end));
+	    transform.set_translation = start.add(end).multiply(0.5);
+	    var len = start.subtract(end).length();
+	    transform.set_scale = new SFVec3f(radius, len, radius);
+	}	
+	"]
+
+    }
+}
+
+
+
+# tetrahedron
+Transform{
+    rotation 1 0 0 0.5
+    children[
+    Edge2{start 1 1 1  end -1 1 -1 radius 0.1}
+    Edge2{start -1 -1 1  end 1 -1 -1 radius 0.1}
+
+    Edge2{start 1 1 1  end 1 -1 -1 radius 0.1}
+    Edge2{start -1 -1 1  end -1 1 -1 radius 0.1}
+
+    Edge2{start 1 1 1  end -1 -1 1 radius 0.1}
+    Edge2{start 1 -1 -1 end -1 1 -1 radius 0.1}
+    ]
+}

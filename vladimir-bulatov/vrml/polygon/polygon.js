@@ -1,0 +1,422 @@
+var last_index;
+
+function initialize(){
+  init();
+}
+
+function set_vertices(v,t){
+  vertices = v;
+  vertex = new MFVec3f();
+  init();
+}
+
+function init(){
+  for(var i=0; i < vertices.length; i++){
+    vertex[i] = vertices[i];
+  }
+  //trace(vertex);
+  makeIFS();
+}
+
+function makeIFS(){
+  var edg = new Array();
+  var center = new SFVec3f(0,0,0);
+  for(var i =0; i < vertex.length; i++){
+    center.x += vertex[i].x;
+    center.y += vertex[i].y;
+    center.z += vertex[i].z;
+  }
+  center.x /= vertex.length;
+  center.y /= vertex.length;
+  center.z /= vertex.length;
+  
+  for(var i =0; i < vertex.length; i++){
+    vertex[i].x -= center.x;
+    vertex[i].y -= center.y;
+    vertex[i].z -= center.z;
+  }
+  
+  var normal = vertex[0].cross(vertex[1]);
+  var rotXY = new SFRotation(normal, new SFVec3f(0,0,1));
+  for(var i = 0; i < vertex.length; i++){
+    vertex[i] = rotXY.multVec(vertex[i]);
+  }
+  
+  // create an array of edges
+  var vert1 = new Vertex(vertex[vertex.length-1],vertex.length-1);
+  for(var i = 0; i < vertex.length; i++){
+    var vert2 = new Vertex(vertex[i],i);
+    edg[i] = new Edge(vert1, vert2);
+    vert1 = vert2;
+  }
+  
+  var inters = new SFVec3f(0,0,0);	    
+  var icount = 0; // counter of intersections
+  // array of intersections 
+  var intersections = new Array(); 
+  var vert_new = new MFVec3f();
+  old_vert_len  = vertex.length;
+  for(var i = 0; i < old_vert_len; i++){
+    vert_new[i] = vertex[i]; 
+  }
+  // make all intersections
+  for(var j = 0; j < edg.length; j++){
+    var imax = edg.length;
+    if(j == 0 )
+      imax = edg.length-1;
+    for(var i = j+2; i < imax; i++ ){
+      if(lines_intersect2d(edg[j].vert[0].point, 
+			   edg[j].vert[1].point, 
+			   edg[i].vert[0].point, 
+			   edg[i].vert[1].point, 
+			   inters)){
+	var point = new SFVec3f(inters.x, inters.y, inters.z);
+	
+	vert_new[old_vert_len + icount] = point; 
+	var vert = new Vertex(point, old_vert_len + icount);
+	var intersij = new Intersection(vert,edg[i],edg[j]);
+	edg[i].addIntersection(intersij);
+	edg[j].addIntersection(intersij);
+	intersections[icount] = intersij;
+	icount++;
+	//trace('inters(' + i + ', ' + j + '): ' + inters );
+      }		    
+    }		
+  }
+  
+  // make new segments 
+  for(var i = 0; i < edg.length; i++){
+    edg[i].makeSegments();
+  }
+  
+  // for each segment we need to know both it's neighbours
+
+  // first - go through all vertices 
+  for(var i = 0; i < edg.length; i++){
+    var j = (i+1)%edg.length;
+    edg[i].segm[edg[i].icount].next[0] = edg[j].segm[0]; 
+    edg[j].segm[0].next[1] = edg[i].segm[edg[i].icount];
+  }
+
+  // next - go through all intersections 
+  for(var i = 0; i < intersections.length; i++){
+    intersections[i].initSegments();
+  }
+
+  // make new polygons - closed chains of segments 
+
+  // array of segments
+  var segms = new Array();
+  var scount = 0;
+  for(var i = 0; i < edg.length; i++){
+    var ec = edg[i].icount
+    for(var j =0; j <= ec; j++){
+      segms[scount] = edg[i].segm[j];
+      segms[scount].index = scount; 
+      scount++;
+    }    
+  }
+  /*
+  for(var i = 0; i < segms.length; i++){
+    trace(segms[i].index + ' ' + segms[i].next[0]+' ' + segms[i].next[1]);
+  }
+  */
+  last_index = 0;
+  var ci_cnt = 0;
+  var ci_new = new MFInt32();
+  
+  var first_segm;
+  while((first_segm = getNextUnusedSegment(segms)) != null){
+
+    segms[first_segm.index] = null;
+    
+    var current_segm = first_segm;    
+    var current_next = 1;
+    ci_new[ci_cnt++] = first_segm.vert[current_next].index;
+    var i = 0;// to prevent infinite cycle
+    while(i++ < segms.length){
+      var next_segm = current_segm.next[current_next];
+      
+      if(next_segm == first_segm){ // end of chain
+	
+	ci_new[ci_cnt++] = -1;
+	break;
+	
+      } else {  // chain continues
+	//trace(next_segm);
+	segms[next_segm.index] = null;
+	
+	if(next_segm.next[0] == current_segm)
+	  current_next = 1;
+	else 
+	  current_next = 0;
+	ci_new[ci_cnt++] = next_segm.vert[current_next].index;
+	current_segm = next_segm; 
+      }      
+    } 
+    
+  }
+  
+  //trace(ci_new);  
+
+  
+  var rotXY1 = rotXY.inverse();
+  for(var i = 0; i < vert_new.length; i++){
+    vert_new[i] = rotXY1.multVec(vert_new[i]);
+    vert_new[i].x += center.x;
+    vert_new[i].y += center.y;
+    vert_new[i].z += center.z;
+  }
+  
+  ifs.set_coordIndex = ci_new;   
+  ifs.coord.set_point = vert_new;   
+  
+}// makeIFS
+
+function getNextUnusedSegment(segms){
+  var segm = null;
+  for(var i = last_index; i < segms.length; i++){
+    segm = segms[i];
+    if(segm != null){
+      last_index = i+1;
+      break;
+    }
+  }
+  return segm;
+}
+
+
+// Segment constructor 
+function Segment(vert1, vert2){
+  this.vert = new Array();
+  this.vert[0] = vert1;
+  this.vert[1] = vert2;
+  this.next = new Array();
+  this.next[0] = null;
+  this.next[1] = null;  
+}
+
+// Edge.addIntersection()
+function addIntersection(inters){
+  if(this.icount == 0){
+    this.intersections = new Array();
+    this.intersLength = new Array();
+  }
+  var len = inters.vert.point.subtract(this.vert[0].point).length();
+  
+  for(var i = 0; i < this.icount; i++){
+    
+    if(len < this.intersLength[i]){ 
+      // new vertex is closer to start
+      // we should shift old vertices up
+      for(var j = this.icount; j > i; j--){
+	this.intersLength[j] = this.intersLength[j-1];
+	this.intersections[j] = this.intersections[j-1];
+      }
+      this.intersLength[i] = len;
+      this.intersections[i] = inters;
+      this.icount++;
+      return;		    
+    }
+  }
+  
+  this.intersLength[this.icount] = len;
+  this.intersections[this.icount++] = inters;
+  
+}
+
+// Edge.makeSegments()
+function makeSegments(){
+  this.segm = new Array();
+  if(this.icount == 0){
+    // no intersections
+    this.segm[0] = new Segment(this.vert[0],this.vert[1]);
+  } else {
+    // there are intersections
+    var v0 = this.vert[0];
+    for(var i = 0; i < this.icount; i++){
+      var v1 = this.intersections[i].vert;
+      this.segm[i] = new Segment(v0,v1);
+      this.intersections[i].setSegment(this, i); 
+      v0 = v1;
+    }
+    this.segm[this.icount] = new Segment(this.intersections[this.icount-1].vert,
+					 this.vert[1]);    
+  }
+}
+
+// Edge constructor 
+function Edge(vert1, vert2){
+  this.vert = new Array();
+  this.vert[0] = vert1;
+  this.vert[1] = vert2;
+  this.icount = 0;
+  this.addIntersection = addIntersection;
+  this.makeSegments = makeSegments;
+}
+
+// Intersection.setSegment
+function setSegment(edge, segmentIndex){
+  var index = -1;
+  if(edge == this.edges[0]){
+    index = 0;
+  } else if(edge == this.edges[1]){
+    index = 1;
+  } else {
+    trace('wrong edge in setSegment()');
+  }
+  this.indices[index] = segmentIndex;
+}
+
+// Intersection.initSegments(){
+function initSegments(){
+  var epsilon = 0.00001;
+  var s00 = this.edges[0].segm[this.indices[0]];
+  var s01 = this.edges[0].segm[this.indices[0]+1];
+  var s10 = this.edges[1].segm[this.indices[1]];
+  var s11 = this.edges[1].segm[this.indices[1]+1];
+  var p1 = s01.vert[1].point;
+  var p2 = s11.vert[1].point;
+  var p0 = this.vert.point;
+  var shift = (p1.subtract(p0).add(p2.subtract(p0))).multiply(epsilon);
+  var p = p0.add(shift);
+  if(InsidePolygon(vertex,p)){
+    s00.next[0] = s10;
+    s10.next[0] = s00;
+    s11.next[1] = s01;
+    s01.next[1] = s11;
+    //trace('In');
+  } else {
+    s00.next[0] = s11;
+    s11.next[1] = s00;
+    s10.next[0] = s01;
+    s01.next[1] = s10;
+    //trace('Out');    
+  }
+  //trace(segm00.vert[1].index + '-' + segm01.vert[0].index);
+  //trace(segm10.vert[1].index + '-' + segm11.vert[0].index);
+}
+
+// Intersection constructor 
+function Intersection(vert, edge1, edge2){
+  this.vert = vert;
+  // array of indices of segments in corresponding edges
+  this.indices = new Array(); 
+  this.edges = new Array();
+  this.edges[0] = edge1;
+  this.edges[1] = edge2;
+  this.setSegment = setSegment;
+  this.initSegments = initSegments;
+}
+
+// Vertex constructor 
+function Vertex(point, index){
+  this.point = point;
+  this.index = index;
+}
+
+function showProps(obj, obj_name) {
+  var result = '';
+  for (var i in obj){
+    result += obj_name + '.' + i + ' = ' + obj[i] + '\n';
+  }
+  return result;
+}
+
+function lines_intersect2d( 
+			   p1, p2, // First line segment 
+			   p3, p4, // Second line segment
+			   result // Output value: point of intersection 
+			   )
+{
+  var a1, a2, b1, b2, c1, c2; // Coefficients of line eqns. 
+  var r1, r2, r3, r4;         // 'Sign' values
+  var denom;     // Intermediate values
+  
+  // Compute a1, b1, c1, where line joining points 1 and 2
+  // is    a1 x  +  b1 y  +  c1  =  0.
+  
+  a1 = p2.y - p1.y;
+  b1 = p1.x - p2.x;
+  c1 = p2.x * p1.y - p1.x * p2.y;
+  
+  // Compute r3 and r4.
+  r3 = a1 * p3.x + b1 * p3.y + c1;
+  r4 = a1 * p4.x + b1 * p4.y + c1;
+  
+  // Check signs of r3 and r4.  If both point 3 and point 4 lie on
+  // same side of line 1, the line segments do not intersect.
+  
+  if ( r3 != 0. && r4 != 0. && r3*r4 > 0)
+    return FALSE; //( DONT_INTERSECT );
+  
+  // Compute a2, b2, c2 
+  
+  a2 = p4.y - p3.y;
+  b2 = p3.x - p4.x;
+  c2 = p4.x * p3.y - p3.x * p4.y;
+  
+  // Compute r1 and r2 
+  
+  r1 = a2 * p1.x + b2 * p1.y + c2;
+  r2 = a2 * p2.x + b2 * p2.y + c2;
+  
+  // Check signs of r1 and r2.  If both point 1 and point 2 lie
+  // on same side of second line segment, the line segments do
+  // not intersect.
+  
+  if ( r1 != 0. && r2 != 0. && r1 * r2 > 0)
+    return FALSE; // ( DONT_INTERSECT );
+  
+  //  Line segments intersect: compute intersection point. 
+  
+  denom = a1 * b2 - a2 * b1;
+  if ( denom == 0 )
+    return FALSE; // ( COLLINEAR );
+  
+  result.x = (b1 * c2 - b2 * c1) / denom;  
+  result.y = (a2 * c1 - a1 * c2) / denom;
+  
+  return TRUE;  //( DO_INTERSECT );
+} // lines_intersect 
+
+function  MIN(x,y) {
+  return (x < y ? x : y);
+}
+function MAX(x,y) {
+  return (x > y ? x : y);
+}
+
+// determines if point p lies inside of polygon 
+// for selfintersection polygons it will use 
+// even-od rule
+function InsidePolygon(polygon, p)
+{
+  var cnt = 0;
+  
+  var pnt1 = polygon[polygon.length-1];
+  
+  for (var i=0; i < polygon.length;i++) {
+    
+    var pnt2 = polygon[i];    
+    if (p.y > MIN(pnt1.y,pnt2.y)) {
+      if (p.y <= MAX(pnt1.y,pnt2.y)) {
+	if (p.x <= MAX(pnt1.x,pnt2.x)) {
+	  if (pnt1.y != pnt2.y) {
+	    var xinters = 
+	      (p.y-pnt1.y)*(pnt2.x-pnt1.x)/(pnt2.y-pnt1.y)+pnt1.x;
+	    if (pnt1.x == pnt2.x || p.x <= xinters)
+	      cnt++;
+	  }
+	}
+      }
+    }   
+    pnt1 = pnt2;
+    
+  }
+  
+  if (cnt % 2 == 0)
+    return FALSE; //(OUTSIDE);
+  else
+    return TRUE; //(INSIDE);
+}

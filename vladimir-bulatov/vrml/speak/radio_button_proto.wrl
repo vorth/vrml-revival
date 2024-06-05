@@ -1,0 +1,102 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "RadioButton PROTO"
+    info [
+    "author"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+PROTO RadioButton [
+eventOut SFBool isPressed
+eventOut SFTime timePressed 
+eventIn  SFBool set_pressed
+field MFNode shapeRaised Shape {
+    geometry Box {
+        size 0.5 0.5 0.1
+    }
+    appearance Appearance {
+        material Material {
+            diffuseColor 0.4 0.9 0.4
+        }
+    }
+}
+field MFNode shapePressed Shape {
+    geometry Box {
+        size 0.5 0.5 0.1
+    }
+    appearance Appearance {
+        material Material {
+            diffuseColor 0.9 0.4 0.4
+        }
+    }
+}
+field SFString description "click to press button"
+]{
+
+    Group{
+        children[
+        DEF BUTTON TouchSensor{}
+        DEF SHAPE Group {
+            children IS shapeRaised
+        }
+        ]
+    }
+    
+    DEF SCRIPT Script {
+        directOutput TRUE
+        eventIn SFBool setOver
+        eventIn SFBool setActive
+        eventIn SFBool set_pressed IS set_pressed
+        
+        eventOut SFBool isPressed IS isPressed
+        eventOut SFTime timePressed IS timePressed
+        
+        field SFNode shape USE SHAPE
+        field MFNode shapeRaised IS shapeRaised
+        field MFNode shapePressed IS shapePressed
+
+        field SFString description IS description
+        field SFBool is_over FALSE
+        field SFBool is_active FALSE
+        field SFBool is_pressed FALSE
+        url "vrmlscript:
+        function set_pressed(value,time){
+            is_pressed = value;
+            if(is_pressed){
+                shape.children[0] = shapePressed[0];
+            } else {
+                shape.children[0] = shapeRaised[0];
+            }
+        }
+        function setActive(value,time){
+            timePressed = time;
+            if(value){
+                if(is_pressed){
+                    is_pressed = FALSE;
+                    isPressed = FALSE;
+                    shape.children[0] = shapeRaised[0];
+                } else {
+                    is_pressed = TRUE;
+                    isPressed = TRUE;
+                    shape.children[0] = shapePressed[0];
+                }
+            }
+        }
+        
+        function setOver(value,time){
+            is_over = value;
+            if(value){
+                Browser.setDescription(description);
+            } else {
+                Browser.setDescription('');
+            }
+        }
+        
+        "
+    }
+
+    ROUTE BUTTON.isActive TO SCRIPT.setActive
+    ROUTE BUTTON.isOver TO SCRIPT.setOver    
+}

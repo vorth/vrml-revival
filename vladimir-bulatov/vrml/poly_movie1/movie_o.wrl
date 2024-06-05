@@ -1,0 +1,92 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+NavigationInfo {
+	type "NONE"
+	headlight FALSE
+}
+
+EXTERNPROTO Isogonal_O [ 
+eventIn SFVec3f set_point
+field SFVec3f point 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+field SFString type
+eventIn SFInt32 set_visible 
+eventOut MFNode faces_changed 
+]"O_misc_proto.wrl#Isogonal_O"
+
+Viewpoint {
+    position 0 0 7
+    fieldOfView 0.3
+}
+
+DirectionalLight {
+    direction 0.5 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+DirectionalLight {
+    direction -2 0 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+
+DEF TRANS Transform {
+    children 
+DEF POLY Isogonal_O { point 0.2 0.1 0.8  type "3" } 
+}
+
+PROTO Animator1 [
+field SFNode poly NULL
+field SFNode transform NULL
+]{
+    
+    DEF TIMER TimeSensor {
+	loop TRUE
+	enabled TRUE
+    }
+    
+    DEF ANIMATOR Script {
+	directOutput TRUE
+	field SFNode poly IS poly
+	field SFNode transform IS transform 
+	
+	eventIn SFTime set_time
+	field SFTime t0 0
+	
+	field SFVec3f point 0.2 0.1 0.8 
+	url [
+	"javascript:
+	var rot;
+	function initialize(){
+	}
+
+	function set_time(v,t){
+	    if(t0 == 0){
+		t0 = t;
+	    }
+	    var dt = t - t0;
+	    var phi = dt*Math.PI/40;
+
+	    var v = new SFVec3f(Math.cos(phi),0.05, Math.sin(phi));
+	    tau = (Math.sqrt(5)+1)/2;
+	    poly.set_point = v;
+	    transform.set_rotation = new SFRotation(1,1,1,0.1*dt);
+	}
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO ANIMATOR.set_time
+}
+
+Animator1 {
+    poly USE POLY
+    transform USE TRANS
+}

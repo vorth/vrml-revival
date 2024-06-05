@@ -1,0 +1,44 @@
+#VRML V2.0 utf8
+
+Viewpoint {
+    position 0 0 100
+    fieldOfView 0.2   
+}
+
+Group {
+    children [
+    DEF S1 Transform {
+	translation 2 0 0 
+	children [
+	DEF S Shape {
+	    geometry Box {
+		size 0.05 4 0.05
+	    }
+	    appearance Appearance {
+		material Material {
+		}
+	    }
+	}
+	]
+    }
+    
+    Transform {
+	translation -2 0 0 
+	children [
+	USE S
+	]
+    }
+    ]
+}
+
+NavigationInfo {
+    type "EXAMINE"
+}
+
+
+# small dot to make Cosmo2.0 happy 
+#Shape {
+#    geometry Box {
+#	size 0.01 0.01 0.01
+#    }
+#}

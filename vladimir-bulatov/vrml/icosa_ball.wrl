@@ -1,0 +1,1199 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Icosaheral Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+PROTO Edge [
+field MFVec3f interval [-1 0 0, 1 0 0]
+field SFFloat radius 0.025
+exposedField SFNode appearance Appearance {
+    material Material{
+	diffuseColor 0.9 0.7 0.4
+    }
+}
+field SFInt32 n 4
+field SFFloat creaseAngle 1
+]
+{
+    DEF TRANSFORM Transform{
+	children [
+	Shape {
+	    geometry DEF EDGE Extrusion{
+		creaseAngle IS creaseAngle
+		beginCap FALSE
+		endCap   FALSE
+		solid TRUE
+		ccw TRUE
+		#crossSection[]	
+		#spine []    
+	    }
+	    appearance IS appearance
+	}
+	]
+    }
+
+    DEF SCRIPT Script{
+	directOutput TRUE
+
+	field SFNode edge USE EDGE
+	field SFNode transform USE TRANSFORM
+
+	field SFFloat radius IS radius
+
+	field MFVec3f interval IS interval
+	field SFVec3f start 0 -1 0
+	field SFVec3f end   0  1 0
+
+	field SFInt32 n IS n
+	
+	url "javascript:
+
+	function initialize(value, time){
+
+	    start = interval[0];
+	    end = interval[1];
+
+	    transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),start.subtract(end));
+	    transform.set_translation = start.add(end).multiply(0.5);
+	    len = start.subtract(end).length();
+
+	    cs = new MFVec2f();
+	    sp = new MFVec3f();
+	    fi = Math.PI*2/n;
+	    for(i=0; i<=n; i++ ){
+		cs[i] = new SFVec2f(-radius*Math.cos(fi*i),
+		                     radius*Math.sin(fi*i));
+	    }
+
+	    sp[0] = new SFVec3f(0,-len/2,0);
+	    sp[1] = new SFVec3f(0,len/2,0);
+
+	    edge.set_crossSection = cs;
+	    edge.set_spine = sp;
+	}
+	"
+    }    
+}
+
+PROTO Edge_[
+field MFVec3f interval [-1 0 0, 1 0 0]
+] {
+    Group {
+	children [
+	DEF TRANSFORM3 Transform{
+	    children [
+	    
+	    DEF CYLINDER Transform {
+		children Shape{
+		    geometry Box{ size 1 1 1 }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  1 0.3 0.5
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}
+	    }
+	    ]
+	}
+	]
+    }
+
+    DEF SCRIPT_INTERVAL Script {
+	directOutput TRUE
+
+	field SFNode transform3 USE TRANSFORM3
+
+	field SFNode cylinder USE CYLINDER 
+
+	field SFVec3f start -1 0 0
+	field SFVec3f end 1 0 0
+
+	field MFVec3f interval IS interval
+	field SFFloat radius 0.01
+
+	url[
+	"javascript:
+	
+	function initialize(){
+	    
+	    start = interval[0];
+	    end = interval[1];
+
+	    set_string();
+	    
+	}
+	
+        function set_string(){
+
+            transform3.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),start.subtract(end));
+            transform3.set_translation = start.add(end).multiply(0.5);
+
+            var length = start.subtract(end).length();
+
+            cylinder.set_scale = new SFVec3f(radius, length, radius);
+        }
+	"
+	]
+    }
+}
+
+PROTO Symmetry_I [
+
+# shape to be transformed
+ exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	Switch {
+	    choice [
+	    
+	    DEF segment Transform {
+		
+		children [
+		DEF S1 Group {
+		    children [
+		    Group {
+			children IS children 
+		    }
+		    Transform {
+			children IS children
+		    }
+		    ]
+		}
+		Transform {
+		    rotation 0.61803 1.61803 0 2.094395
+		    children USE S1
+		}
+		Transform {
+		    rotation 0.61803 1.61803 0 -2.094395
+		    children USE S1
+		}
+		]
+	    }
+	    
+	    DEF segment2 Transform {
+		children[
+		USE segment
+		Transform {
+		    rotation  0 1 0 3.1415926
+		    children[
+		    USE segment
+		    ]
+		}
+		]
+	    }
+	    
+	    DEF segment10 Transform {
+		children [
+		USE segment2
+		Transform {
+		    rotation 1.61803 1 0 1.256637061
+		    children[
+		    USE segment2
+		    ]
+		}
+		Transform { 
+		    rotation 1.61803 1 0 2.513274122
+		    children[	    
+		    USE segment2
+		    ]
+		}
+		Transform { 
+		    rotation 1.61803 1 0 3.769911184	    
+		    children[
+		    USE segment2
+		    ]
+		}
+		Transform { 
+		    rotation 1.61803 1 0 5.026548245
+		    children[
+		    USE segment2
+		    ]
+		}
+		]
+	    }
+	    
+	    DEF segment20 Transform {
+		children[
+		USE segment10
+		Transform {
+		    rotation 0 0 1 3.1415926
+		    children[
+		    USE segment10
+		    ]
+		}
+		]
+		
+	    }
+	    ]
+	    
+	}
+	USE segment20
+	]
+    }
+}
+
+PROTO Symmetry_I_ [
+
+# shape to be transformed
+ exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	Transform { children IS children}
+
+	Transform {rotation 0 1.61803 1  1.25664 children IS children}
+	Transform {rotation 0 1.61803 1 -1.25664 children IS children}
+	Transform {rotation 0 1.61803 1  2.51327 children IS children}
+	Transform {rotation 0 1.61803 1 -2.51327 children IS children}
+
+	Transform {rotation 0 1.61803 -1  1.25664 children IS children}
+	Transform {rotation 0 1.61803 -1 -1.25664 children IS children}
+	Transform {rotation 0 1.61803 -1  2.51327 children IS children}
+	Transform {rotation 0 1.61803 -1 -2.51327 children IS children}
+
+	Transform {rotation 1.61803 1 0  1.25664 children IS children}
+	Transform {rotation 1.61803 1 0 -1.25664 children IS children}
+	Transform {rotation 1.61803 1 0  2.51327 children IS children}
+	Transform {rotation 1.61803 1 0 -2.51327 children IS children}
+
+	Transform {rotation 1.61803 -1 0  1.25664 children IS children}
+	Transform {rotation 1.61803 -1 0 -1.25664 children IS children}
+	Transform {rotation 1.61803 -1 0  2.51327 children IS children}
+	Transform {rotation 1.61803 -1 0 -2.51327 children IS children}
+
+	Transform {rotation 1 0 1.61803  1.25664 children IS children}
+	Transform {rotation 1 0 1.61803 -1.25664 children IS children}
+	Transform {rotation 1 0 1.61803  2.51327 children IS children}
+	Transform {rotation 1 0 1.61803 -2.51327 children IS children}
+
+	Transform {rotation -1 0 1.61803  1.25664 children IS children}
+	Transform {rotation -1 0 1.61803 -1.25664 children IS children}
+	Transform {rotation -1 0 1.61803  2.51327 children IS children}
+	Transform {rotation -1 0 1.61803 -2.51327 children IS children}
+
+	Transform {rotation 0.61803 1.61803 0 2.09439 children IS children}
+	Transform {rotation 0.61803 1.61803 0 -2.09439 children IS children}
+
+	Transform {rotation -0.61803 1.61803 0 2.09439 children IS children}
+	Transform {rotation -0.61803 1.61803 0 -2.09439 children IS children}
+
+	Transform {rotation 1.61803 0 0.61803  2.09439 children IS children}
+	Transform {rotation 1.61803 0 0.61803 -2.09439 children IS children}
+
+	Transform {rotation 1.61803 0 -0.61803  2.09439 children IS children}
+	Transform {rotation 1.61803 0 -0.61803 -2.09439 children IS children}
+
+	Transform {rotation 0 0.61803 1.61803 2.09439 children IS children}
+	Transform {rotation 0 0.61803 1.61803 -2.09439 children IS children}
+
+	Transform {rotation 0 -0.61803 1.61803 2.09439 children IS children}
+	Transform {rotation 0 -0.61803 1.61803 -2.09439 children IS children}
+
+	Transform {rotation  1 1 1 2.09439 children IS children}
+	Transform {rotation  1 1 1 -2.09439 children IS children}
+
+	Transform {rotation  1 -1 1 2.09439 children IS children}
+	Transform {rotation  1 -1 1 -2.09439 children IS children}
+
+	Transform {rotation  -1 -1 1 2.09439 children IS children}
+	Transform {rotation  -1 -1 1 -2.09439 children IS children}
+
+	Transform {rotation  -1 1 1 2.09439 children IS children}
+	Transform {rotation  -1 1 1 -2.09439 children IS children}
+
+	Transform {rotation  1 0 0 3.1415 children IS children}
+	Transform {rotation  0 1 0 3.1415 children IS children}
+	Transform {rotation  0 0 1 3.1415 children IS children}
+
+	# double gg1 = 1+g1, gg = 1+g;
+
+	Transform {rotation  1  1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation -1  1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation  1 -1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation -1 -1.61803 2.61803 3.1415 children IS children}
+
+	Transform {rotation  2.61803  1 1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803 -1 1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803  1 -1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803 -1 -1.61803 3.1415 children IS children}
+
+	Transform {rotation  1.61803  2.61803  1 3.1415 children IS children}
+	Transform {rotation  1.61803  2.61803 -1 3.1415 children IS children}
+	Transform {rotation -1.61803  2.61803  1 3.1415 children IS children}
+	Transform {rotation -1.61803  2.61803 -1 3.1415 children IS children}
+    ]
+    }
+}
+
+
+PROTO Triangle [
+
+]{
+Group {
+    children [
+
+    Switch {
+	choice [
+	DEF SHAPE Transform {
+	    children [
+	    Edge { interval [-0.2 1 0, 0.2 1 0]}
+	    Edge { interval [0.2 1 0, 0 1 1]}
+	    Edge { interval [-0.2 1 0,  0 1 1]}
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw TRUE
+		    coord DEF COORD Coordinate{
+			point [
+			# 0 1.61803 1, 0 1.61803 -1, 1.61803 1 0,
+			-0.2 1 0, 0.2 1 0, 0 1 1
+			# 0 1.61803 0, 0 1.61803 1, 0.53934, 1.4120 0
+			#                          1.61803/3, (2*1.61803+1)/3 0
+			]
+		    }
+		    coordIndex [
+		    0, 1, 2,-1
+		    ]
+		}
+		appearance Appearance{
+		    material Material{
+			diffuseColor  0.4 0.5 1.0
+			specularColor 0.3 0.3 0.3
+			shininess 0.1
+		    }
+		}
+	    }
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw FALSE
+		    coord USE COORD
+		    coordIndex [
+		    0, 1, 2,-1
+		    ]
+		}
+		appearance Appearance{
+		    material Material{
+			diffuseColor  1 0.9 0.5
+			specularColor 0.3 0.3 0.3
+			shininess 0.1
+		    }
+		}
+	    }   
+	    ]
+	}
+	]
+    }
+    
+    DEF TRANSFORM1 Transform {
+	children [
+	DEF TRANSFORM2 Transform {
+	    children USE SHAPE
+	}
+	]
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF MAIN_SCRIPT Script {
+    directOutput TRUE
+    field SFNode coord USE COORD
+    field SFNode transform1 USE TRANSFORM1 
+    field SFNode transform2 USE TRANSFORM2 
+
+    eventIn SFTime set_time
+
+    field SFTime t0 0
+    field MFVec3f point []
+
+    url [
+    "javascript:
+
+    function set_time(val,time){
+
+	if(t0 == 0){
+	    t0 = time;
+	    point = new MFVec3f();
+	    point[0] = new SFVec3f();
+	    point[1] = new SFVec3f();
+	    point[2] = new SFVec3f();
+	}
+	
+	dt = time - t0;
+
+	transform1.set_rotation = new SFRotation(1,0,0,dt/20);
+	//transform2.set_rotation = new SFRotation(0,1,0,dt/6);
+    }
+    
+    "
+    ]
+}
+
+ROUTE TIMER.time TO MAIN_SCRIPT.set_time
+}
+
+
+PROTO Triangle1 [
+
+]{
+    Group {
+	children [
+
+	Switch {
+	    choice [
+	    DEF SHAPE Transform {
+		children [
+		Edge { interval [-0.2 -2 0,  0.2 -2 0]}
+		Edge { interval [ 0.2 -2 0,  0   -2 1]}
+		Edge { interval [-0.2 -2 0,  0   -2 1]}
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw TRUE
+			coord DEF COORD Coordinate{
+			    point [
+			    -0.2 0 -0.5, 0.2 0 -0.5, 0 0 0.5
+			    ]
+			}
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  0.4 0.5 1.0
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw FALSE
+			coord USE COORD
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  1 0.9 0.5
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}   
+		]
+	    }
+	    ]
+	}
+	
+	DEF TRANSFORM1 Transform {
+	    children [
+	    DEF TRANSFORM2 Transform {
+		children DEF TRANSFORM3 Transform {
+		    translation 0 1 0
+		    children USE SHAPE
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TIMER TimeSensor {
+	enabled TRUE
+	loop TRUE
+    }
+    
+    DEF MAIN_SCRIPT Script {
+	directOutput TRUE
+	field SFNode coord USE COORD
+	field SFNode transform1 USE TRANSFORM1 
+	field SFNode transform2 USE TRANSFORM2 
+	field SFNode transform3 USE TRANSFORM3 
+	
+	eventIn SFTime set_time
+	
+	field SFTime t0 0
+	field MFVec3f point []
+	
+	url [
+	"javascript:
+	
+	function set_time(val,time){
+	    
+	    if(t0 == 0){
+		t0 = time;
+		point = new MFVec3f();
+		point[0] = new SFVec3f();
+		point[1] = new SFVec3f();
+		point[2] = new SFVec3f();
+	    }
+	    
+	    dt = time - t0;
+	    
+	    transform1.set_rotation = new SFRotation(1,0,0,dt/11);
+	    //transform2.set_rotation = new SFRotation(0,1,0,dt/6);
+	    transform3.set_rotation = new SFRotation(1,0,0,dt/20);
+	}
+	
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO MAIN_SCRIPT.set_time
+}
+
+PROTO Triangle2 [
+
+]{
+    Group {
+	children [
+
+	Switch {
+	    choice [
+	    DEF SHAPE1 Transform {
+		children [
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw TRUE
+			coord DEF COORD Coordinate{
+			    point [
+			    -0.2 1 -0.5, 0.2 1 -0.5, 0 1 0.5
+			    ]
+			}
+			normal Normal {
+			    vector [0.2 -1 -0.2, -0.2 -1 -0.2, 0 -1 0.5]
+			}
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  0.4 0.5 1.0
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw FALSE
+			coord USE COORD
+			normal Normal {
+			    vector [-0.2 1 -0.2, 0.2 1 -0.2, 0 1 0.5]
+			}
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  1 0.9 0.5
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}   
+		]
+	    }
+	    DEF SHAPE2 Transform {
+		children [
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw TRUE
+			coord DEF COORD2 Coordinate{
+			    point [
+			    -0.1 1 -0.8, -0.1 1 0.8, 0.1 1 0
+			    ]
+			}
+			normal Normal {
+			    vector [0 1 -0.5, 0 1 0.5, 0.5 1 0]
+			}
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  0.9 0.5 0.3
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}
+		Shape {
+		    geometry IndexedFaceSet{
+			ccw FALSE
+			coord USE COORD2
+			normal Normal {
+			    vector [0 -1 0.5, 0 -1 -0.5, -0.5 -1 0]
+			}
+			coordIndex [
+			0, 1, 2,-1
+			]
+		    }
+		    appearance Appearance{
+			material Material{
+			    diffuseColor  0.3 0.9 0.5
+			    specularColor 0.3 0.3 0.3
+			    shininess 0.1
+			}
+		    }
+		}   
+		]
+	    }
+	    ]
+	}
+	
+	DEF TRANSFORM1 Transform {
+	    children [
+	    DEF TRANSFORM2 Transform {
+		children DEF TRANSFORM3 Transform {
+		    translation 0 1 0
+		    rotation 1 0 0 1
+		    children USE SHAPE1
+		}
+	    }
+	    ]
+	}
+	DEF TRANSFORM2_1 Transform {
+	    children [
+	    DEF TRANSFORM2_2 Transform {
+		children DEF TRANSFORM2_3 Transform {
+		    rotation 1 0 0 1
+		    translation 0 1 0
+		    children USE SHAPE2
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TIMER TimeSensor {
+	enabled TRUE
+	loop TRUE
+    }
+    
+    DEF MAIN_SCRIPT Script {
+	directOutput TRUE
+	field SFNode coord USE COORD
+	field SFNode transform1 USE TRANSFORM1 
+	field SFNode transform2 USE TRANSFORM2 
+	field SFNode transform3 USE TRANSFORM3 
+	
+	field SFNode transform2_1 USE TRANSFORM2_1 
+	field SFNode transform2_2 USE TRANSFORM2_2 
+	field SFNode transform2_3 USE TRANSFORM2_3 
+	
+	eventIn SFTime set_time
+	
+	field SFTime t0 0
+	field MFVec3f point []
+	
+	url [
+	"javascript:
+	
+	function set_time(val,time){
+	    
+	    if(t0 == 0){
+		t0 = time;
+	    }
+	    
+	    dt = time - t0;
+	    
+	    transform1.set_rotation = new SFRotation(1,0,0,dt/11+1.57);
+	    transform3.set_rotation = new SFRotation(1,0,0,dt/23+1.57);
+
+	    transform2_1.set_rotation = new SFRotation(0,0,1,dt/19);
+	    transform2_3.set_rotation = new SFRotation(0,0,1,dt/29);
+
+	}
+	
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO MAIN_SCRIPT.set_time
+}
+
+PROTO Triangle3 [
+
+]{
+Group {
+    children [
+
+    Switch {
+	choice [
+	DEF SHAPE Transform {
+	    children [
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw TRUE
+		    coord DEF COORD Coordinate{
+			point [
+#			0 1.61803 0,  0 1.61803 1, 0.53934, 1.4120 0, 0 1.61803 -1
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			#                          1.61803/3, (2*1.61803+1)/3 0
+			]
+		    }
+		    
+		    coordIndex [
+		    0, 1, 2,-1,
+		    0, 2, 3,-1,
+		    ]
+		    texCoord DEF TEX_COORD TextureCoordinate {
+			point [0 0, 1 1, 0 1]
+		    }
+		    texCoordIndex [
+		    0, 1, 2, -1,
+		    0, 2, 1, -1,
+		    ]
+		    normal Normal {
+			vector [
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			]
+		    }
+		}
+		appearance Appearance{
+
+		    texture ImageTexture {
+			url ["k07.jpg"]
+		    }
+
+		    material Material{
+			diffuseColor  0.5 0.5 0.5
+			specularColor 1 1 1
+			shininess 0.1
+		    }
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TRANSFORM1 Transform {
+	children [
+	DEF TRANSFORM2 Transform {
+	    scale 1.3 1.3 1.3
+	    children USE SHAPE
+	}
+	]
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF TRIANGLE3_SCRIPT Script {
+    directOutput TRUE
+    field SFNode coord USE COORD
+    field SFNode transform1 USE TRANSFORM1 
+    field SFNode transform2 USE TRANSFORM2 
+
+    field SFNode tex_coord USE TEX_COORD 
+
+    eventIn SFTime set_time
+
+    field SFTime t0 0
+    field MFVec2f point []
+
+    url [
+    "javascript:
+
+    function set_time(val,time){
+
+	if(t0 == 0){
+	    t0 = time;
+	    point = new MFVec2f();
+	    point[0] = new SFVec2f(0,0);
+	    point[1] = new SFVec2f(1,0);
+	    point[2] = new SFVec2f(0,1);
+	}
+	
+	dt = time - t0;
+	
+	vx = 0.01; vy = 0.1; r = 0.5; fi1 = Math.PI*2/3;fi2 = 2*fi1;
+	rot = 0.05;
+	r = 0.5+0.3*Math.cos(dt/20); 
+
+	cx = vx*dt; cy = vy*dt;
+	fi = rot*dt;
+	
+	point[0][0] = cx + r*Math.sin(fi);
+	point[0][1] = cy + r*Math.cos(fi);
+
+	point[1][0] = cx + r*Math.sin(fi+fi1);
+	point[1][1] = cy + r*Math.cos(fi+fi1);
+
+	point[2][0] = cx + r*Math.sin(fi+fi2);
+	point[2][1] = cy + r*Math.cos(fi+fi2);
+
+
+	tex_coord.set_point = point;
+
+    }
+    
+    "
+    ]
+}
+
+ ROUTE TIMER.time TO TRIANGLE3_SCRIPT.set_time
+
+}
+
+PROTO Triangle4 [
+exposedField MFVec2f point [0 0, 1 0, 0 1]
+exposedField SFNode texture ImageTexture {
+    url["k01.jpg"]
+}
+]{
+Group {
+    children [
+
+    Switch {
+	choice [
+	DEF SHAPE Transform {
+	    children [
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw TRUE
+		    coord DEF COORD Coordinate{
+			point [
+#			0 1.61803 0,  0 1.61803 1, 0.53934, 1.4120 0, 0 1.61803 -1
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			#                          1.61803/3, (2*1.61803+1)/3 0
+			]
+		    }
+		    
+		    coordIndex [
+		    0, 1, 2,-1,
+		    0, 2, 3,-1,
+		    ]
+		    texCoord DEF TEX_COORD TextureCoordinate {
+			point IS point
+		    }
+		    texCoordIndex [
+		    0, 1, 2, -1,
+		    0, 2, 1, -1,
+		    ]
+		    normal Normal {
+			vector [
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			]
+		    }
+		}
+		appearance Appearance{
+
+		    texture IS texture
+
+		    material Material{
+			diffuseColor  0.5 0.5 0.5
+			specularColor 0.3 0.3 0.3
+			shininess 0.1
+		    }
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TRANSFORM1 Transform {
+	children [
+	DEF TRANSFORM2 Transform {
+	    scale 1.3 1.3 1.3
+	    children USE SHAPE
+	}
+	]
+    }
+    ]
+}
+
+}
+
+PROTO TriangleManipulator [
+field MFVec2f point [0 0, 1 0, 0 1]
+eventOut MFVec2f point_changed 
+eventIn MFVec2f set_point
+exposedField SFNode texture ImageTexture {
+    url["k01.jpg"]
+}
+
+]{
+    Group {
+	children [
+	Shape {
+	    geometry IndexedFaceSet{
+		coord Coordinate {
+		    point [-1 -1 0, 1 -1 0, 1 1 0, -1 1 0]
+		}
+		coordIndex [0 1 2 3 -1]
+		texCoord TextureCoordinate {
+		    point [-1 -1, 1 -1, 1 1, -1 1]
+		}
+		texCoordIndex [0 1 2 3 -1]
+	    }
+	    appearance Appearance {
+		texture IS texture 
+		material Material {
+		    diffuseColor 0.6 0.6 0.8
+		}
+	    }
+	}	    
+	Group {
+	    children [
+	    DEF SENSOR1 PlaneSensor {
+		
+	    }
+	    DEF TR1 Transform {
+		children [
+		DEF SHAPE Shape {
+		    geometry Box{
+			size 0.1 0.1 0.1
+		    }
+		    appearance Appearance {
+			material Material {
+			    diffuseColor 1 0.8 0.3
+			}
+		    }
+		}
+		]
+	    }
+	    ]
+	}
+	Group {
+	    children [
+	    DEF SENSOR2 PlaneSensor {
+		
+	    }
+	    DEF TR2 Transform {
+		children USE SHAPE
+	    }
+	    ]
+	}
+	Group {
+	    children [
+	    DEF SENSOR3 PlaneSensor {
+		
+	    }
+	    DEF TR3 Transform {
+		children USE SHAPE
+	    }
+	    ]
+	}
+	]
+    }
+
+    DEF TRIANGLE_MANIPULATOR Script {
+	directOutput TRUE
+	field MFVec2f point IS point
+	eventOut MFVec2f point_changed IS point_changed
+	eventIn MFVec2f set_point IS set_point
+
+	field SFNode tr1 USE TR1
+	field SFNode tr2 USE TR2
+	field SFNode tr3 USE TR3
+
+	field SFNode sens1 USE SENSOR1
+	field SFNode sens2 USE SENSOR2
+	field SFNode sens3 USE SENSOR3
+
+	eventIn SFVec3f set_tr1 
+	eventIn SFVec3f set_tr2 
+	eventIn SFVec3f set_tr3 
+
+	field MFVec3f point3 [0 0 0, 1 0 0, 0 1 0]
+	url [
+	"javascript:
+
+	function initialize(){
+	    for(i =0; i< 3; i++){
+		point3[i][0] = point[i][0];
+		point3[i][1] = point[i][1];
+	    }
+
+	    tr1.set_translation = point3[0];
+	    tr2.set_translation = point3[1];
+	    tr3.set_translation = point3[2];
+	    sens1.set_offset = point3[0];
+	    sens2.set_offset = point3[1];
+	    sens3.set_offset = point3[2];
+
+	    point_changed = point;
+	}
+	function set_point(val, t){
+	    point = val;
+	    for(i =0; i< 3; i++){
+		point3[i][0] = point[i][0];
+		point3[i][1] = point[i][1];
+	    }
+
+	    tr1.set_translation = point3[0];
+	    tr2.set_translation = point3[1];
+	    tr3.set_translation = point3[2];
+	    sens1.set_offset = point3[0];
+	    sens2.set_offset = point3[1];
+	    sens3.set_offset = point3[2];
+
+	    point_changed = point;	    
+	}
+	function set_tr1(val,t){
+	    point3[0] = val;
+	    point[0][0] = val[0];
+	    point[0][1] = val[1];
+	    tr1.set_translation = point3[0];
+	    point_changed = point;	    
+	}
+	function set_tr2(val,t){
+	    point3[1] = val;
+	    point[1][0] = val[0];
+	    point[1][1] = val[1];
+	    tr2.set_translation = point3[1];
+	    point_changed = point;	    
+	}
+	function set_tr3(val,t){
+	    point3[2] = val;
+	    point[2][0] = val[0];
+	    point[2][1] = val[1];
+	    tr3.set_translation = point3[2];
+	    point_changed = point;	    
+	}
+	"
+	]
+    }
+
+    ROUTE SENSOR1.translation_changed TO TRIANGLE_MANIPULATOR.set_tr1
+    ROUTE SENSOR2.translation_changed TO TRIANGLE_MANIPULATOR.set_tr2
+    ROUTE SENSOR3.translation_changed TO TRIANGLE_MANIPULATOR.set_tr3
+
+}
+
+Symmetry_I_ {
+    children [
+    DEF TR4 Triangle4 {
+	texture DEF TEXTURE ImageTexture {
+	    url["k07.jpg"]
+	}	
+    }
+    ]
+}
+
+Switch {
+    choice [
+Transform {
+    scale 0.4 0.4 0.4
+    translation -1.5 -0.4 1
+    children [
+    DEF TRI_MAN TriangleManipulator {
+	texture USE TEXTURE
+    }
+    ]
+}
+]
+}
+ROUTE TRI_MAN.point_changed TO TR4.set_point
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF MAIN Script {
+
+    eventIn SFTime set_time
+    field SFTime t0 0
+    field MFVec2f point []
+    
+    eventOut MFVec2f point_changed 
+
+    url [
+    "javascript:
+    
+    function set_time(val,time){
+	
+	if(t0 == 0){
+	    t0 = time;
+	    point = new MFVec2f();
+	    point[0] = new SFVec2f(0,0);
+	    point[1] = new SFVec2f(1,0);
+	    point[2] = new SFVec2f(0,1);
+	}
+	
+	dt = time - t0;
+	R1 = 0.5; r1 = 0.5; W1 = 0.027; w1 = 0.11;
+	
+	point[0][0] = R1*Math.cos(W1*dt) + r1*Math.cos(w1*dt);
+	point[0][1] = R1*Math.sin(W1*dt) + r1*Math.sin(w1*dt);
+
+	dt += 2*Math.PI/(3*w1);
+	point[1][0] = R1*Math.cos(W1*dt) + r1*Math.cos(w1*dt);
+	point[1][1] = R1*Math.sin(W1*dt) + r1*Math.sin(w1*dt);
+
+	dt += 2*Math.PI/(3*w1);
+	point[2][0] = R1*Math.cos(W1*dt) + r1*Math.cos(w1*dt);
+	point[2][1] = R1*Math.sin(W1*dt) + r1*Math.sin(w1*dt);
+	
+		
+	point_changed = point;
+	
+    }
+    "
+    ]
+}
+
+ROUTE TIMER.time TO MAIN.set_time
+ROUTE MAIN.point_changed TO TRI_MAN.set_point
+
+Viewpoint { 
+position 0 0 4
+description "view 2"
+}
+
+Viewpoint { 
+position 0 3.402 2.103 # 0 1.61803 1
+description "view 5"
+orientation -1 0 0 1.0172
+}
+
+Viewpoint { 
+position 0 1.498 3.922 #0 0.61803 1.61803
+description "view 3"
+orientation  -1 0 0 0.36486
+}
+
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}
+
+
+Shape {
+    geometry Sphere {
+	radius 0.35
+    }
+    appearance Appearance{
+	material Material{
+	    transparency 1
+	}
+    }
+}

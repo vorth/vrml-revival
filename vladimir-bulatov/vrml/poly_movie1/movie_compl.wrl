@@ -1,0 +1,166 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+NavigationInfo { 
+    type "NONE" 
+    headlight TRUE
+} 
+
+
+#DirectionalLight {
+#    direction 0.3 -0.3 -1
+#}
+
+#Viewpoint {
+#    description "still"
+#    position 0 0 10
+#}
+
+DEF CAMERA Viewpoint {
+    description "moving"
+    position 0 0 10
+    orientation 0 0 1 0
+}  
+
+Background {
+    groundAngle [ 1.57 ]
+    groundColor [
+    0.5 0.0 0.99
+    0.99 0.99 0.00
+    ]
+    skyAngle [  1.57 ]
+    skyColor [
+    0.99 0.2 0.00
+    0.99 0.99 0.00
+    ]
+}
+
+EXTERNPROTO Completion [
+exposedField SFInt32 whichChoice
+exposedField SFInt32 maxChoice
+#]"compl_u17.wrl#Completion"
+]"compl_u28.wrl#Completion"
+
+Transform {
+    rotation 0 1 0 -0.3
+    children [
+    DEF TR Transform {
+	children [
+	DEF TR0 Transform {
+	    children DEF C0 Completion{ whichChoice 0}
+	}
+	
+	DEF TR1 Transform {
+	    scale 0.01 0.01 0.01
+	    children DEF C1 Completion{ whichChoice 1}
+	}
+	]
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {
+    enabled TRUE loop TRUE 
+}
+
+DEF MAIN Script {
+    eventIn SFTime set_time
+
+    field SFNode c0 USE C0
+    field SFNode c1 USE C1
+    field SFNode tr1 USE TR1
+    field SFNode tr0 USE TR0
+    field SFNode tr USE TR
+    field SFNode camera USE CAMERA 
+    field SFTime t0 0
+    field SFFloat spin 0.1
+    field SFFloat grow 0.5
+    field SFInt32 visible 0 
+    field SFInt32 max_step 8
+    url [
+    "javascript:
+
+    function initialize(){
+	isCosmo = false;
+	if(Browser.getName().indexOf(\"Cosmo\") != -1){
+	    isCosmo = true;
+	} else {
+	    isCosmo = false;
+	}
+    }
+
+    function set_time(v,t){
+	if(t0 == 0){
+	    t0 = v;
+	}
+	var dt = t - t0;
+	//tr.set_rotation = new SFRotation(0,0,1,dt*spin);
+	//tr.set_rotation = new SFRotation(1,0,1.618,dt*spin);
+	set_camera(dt);
+	
+	s = grow*dt;	
+	s = s - 2*max_step*Math.floor(s/(2*max_step));
+	if(s > max_step){
+	    s = 2*max_step-s;
+	}
+	// trace(Dt);
+	var ss = 1.5*Math.exp(-s*0.5)+0.5;
+	tr.set_scale  = new SFVec3f(ss,ss,ss);
+
+	var v = Math.floor(s);
+	if(v != visible){
+	    visible = v;
+	    c0.whichChoice = visible;
+	    c1.whichChoice = visible+1;
+	}
+	var ds = s - v + 0.001;
+	tr1.set_scale = new SFVec3f(ds,ds,ds);
+	
+    }
+    
+    function set_camera(t){
+	var r = 10;
+	var phi = t*0.5;
+	var tet = t*0.3245;
+	var cosphi = Math.cos(phi);
+	var sinphi = Math.sin(phi);
+	var costet = Math.cos(tet);
+	var sintet = Math.sin(tet);
+	var position = new SFVec3f(r*sintet,r*costet*cosphi,r*costet*sinphi);
+	var look_at = new SFVec3f(0,0,0);
+	var up = new SFVec3f(0,-Math.sin(phi),Math.cos(phi));
+	camera.position =  position;
+	camera.orientation = getOrientation(position, look_at, up); 
+    }
+
+    // makes camera orientation from 
+    // camera position, look_at point and up-vector
+    
+    function getOrientation(pos, look, up){
+	var dir0 = new SFVec3f(0,0,-1);
+	var up0 = new SFVec3f(0,1,0);
+	var dir = look.subtract(pos).normalize();
+	var rot0 = new SFRotation(dir0,dir);
+	var up1 = rot0.multVec(up0);
+	var axis = dir.normalize();
+	var up_n = up.subtract(dir.multiply(dir.dot(up)));
+	var rot1 = new SFRotation(up1,up_n);
+	var rot2;  
+	// disagreement between browsers
+	if(isCosmo) { 
+	    rot2 = rot0.multiply(rot1); // Cosmo
+	} else {  // WorldView ?
+	    rot2 = rot1.multiply(rot0);  // WorldView, Cortona
+	}
+	return rot2;
+    }
+    
+    "
+    ]
+}
+
+ROUTE TIMER.time TO MAIN.set_time

@@ -1,0 +1,23 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Matrix Bug"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+Script {
+    url[
+    "javascript:
+    function initialize(){
+	var m = new VrmlMatrix();
+	m.setTransform(new SFVec3f(1,2,3), new SFRotation(1,0,0,0), 
+	new SFVec3f(1,1,1), new SFRotation(1,0,0,0), new SFVec3f(0,0,0));
+	trace(m);
+	m1 = m.multRight(m);
+	trace(m);
+	trace(m1);
+    }
+    
+    "
+    ]
+}

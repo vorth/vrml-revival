@@ -1,0 +1,33 @@
+#VRML V2.0 utf8
+
+PROTO Polygon [
+  field MFVec3f vertices []
+  eventIn MFVec3f set_vertices 
+  eventOut SFBool isReady
+] {
+
+    DEF IFS IndexedFaceSet {
+      solid FALSE
+      convex FALSE
+      coordIndex []
+      coord Coordinate {
+        point []
+      }
+    }
+    
+    DEF Polygon Script {
+
+      directOutput TRUE
+
+      eventOut SFBool isReady IS isReady
+      eventIn MFVec3f set_vertices IS set_vertices 
+      field SFNode ifs USE IFS
+      field MFVec3f vertices IS vertices
+
+      field MFInt32 ci []
+      field MFVec3f vertex []
+	
+      url "Polygon.js"
+    }
+}
+

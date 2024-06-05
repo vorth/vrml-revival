@@ -1,0 +1,316 @@
+#VRML V2.0 utf8
+NavigationInfo {
+	type "EXAMINE"
+	headlight FALSE
+}
+
+Viewpoint {
+    position 0 0 3
+}
+
+DirectionalLight {
+    direction 0.5 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+DirectionalLight {
+    direction -1 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+PROTO APP[
+exposedField SFColor color 0.80 0.68 0.27
+]{
+    Appearance {
+	material DEF MAT Material {
+	    diffuseColor IS color
+	    ambientIntensity 0.5
+	}	
+    }
+    Script {
+	field SFNode mat USE MAT
+	directOutput TRUE
+	url[
+	"javascript:
+	function initialize(){
+	    //mat.set_diffuseColor = new SFColor(Math.random(),Math.random(),Math.random());
+	}
+	"
+	]
+    }
+}
+
+PROTO SBox[
+exposedField SFColor color 0.80 0.68 0.27
+]{
+    Shape {
+	geometry Box {
+	    size 1 1 1
+	}
+	appearance APP {color IS color}
+    }
+}
+
+PROTO SBoxO[
+exposedField SFColor color 0.80 0.68 0.27
+]{
+    Shape {
+	geometry IndexedFaceSet{
+	    ccw TRUE
+	    coord Coordinate {
+		point [-0.8 0 0,0.8 0 0,0 0 -0.8,0 0 0.8,0 -0.8 0,0 0.8 0]
+	    }
+	    coordIndex [
+		0 3 5 -1, 3 1 5 -1, 1 2 5 -1,  2 0 5 -1, 
+		4 3 0 -1, 4 1 3 -1, 4 2 1 -1, 4 0 2 -1
+	    ]
+	}
+	appearance APP {color IS color}
+    }
+}
+
+
+PROTO I_2_2_2 [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0.7 0.7 0.2 
+exposedField SFColor color 0.80 0.68 0.27
+]{
+  Group {
+      children [
+      DEF B0 Transform { children SBox{ color IS color}}
+      DEF B1 Transform { children SBox{ color IS color}}
+      DEF B2 Transform { children SBox{ color IS color}}
+      DEF B3 Transform { children SBox{ color IS color}}
+      DEF B4 Transform { children SBox{ color IS color}}
+      DEF B5 Transform { children SBox{ color IS color}}
+      DEF B6 Transform { children SBox{ color IS color}}
+      DEF B7 Transform { children SBox{ color IS color}}
+      DEF B8 Transform { children SBox{ color IS color}}
+      DEF B9 Transform { children SBox{ color IS color}}
+      DEF B10 Transform {children SBox{ color IS color}}
+      DEF B11 Transform {children SBox{ color IS color}}
+      DEF B12 Transform {children SBox{ color IS color}}
+      DEF B13 Transform {children SBox{ color IS color}}
+      DEF B14 Transform {children SBox{ color IS color}}
+      ]
+  }
+
+  DEF TRANSPOLY_I_4_4_4 Script {
+      directOutput TRUE
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+
+
+      field MFNode boxes [USE B0
+           USE B1 USE B2 USE B3 USE B4 
+           USE B5 USE B6 USE B7 USE B8 USE B9 
+      USE B10 USE B11 USE B12 USE B13 USE B14 ]
+      url [
+      "javascript:
+      function initialize(){
+	  tau = (Math.sqrt(5)+1)/2;
+	  rot3_1 = new SFRotation(1,1,1,2*Math.PI/3);
+	  rot3_2 = new SFRotation(1,1,1,4*Math.PI/3);
+	  boxes[1].set_rotation = new SFRotation(1,0,tau,2*Math.PI/5);
+	  boxes[2].set_rotation = new SFRotation(1,0,tau,4*Math.PI/5);
+	  boxes[3].set_rotation = new SFRotation(1,0,tau,6*Math.PI/5);
+	  boxes[4].set_rotation = new SFRotation(1,0,tau,8*Math.PI/5);
+	  boxes[5].set_rotation = new SFRotation(-1,0,tau,2*Math.PI/5);
+	  boxes[6].set_rotation = new SFRotation(-1,0,tau,4*Math.PI/5);
+	  boxes[7].set_rotation = new SFRotation(-1,0,tau,6*Math.PI/5);
+	  boxes[8].set_rotation = new SFRotation(-1,0,tau,8*Math.PI/5);
+	  boxes[9].set_rotation = new SFRotation(1,1,1,2*Math.PI/3);
+	  boxes[10].set_rotation = new SFRotation(1,1,1,-2*Math.PI/3);
+	  boxes[11].set_rotation = new SFRotation(1,1+1/tau,1+tau,Math.PI);
+	  boxes[12].set_rotation = new SFRotation(-1,1+1/tau,1+tau,Math.PI);
+	  boxes[13].set_rotation = new SFRotation(1,1+1/tau,-1-tau,Math.PI);
+	  boxes[14].set_rotation = new SFRotation(-1,1+1/tau,-1-tau,Math.PI);
+
+	  set_point(point,0);
+      }
+
+      function scale(x){
+	  v = 2*Math.abs(x);
+	  if(v < 0.0001){
+	      v = 0.0001;
+	  }
+	  return v;	   
+      }
+
+      function set_point(v,t){
+	  var s1 = scale(v.x);
+	  var s2 = scale(v.y);
+	  var s3 = scale(v.z);
+	  var vect = new SFVec3f(s1,s2,s3);
+	  var i;
+	  for( i = 0; i < 15; i++){
+	      boxes[i].set_scale = vect;
+	  }
+      }    
+      "
+      ]
+  }
+  
+}
+
+PROTO I_2_2_2_ [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0.7 0.7 0.2 
+exposedField SFColor color 0.80 0.68 0.27
+]{
+  Group {
+      children [
+      DEF B0 Transform { children SBoxO{ color IS color}}
+      DEF B1 Transform { children SBoxO{ color IS color}}
+      DEF B2 Transform { children SBoxO{ color IS color}}
+      DEF B3 Transform { children SBoxO{ color IS color}}
+      DEF B4 Transform { children SBoxO{ color IS color}}
+      DEF B5 Transform { children SBoxO{ color IS color}}
+      DEF B6 Transform { children SBoxO{ color IS color}}
+      DEF B7 Transform { children SBoxO{ color IS color}}
+      DEF B8 Transform { children SBoxO{ color IS color}}
+      DEF B9 Transform { children SBoxO{ color IS color}}
+      DEF B10 Transform {children SBoxO{ color IS color}}
+      DEF B11 Transform {children SBoxO{ color IS color}}
+      DEF B12 Transform {children SBoxO{ color IS color}}
+      DEF B13 Transform {children SBoxO{ color IS color}}
+      DEF B14 Transform {children SBoxO{ color IS color}}
+      ]
+  }
+
+  DEF TRANSPOLY_I_4_4_4 Script {
+      directOutput TRUE
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+
+
+      field MFNode boxes [USE B0
+           USE B1 USE B2 USE B3 USE B4 
+           USE B5 USE B6 USE B7 USE B8 USE B9 
+      USE B10 USE B11 USE B12 USE B13 USE B14 ]
+      url [
+      "javascript:
+      function initialize(){
+	  tau = (Math.sqrt(5)+1)/2;
+	  rot3_1 = new SFRotation(1,1,1,2*Math.PI/3);
+	  rot3_2 = new SFRotation(1,1,1,4*Math.PI/3);
+	  boxes[1].set_rotation = new SFRotation(1,0,tau,2*Math.PI/5);
+	  boxes[2].set_rotation = new SFRotation(1,0,tau,4*Math.PI/5);
+	  boxes[3].set_rotation = new SFRotation(1,0,tau,6*Math.PI/5);
+	  boxes[4].set_rotation = new SFRotation(1,0,tau,8*Math.PI/5);
+	  boxes[5].set_rotation = new SFRotation(-1,0,tau,2*Math.PI/5);
+	  boxes[6].set_rotation = new SFRotation(-1,0,tau,4*Math.PI/5);
+	  boxes[7].set_rotation = new SFRotation(-1,0,tau,6*Math.PI/5);
+	  boxes[8].set_rotation = new SFRotation(-1,0,tau,8*Math.PI/5);
+	  boxes[9].set_rotation = new SFRotation(1,1,1,2*Math.PI/3);
+	  boxes[10].set_rotation = new SFRotation(1,1,1,-2*Math.PI/3);
+	  boxes[11].set_rotation = new SFRotation(1,1+1/tau,1+tau,Math.PI);
+	  boxes[12].set_rotation = new SFRotation(-1,1+1/tau,1+tau,Math.PI);
+	  boxes[13].set_rotation = new SFRotation(1,1+1/tau,-1-tau,Math.PI);
+	  boxes[14].set_rotation = new SFRotation(-1,1+1/tau,-1-tau,Math.PI);
+
+	  set_point(point,0);
+      }
+
+      function scale(x){
+	  var v = 2*Math.abs(x);
+	  if(v < 0.0001){
+	      v = 0.0001;
+	  }
+	  return v;	   
+      }
+
+      function set_point(v,t){
+	  var s1 = scale(v.x);
+	  var s2 = scale(v.y);
+	  var s3 = scale(v.z);
+	  var vect = new SFVec3f(s1,s2,s3);
+	  var i;
+	  for( i = 0; i < 15; i++){
+	      boxes[i].set_scale = vect;
+	  }
+      }    
+      "
+      ]
+  }
+  
+}
+
+PROTO Animator [
+    eventOut SFVec3f point_changed 
+    eventOut SFRotation rotation_changed 
+]{
+    
+    DEF TIMER TimeSensor {
+	enabled TRUE
+	loop TRUE
+	cycleInterval 30
+    }
+    
+    DEF SCRIPT Script {
+	
+	eventIn SFTime set_time
+	eventOut SFVec3f point_changed IS point_changed 
+	eventOut SFRotation rotation_changed IS rotation_changed 
+	#field SFNode poly USE POLY
+	field SFTime t0 -1
+	field SFVec3f v 0.125 0.1 0.1
+	url [
+	"javascript:
+	
+	function initialize(){
+	    v[0] *= Math.random();
+	    v[1] *= Math.random();
+	    v[2] *= Math.random();
+	}
+
+	function set_time(p,t){
+
+	    if(t0 < 0){
+		t0 = t;		
+	    }
+	    var dt = t - t0;
+	    
+	    var fi1 = v[0]*dt;
+	    var fi2 = v[1]*dt;
+	    var fi3 = v[2]*dt;
+	    
+	    var vert = new SFVec3f(Math.cos(fi1),Math.sin(fi1),0);
+	    
+	    var rot1 = new SFRotation(0,1,0,fi2);	
+	    vert = rot1.multVec(vert);
+	    var rot2 = new SFRotation(1,0,0,fi3);	
+	    vert = rot2.multVec(vert);
+	    //trace(vert);
+	    
+	    point_changed = vert;
+	    rotation_changed = new SFRotation(0,1,0,fi3);
+	}
+	"
+	]
+    }
+    ROUTE TIMER.time TO SCRIPT.set_time
+}
+
+DEF TR Transform {
+    children [
+    DEF POLY I_2_2_2{color 0.80 0.68 0.27}
+    DEF POLY1 I_2_2_2_{color  0.47 0.27 0.70 }
+    ]
+}
+
+
+
+DEF ANIMATOR Animator {}
+DEF ANIMATOR1 Animator {}
+
+#
+ROUTE ANIMATOR.point_changed TO POLY.set_point
+ROUTE ANIMATOR.rotation_changed TO TR.set_rotation
+
+ROUTE ANIMATOR1.point_changed TO POLY1.set_point
+

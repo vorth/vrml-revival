@@ -1,0 +1,432 @@
+#VRML V2.0 utf8
+
+Viewpoint {
+   position 0 0 10
+}
+
+NavigationInfo {
+  type "EXAMINE"
+  headlight TRUE
+}
+#DirectionalLight {
+#  direction 0.2 -0.3 -1
+#}
+
+Background {
+    skyColor [
+    1 1 1
+    ]
+}
+
+PROTO Body [
+]{
+    Appearance {
+	material Material {
+	    diffuseColor 1 0.5 0.5
+	}
+    }
+}
+
+PROTO Hinge [
+field MFNode children []
+field SFFloat fi1 0
+field SFFloat fi2 0
+field SFFloat fi3 0
+eventIn SFFloat set_fi1 
+eventIn SFFloat set_fi2 
+eventIn SFFloat set_fi3 
+]{
+    DEF TR1 Transform {
+	rotation 1 0 0 0 # fi1
+	children DEF TR2 Transform {
+	    rotation 0 0 1 0 # fi2	    
+	    children DEF TR3 Transform {
+		rotation 0 1 0 0 # fi3
+		children IS children 
+	    }
+	}
+    }
+    DEF HINGE Script {
+	directOutput TRUE
+	field SFFloat fi1 IS fi1
+	field SFFloat fi2 IS fi2
+	field SFFloat fi3 IS fi3
+
+	eventIn SFFloat set_fi1 IS set_fi1
+	eventIn SFFloat set_fi2 IS set_fi2
+	eventIn SFFloat set_fi3 IS set_fi3
+
+	field SFNode tr1 USE TR1
+	field SFNode tr2 USE TR2
+	field SFNode tr3 USE TR3
+
+	field SFRotation r1 1 0 0 0
+	field SFRotation r2 0 0 1 0
+	field SFRotation r3 0 1 0 0
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    r1[3] = fi1;
+	    tr1.set_rotation = r1;
+
+	    r2[3] = fi2;
+	    tr2.set_rotation = r2;
+
+	    r3[3] = fi3;
+	    tr3.set_rotation = r3;
+	}
+	function set_fi1(v, t){
+	    r1[3] = v;
+	    tr1.set_rotation = r1;	    
+	}
+	function set_fi2(v, t){
+	    r2[3] = v;
+	    tr2.set_rotation = r2;	    
+	}
+	function set_fi3(v, t){
+	    r3[3] = v;
+	    tr3.set_rotation = r3;  
+	}
+	"
+	]
+
+    }
+    
+}
+
+PROTO Hand [
+
+field SFFloat fi1_shoulder 0.15
+field SFFloat fi2_shoulder 0
+field SFFloat fi3_shoulder 0
+
+field SFFloat fi1_elbow -0.3
+field SFFloat fi2_elbow 0
+field SFFloat fi3_elbow 0
+
+]{
+    Hinge {	    
+	fi1 IS fi1_shoulder
+	fi2 IS fi2_shoulder
+	fi3 IS fi3_shoulder
+	children Transform {
+	    translation 0 -0.2 0
+	    children [
+	    Shape {
+		geometry Cylinder {
+		    height 0.5
+		    radius 0.1 
+		}
+		appearance Body{
+		}
+	    }
+
+	    Transform {
+		translation 0 -0.2 0
+		children Hinge {
+
+		    fi1 IS fi1_elbow
+		    fi2 IS fi2_elbow
+		    fi3 IS fi3_elbow
+
+		    children Transform {
+			translation 0 -0.25 0
+			children [
+			Shape {
+			    geometry Cylinder {
+				height 0.55
+				radius 0.07 
+			    }
+			    appearance Body{
+			    }
+			}
+			]
+		    }
+		}
+	    }
+	    ]
+	}
+    }
+}
+
+PROTO Leg [
+
+field SFFloat fi1_pelvis -0.15
+field SFFloat fi2_pelvis 0
+field SFFloat fi3_pelvis 0
+
+field SFFloat fi1_knee 0.3
+field SFFloat fi2_knee 0
+field SFFloat fi3_knee 0
+
+
+]{
+    Hinge {	    
+	fi1 IS fi1_pelvis  
+	fi2 IS fi2_pelvis
+	fi3 IS fi3_pelvis
+	children Transform {
+	    translation 0 -0.3 0
+	    children [
+	    Shape {
+		geometry Cylinder {
+		    height 0.65
+		    radius 0.15 
+		}
+		appearance Body{
+		}
+	    }
+	    Transform {
+		translation 0 -0.3 0
+		children Hinge {
+		    fi1 IS fi1_knee
+		    fi2 IS fi2_knee
+		    fi3 IS fi3_knee
+
+		    children Transform {
+			translation 0 -0.35 0
+			children [
+			Shape {
+			    geometry Cylinder {
+				height 0.75
+				radius 0.1 
+			    }
+			    appearance Body{
+			    }
+			}
+			]
+		    }
+		}
+	    }
+	    ]
+	}
+    }
+}
+
+PROTO Head [
+
+]{
+    Hinge {
+	children [
+	Transform {
+	    translation 0 0.15 0
+	    children [
+	    Shape {
+		geometry Sphere {
+		    radius 0.15 
+		}
+		appearance Body {
+		}
+	    }
+	    ]
+	}
+	]
+    }
+}
+
+
+PROTO Chest [
+]{    
+    Hinge {
+	fi1 1
+	children [
+	Transform {
+	    translation 0 0.6 0 
+	    children Head {}	    	    
+	}
+	Transform {
+	    translation 0.3 0.5 0 
+	    children Hand {}
+	}
+	Transform {
+	    translation -0.3 0.5 0 
+	    children Hand {}
+	}
+	Transform {
+	    translation 0 0.1 0
+	    rotation 1 0 0 3.1415
+	    scale 1 1 0.5
+	    children [	    	    
+	    Shape {
+		geometry Cone {
+		    bottomRadius 0.4
+		    height 0.9
+		}
+		appearance Body {
+		}
+	    }
+	    ]
+	}
+	]
+    }
+}
+
+PROTO Hips [
+field SFFloat fi1_leg1 0
+]{
+    Hinge {
+	fi1 0
+	children [
+	Transform {
+	    translation 0.15 -0.3 0 
+	    children Leg {
+		
+	    }
+	}
+	Transform {
+	    translation -0.15 -0.3 0 
+	    children Leg {}
+	}
+	Transform {
+	    translation 0 0 0
+	    scale 1 1 0.6
+	    children [	    	    
+	    Shape {
+		geometry Cone {
+		    bottomRadius 0.3
+		    height 0.7
+		}
+		appearance Body {
+		}
+	    }
+	    ]
+	}
+	]
+    }
+}
+
+
+
+PROTO Man [
+
+]{
+    Group {
+	children [
+	Hinge { # chest 
+	    fi1 -0.1
+	    children [
+	    Transform {
+		translation 0 0.6 0 
+		children Head {}	    	    
+	    }
+	    Transform {
+		translation 0.3 0.5 0 
+		children DEF LHAND Hand {
+		    fi1_shoulder 2.5
+		    fi2_shoulder 0.7
+		    fi3_shoulder -1
+		}
+	    }
+	    Transform {
+		translation -0.3 0.5 0 
+		children DEF RHAND Hand {
+		    fi1_shoulder 3
+		    fi2_shoulder -0.5
+		    fi3_shoulder 1
+		}
+	    }
+	    Transform {
+		translation 0 0.1 0
+		rotation 1 0 0 3.1415
+		scale 1 1 0.5
+		children [	    	    
+		Shape {
+		    geometry Cone {
+			bottomRadius 0.35
+			height 0.9
+		    }
+		    appearance Body {
+		    }
+		}
+		]
+	    }
+	    ]
+	}
+
+	Hinge { # hips 
+	    fi1 0
+	    children [
+	    Transform {
+		translation 0.15 -0.3 0 
+		children DEF LLEG Leg {
+		    fi1_pelvis -0.8
+		    fi3_pelvis 0.
+		    fi1_knee 1
+		}
+	    }
+	    Transform {
+		translation -0.15 -0.3 0 
+		children DEF RLEG Leg {
+		    fi1_pelvis 0.6		    
+		}
+	    }
+	    Transform {
+		translation 0 0 0
+		scale 1 1 0.6
+		children [	    	    
+		Shape {
+		    geometry Cone {
+			bottomRadius 0.3
+			height 0.7
+		    }
+		    appearance Body {
+		    }
+		}
+		]
+	    }
+	    ]
+	    
+	}
+	]
+    }
+}
+
+Transform {
+    scale 0.5 0.5 0.5
+    translation -6 1 0
+    rotation 0 1 0 1
+    children Man {
+    }
+}
+
+
+Transform {
+    scale 8 1 1 
+    translation 0 -1 0
+    children [
+    Shape {
+	geometry IndexedFaceSet {
+	    solid FALSE
+	    coord Coordinate {
+		point [
+		-1 -1 0 1 -1 0 1 1 0 -1 1 0
+		]
+	    }
+	    coordIndex [
+	    0 1 2 3 -1
+	    ]
+	    texCoord TextureCoordinate {
+		point [
+		0 0 , 1 0, 1 1 , 0 1
+		]
+	    }
+	    texCoordIndex [
+	    0 1 2 3 -1	    
+	    ]
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 0.5 0.5 0.5
+	    }
+	    texture ImageTexture {
+		url [
+		"sg98.gif"
+		]
+	    }
+	}
+    }
+    ]
+    
+}

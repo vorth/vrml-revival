@@ -1,0 +1,96 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Hyperbolic Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+Background {
+    skyColor [0 0 0 ]
+}
+
+EXTERNPROTO Hyper [
+exposedField MFVec2f point 
+exposedField SFNode texture 
+exposedField SFNode textureTransform 
+]"6_5_proto.wrl"
+
+
+Transform {
+    scale 1.5 1.5 1.5
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Transform {
+	translation 0 0 -0.1
+	children Shape {
+	    geometry Box {
+		size 5 5 0.01
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 0 0 0
+		    transparency 1
+		}
+#		texture ImageTexture {
+#		    url [
+#		    "tex/random3.jpg"
+#		    ]
+#		}
+		
+		textureTransform DEF TTRANSFORM1 TextureTransform {
+		}
+	    }
+	}
+    }
+    DEF HYPER Hyper {
+	point [0 0, 1 0, 0.75 0.25]
+	texture DEF TEXTURE ImageTexture {
+	    url [
+# 	    "tex/spirals1.png"
+ 	    "tex/random11.jpg"
+	    ]
+	}
+
+	textureTransform DEF TTRANSFORM TextureTransform {	    
+	}
+    }
+    ]
+}
+
+Viewpoint { 
+position 0 0 3
+description "view"
+}
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}
+
+EXTERNPROTO TextureManupulator [
+eventIn SFVec3f set_point
+eventIn SFBool set_active
+field SFNode textureTransform 
+field SFFloat scale 
+field SFFloat speed 
+]"texture_manipulator.wrl"
+
+DEF TEXMANIP TextureManupulator {
+    speed 0.5
+    textureTransform USE TTRANSFORM 
+}
+
+ROUTE SENSOR.hitPoint_changed TO TEXMANIP.set_point
+ROUTE SENSOR.isActive TO TEXMANIP.set_active
+
+#DEF TEXMANIP1 TextureManupulator {
+#    textureTransform USE TTRANSFORM1 
+#    speed 0.1
+#    scale 1
+#}
+
+#ROUTE SENSOR.hitPoint_changed TO TEXMANIP.set_point
+#ROUTE SENSOR.isActive TO TEXMANIP.set_active
+
+

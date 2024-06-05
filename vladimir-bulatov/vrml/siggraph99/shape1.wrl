@@ -1,0 +1,207 @@
+#VRML V2.0 utf8
+
+Viewpoint {
+   position 0 0 10
+}
+
+NavigationInfo {
+  type "EXAMINE"
+  headlight FALSE
+}
+DirectionalLight {
+direction 0.2 -0.3 -1
+}
+
+PROTO Shape99 [
+]{
+  DEF EXT Extrusion  {
+    creaseAngle 1
+    crossSection [
+         0.1 0.1, 0.1 -0.1, -0.1  -0.1, -0.1 0.1, 0.1 0.1
+    ]        
+  }
+  DEF ILS IndexedLineSet {
+      coord Coordinate {
+         point[-1 -1 0, 1 -1 0, 1  1 0, -1 1 0]
+      }
+      coordIndex [
+        0 1 2 3 0 -1
+      ]
+        
+  }
+
+  DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+  }
+  
+  DEF SHAPE_SCRIPT Script {
+    
+     directOutput TRUE
+
+     eventIn SFTime set_time
+     
+     field SFNode ils USE ILS
+     field SFNode ext USE EXT
+     field MFInt32 index []
+     field MFVec3f coord []
+     field MFVec2f scale []
+     field MFVec3f coeff [
+        1, 1.00000, 0,
+       -3, 0.74326, 1.11184,
+        5,-0.12904,-0.16920,
+       -7,-0.80680,-0.62710,
+#        9,-0.02629,-0.04701, 
+      -11,-0.28189,-0.17907,
+      -15,-0.06295, 0.04387,
+#      -19,-0.02658, 0.03689,
+#      -23,-0.02739, 0.00581
+      ]
+      field SFInt32 N 128
+      field SFInt32 n 4
+      field SFFloat r  0.3
+      field MFVec2f cs []
+      field SFFloat delay 4
+      field SFTime t0 0
+
+     url[
+      "javascript:
+      
+        function makeVector(t, c){
+          var i;
+          for(i=0; i < coeff.length; i++){
+            cosfi = Math.cos(coeff[i][0]*t);
+            sinfi = Math.sin(coeff[i][0]*t);
+            c.x += coeff[i][1]*cosfi-coeff[i][2]*sinfi;
+            c.y += coeff[i][2]*cosfi+coeff[i][1]*sinfi;            
+          }
+          //c.z = 0.7*Math.cos(4*t+delay);
+          //c.z = Math.cos(2*t+Math.PI*0.6);
+          c.z = -Math.sin(2*t+Math.PI*0.1);
+        }
+
+        function initialize(time){
+          index = new MFInt32();
+          coord = new MFVec3f();
+          scale = new MFVec2f();
+          var i;
+          for(i = 0; i <=N/2; i++){
+            t = i/N*Math.PI*2-0.2;
+            coord[i] = new SFVec3f(0,0,0);
+            makeVector(t,coord[i]);
+	    var s = (Math.cos(4*t+4)+1.5)/2;
+	    scale[i] = new SFVec2f(s,s);
+          }
+          /*          
+          for(i = 0; i < N; i++){
+            index[i] = i;
+          }
+          index[N] = 0;
+          index[N+1] = -1;
+          
+          ils.set_coordIndex = index;
+          ils.coord.set_point = coord;
+          */
+	  
+          ext.set_spine = coord;
+          ext.set_scale = scale;
+          cs = new MFVec2f();
+          for(i =0; i <= n; i++){
+            fi = i*2*Math.PI/n+0.3;
+            cs[i] = new SFVec2f(r*Math.cos(fi), -r*Math.sin(fi));
+          }
+          ext.set_crossSection = cs;           
+	  trace('initialize');
+        }
+        
+       function init(){
+          for(i = 0; i <=N; i++){
+            t = i/N*Math.PI*2;
+            makeVector(t,coord[i]);
+          }        
+          ext.set_spine = coord;
+       }
+       function set_time(val){
+          if(t0 == 0){
+            t0 = val;
+          }
+          dt = val - t0;
+          delay = 2*Math.PI*dt*0.1;
+          
+          for(i = 0; i <=N/2; i++){
+            t = i/N*Math.PI*2-0.2;
+            //coord[i].z = Math.cos(4*t+delay);
+	      coord[i].z = -Math.sin(2*t+delay);
+          }        
+          
+          ext.set_spine = coord;
+	  
+          for(i =0; i <= n; i++){
+            fi = i*2*Math.PI/n + 0.3*dt;
+            cs[i] = new SFVec2f(r*Math.cos(fi), -r*Math.sin(fi));
+          }
+          //ext.set_crossSection = cs;           
+	  
+          //trace(dt);
+       }
+      "
+     ]
+  }
+  ROUTE TIMER.time TO SHAPE_SCRIPT.set_time
+}
+
+Transform {
+  scale 1 1 1
+  children [
+    DEF SHAPE Shape {
+    geometry  Shape99{     
+    }
+    appearance Appearance {
+       material Material {
+          diffuseColor 1 1 1
+          specularColor 1 1 0
+       }
+       texture ImageTexture {        
+        url ["texture11.jpg"]
+       }
+       textureTransform DEF TTRANS TextureTransform{
+        rotation 1.57
+        scale 1 1
+        #scale 32 1
+        translation 0. 0.2
+       }
+    }
+  }
+  Transform {
+      rotation 0 0 1 3.1415
+      children USE SHAPE
+  }
+  ]
+}
+
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF MAIN Script {
+  directOutput TRUE
+
+  eventIn SFTime set_time
+  field SFNode ttrans USE TTRANS
+  field SFTime t0 0
+  url [
+  "javascript:
+  function set_time(val){
+    if(t0 == 0){
+      t0 = val;
+    }
+    dt = val - t0;
+    ttrans.set_translation = new SFVec2f(0,-dt*0.1-0.2);
+  }
+  "
+  ]
+}
+
+ROUTE TIMER.time TO MAIN.set_time

@@ -1,0 +1,43 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO ExternBug [
+exposedField SFInt32 value
+eventOut SFTime init
+]"proto_bug_proto.wrl#Bug"
+
+PROTO Bug [
+exposedField SFInt32 value 10
+]{
+    Group {
+    }
+}
+
+DEF BUG Bug{}
+DEF EXTERNBUG ExternBug{}
+
+DEF SCRIPT Script {
+    directOutput TRUE
+    
+    eventIn SFTime init_externbug 
+    field SFNode bug USE BUG
+    field SFNode externbug USE EXTERNBUG
+
+    url [
+    "javascript:
+
+    function initialize(value, time){
+	trace('initialize()');	
+	trace('Bug.value = ' + bug.value);
+	trace('ExternBug.value = ' + externbug.value);
+    }
+
+    function init_externbug(value, time){	
+	trace('init_externbug()');	
+	trace('ExternBug.value = ' + externbug.value);	
+    }
+    
+    "
+    ]
+}
+
+ROUTE EXTERNBUG.init TO SCRIPT.init_externbug

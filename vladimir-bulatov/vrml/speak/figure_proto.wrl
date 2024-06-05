@@ -1,0 +1,179 @@
+#VRML V2.0 utf8
+
+PROTO Figure1 [
+field MFVec2f shape [0 0, 0 1, 1 0]
+eventIn MFVec2f set_shape 
+exposedField SFColor color 1 1 1
+] {
+    Transform {
+	rotation 1 0 0 -1.5708
+	children Shape {
+	    geometry Extrusion {
+		convex  FALSE
+		set_crossSection IS set_shape
+		crossSection IS shape
+		spine [0 0 0, 0 0.01 0]
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor IS color
+		}
+	    }
+	}
+    }
+}
+
+
+PROTO Figure [
+field MFVec2f shape [0 0, 0 1, 1 0]
+eventIn MFVec2f set_shape 
+exposedField SFColor color 1 1 1
+] {
+    Transform {
+	children Shape {
+	    geometry DEF IFS IndexedFaceSet {
+		convex  FALSE
+		colorPerVertex FALSE
+		solid FALSE
+		coordIndex[0,1,2,-1]
+		coord Coordinate{point[0 0 0, 0 1 0, 1 0 0]}
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor IS color
+		}
+	    }
+	}
+    }
+    Script {
+	directOutput TRUE
+	eventIn MFVec2f set_shape IS set_shape 
+	field SFNode ifs USE IFS
+	field MFVec2f shape IS shape 
+	url[
+	"javascript:
+	function initialize(value,time){
+	    
+	    var ci = new MFInt32();
+	    var coord = new MFVec3f();
+	    for( i = 0; i < shape.length; i++){
+		coord[i] = new SFVec3f(shape[i][0], shape[i][1], 0);
+		ci[i] = i;
+	    }
+	    ci[shape.length] = -1;
+
+	    ifs.set_coordIndex = ci;
+	    ifs.coord.set_point = coord;
+	}
+	function set_shape(value,time){
+	    shape = value;
+	    var ci = new MFInt32();
+	    var coord = new MFVec3f();
+	    for( i = 0; i < shape.length; i++){
+		coord[i] = new SFVec3f(shape[i][0], shape[i][1], 0);
+		ci[i] = i;
+	    }
+	    ci[shape.length] = -1;
+
+	    ifs.set_coordIndex = ci;
+	    ifs.coord.set_point = coord;
+	}
+	"
+	]
+    }
+}
+
+
+PROTO Arrow [
+
+field SFVec2f origin   0 0 
+field SFFloat angle    0 
+field SFFloat width  0.1 
+field SFFloat length 1 
+
+eventIn SFFloat set_angle
+eventIn SFFloat set_length
+
+exposedField SFColor color 1 0 0 
+]{
+    DEF TR Transform {
+	rotation 0 0 1 0
+	scale 0.3 1 1
+	children [
+	 DEF FIG Figure { color IS color}
+	#DEF FIG Transform {}
+	]
+    }
+
+    Script {
+
+	directOutput TRUE
+	field SFNode tr USE TR
+	field SFNode fig USE FIG
+
+	field SFFloat angle IS angle
+	field SFFloat width IS width
+	field SFFloat len IS length
+	field SFVec2f origin IS origin
+
+	eventIn SFFloat set_angle IS set_angle
+	eventIn SFFloat set_length IS set_length
+
+	url [
+	"javascript:
+	function initialize(value, time){
+	    cs = new MFVec2f();
+	    var w2 = width/2;	    
+	    ll = 1;
+	    cs[0] = new SFVec2f(0,w2);
+	    cs[1] = new SFVec2f(ll-width,w2);
+	    cs[2] = new SFVec2f(ll-width,width);
+	    cs[3] = new SFVec2f(ll,0);
+	    cs[4] = new SFVec2f(ll-width,-width);
+	    cs[5] = new SFVec2f(ll-width,-w2);
+	    cs[6] = new SFVec2f(0,-w2);
+
+	    fig.set_shape = cs;
+
+	    tr.set_scale = new SFVec3f(len,1,1);
+	    tr.set_rotation = new SFRotation(0,0,1,angle);
+	    tr.set_translation = new SFVec3f(origin[0],origin[1],0);
+	}
+
+	function set_angle(value, time){
+	    tr.set_rotation = new SFRotation(0,0,1,value);	    
+	}
+
+	function set_length(value, time){
+	    len = value;
+	    tr.set_scale = new SFVec3f(len,1,1);
+	    //cs = new MFVec2f();
+	    //var w2 = width/2;	    
+	    //cs[0] = new SFVec2f(0,w2);
+	    //cs[1] = new SFVec2f(ll-width,w2);
+	    //cs[2] = new SFVec2f(ll-width,width);
+	    //cs[3] = new SFVec2f(ll,0);
+	    //cs[4] = new SFVec2f(ll-width,-width);
+	    //cs[5] = new SFVec2f(ll-width,-w2);
+	    //cs[6] = new SFVec2f(0,-w2);
+	    //fig.set_shape = cs;
+
+	}
+	"
+	]
+    }
+}
+
+#Viewpoint {
+#    position 0 2 10
+#}
+
+Shape {
+    geometry Box{ size 0.1 0.1 0.1}
+    appearance Appearance {
+	material Material {}
+    }
+}
+Figure1 {
+    shape [-1, 1, 1 1, 1 -1, -1 -1]
+}

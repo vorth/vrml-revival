@@ -1,0 +1,426 @@
+<HTML>
+<head>
+<title>Kaleidoscope</title>
+
+<script language=JavaScript>
+
+function doWindow (what)
+{
+ window.open("/cgi-bin/bulatov/kaleidoscope?"+what,"kaleidoscope",
+"toolbar = no,location=no,directories=no,status=yes,menubar=no,scrollbars=no,resizable=yes,width=480,height=480")
+}
+
+function showPicture (what)
+{
+ window.open(what,"kaleidoscope",
+"toolbar = no,location=no,directories=no,status=yes,menubar=no,scrollbars=no,resizable=yes,width=480,height=480")
+}
+
+function Status(what){
+window.status = what;
+return true;
+}
+
+function Status0(){
+window.status = "Tetrahedron";
+return true;
+}
+function Status1(){
+window.status = "Octahedron";
+return true;
+}
+function Status2(){
+window.status = "Cube";
+return true;
+}
+function Status3(){
+window.status = "Icosahedron";
+return true;
+}
+function Status4(){
+window.status = "Dodecahedron";
+return true;
+}
+function Status5(){
+window.status = "Great Dodecahedron";
+return true;
+}
+function Status6(){
+window.status = "Great Stellated Dodecahedron";
+return true;
+}
+function Status7(){
+window.status = "Small Stellated Dodecahedron";
+return true;
+}
+function Status8(){
+window.status = "Great Icosahedron";
+return true;
+}
+
+</script>
+</head>
+
+<h1>Polyhedral kaleidoscope.</h1>
+
+
+Everybody have played with usual kaleidoscope - simple device consisting 
+of 3 mirrors and handful of colored pieces, which creates beautifull patterns, 
+when you look inside. <br>
+Not many yet have played with <b>polyhedral kaleidoscope</b> - virtual 
+device consisting of symmetry group of regular polyhedron and small picture, 
+which creates gorgeous patterns on polyhedron's surface. 
+Here you have a chance to try it.
+
+<p>
+<b>Instructions:</b> Every grayish square in the table represents kaleidoscope 
+with polyheron from corresponding row and with pattern from corresponding column. 
+Click it and have fun! If after click you don't have VRML window created, 
+than you need to enable javascript in your browser.
+
+<br><b>Hint:</b> clicking and draging with mouse polyhedron 
+in VRML window makes pattern to move.
+<br>
+If you don't have yet VRML2.0 browser - than first column in the table 
+gives your dull static reflection of what <b>polyhedral kaleidoscope</b> 
+is and it may encourage you to download 
+<a href="http://www.intervista.com/">WorldView2.0</a> or 
+<a href="http://cosmo.sgi.com/cgi-bin/download.cgi">Cosmo Player 2.0</a> VRML2.0 
+browser.
+<p>
+
+<table border = 1>
+<tr>
+<td>  .</td>
+<td><a href="", onClick="showPicture('k00.html');return false;" 
+  onMouseOver="return Status('pattern 0');">
+  <img src = "k00.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k01.html');return false;" 
+  onMouseOver="return Status('pattern 1');">
+ <img src = "k01.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k02.html');return false;" 
+  onMouseOver="return Status('pattern 2');">
+ <img src = "k02.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k03.html');return false;" 
+  onMouseOver="return Status('pattern 3');">
+ <img src = "k03.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k04.html');return false;" 
+  onMouseOver="return Status('pattern 4');">
+ <img src = "k04.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k05.html');return false;" 
+  onMouseOver="return Status('pattern 5');">
+ <img src = "k05.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k06.html');return false;" 
+  onMouseOver="return Status('pattern 6');">
+ <img src = "k06.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k07.html');return false;" 
+  onMouseOver="return Status('pattern 7');">
+ <img src = "k07.jpg" width=32 height=32></a></td>
+<td><a href="", onClick="showPicture('k08.html');return false;" 
+  onMouseOver="return Status('pattern 8');">
+ <img src = "k08.jpg" width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p0.jpg');return false;" 
+  onMouseOver="return Status0();"> 
+  <img src="p0_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('00');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('01');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('02');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('03');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('04');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('05');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('06');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('07');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('08');return false;"
+  onMouseOver="return Status0();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p1.jpg');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="p1_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('10');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('11');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('12');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('13');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('14');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('15');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('16');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('17');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('18');return false;"
+  onMouseOver="return Status1();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p2.jpg');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="p2_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('20');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('21');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('22');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('23');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('24');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('25');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('26');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('27');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('28');return false;"
+  onMouseOver="return Status2();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p3.jpg');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="p3_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('30');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('31');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('32');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('33');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('34');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('35');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('36');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('37');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('38');return false;"
+  onMouseOver="return Status3();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p4.jpg');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="p4_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('40');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('41');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('42');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('43');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('44');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('45');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('46');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('47');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('48');return false;"
+  onMouseOver="return Status4();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p5.jpg');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="p5_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('50');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('51');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('52');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('53');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('54');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('55');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('56');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('57');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('58');return false;"
+  onMouseOver="return Status5();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p6.jpg');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="p6_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('60');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('61');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('62');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('63');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('64');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('65');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('66');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('67');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('68');return false;"
+  onMouseOver="return Status6();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p7.jpg');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="p7_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('70');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('71');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('72');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('73');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('74');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('75');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('76');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('77');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('78');return false;"
+  onMouseOver="return Status7();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+<tr>
+<td><a href = "" onClick="showPicture('p8.jpg');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="p8_.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('80');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('81');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('82');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('83');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('84');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('85');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('86');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('87');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+<td><a href = "" onClick="doWindow('88');return false;"
+  onMouseOver="return Status8();"> 
+  <img src="k.jpg"width=32 height=32></a></td>
+</tr>
+</table>
+
+<p>
+<FONT SIZE = 1>
+&copy Copyright 1997 V.Bulatov.
+Commercial use of these materials is prohibited without 
+prior written permission. 
+</FONT>
+<p>
+<a href="../polyhedra/index.html">Back</a> to my polyhedra collection
+<hr>
+<a href="http://www.physics.orst.edu/~bulatov">
+<img src="../../s_bulat.jpg" alt="photo"></a>
+<address>e-mail:<a href="mailto:vladimir@bulatov.org">
+vladimir@bulatov.org</a></address>
+

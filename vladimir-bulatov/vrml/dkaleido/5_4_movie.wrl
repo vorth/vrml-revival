@@ -1,0 +1,138 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Hyperbolic Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+Background {
+    skyColor [0 0 0 ]
+}
+
+EXTERNPROTO Hyper [
+exposedField MFVec2f point 
+exposedField SFNode texture 
+exposedField SFNode textureTransform 
+]"5_4_movie_proto.wrl"
+
+EXTERNPROTO Torus [
+field SFFloat r 
+field SFFloat R 
+field SFFloat angle
+field SFInt32 n
+field SFInt32 N 
+field SFFloat creaseAngle 
+]"torus_proto.wrl"
+
+
+Transform {
+    scale 1.3 1.3 1.3
+    rotation 0 0 1 -2.19911
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Transform {
+	translation 0 0 -0.01
+	children [
+#	Shape {
+#	    geometry Box {
+#		size 5 5 0.001
+#	    }
+#	    appearance DEF A1 Appearance {
+#		material Material {
+#		    diffuseColor 0 0 0
+#		    transparency 1
+#		}
+#	    }
+#	}
+	Shape {
+	    geometry Torus {
+		R 1
+		r 0.095
+	    }
+	    appearance DEF A1 Appearance {
+		material Material {
+		    #emissiveColor 1 1 0.5
+		    diffuseColor 0 0 0
+		    transparency 0
+		}
+	    }	    
+	}
+	]
+    }
+    DEF HYPER Hyper {
+	#point [ 0 0 0.397975 0 0.245584 0.178427]
+	point [ 0 0 0.8 0 0.5 0.35]
+	texture DEF TEXTURE ImageTexture {
+	    url [
+	    ]
+	}
+
+	textureTransform DEF TTRANSFORM TextureTransform {
+	    
+	}
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {
+    loop TRUE
+    cycleInterval 5
+}
+
+DEF SCRIPT Script {
+
+    directOutput TRUE
+    eventIn SFTime set_time
+    field SFNode imtext USE TEXTURE
+    field MFString textures [
+    "tex/random2.jpg"
+    "tex/random3.jpg"
+    "tex/random4.jpg"
+    "tex/random5.jpg"
+    "tex/random6.jpg"
+    "tex/random7.jpg"
+    "tex/random8.jpg"
+    "tex/random9.jpg"
+    "tex/random10.jpg" 
+    "tex/random11.jpg"
+    "tex/random12.jpg"
+    "tex/toruses.png"
+    "tex/toruses1.jpg"
+    "tex/toruses2.png"
+    ]    
+    url [
+    "javascript:
+    function initialize(){
+	var n = Math.floor(textures.length*Math.random()-0.01);
+	imtext.set_url = new MFString (textures[n]);
+	trace(n);
+    }
+    "
+    ]
+}
+
+#ROUTE TIMER.cycleTime TO SCRIPT.set_time
+
+Viewpoint { 
+position 0 0 3
+description "view"
+}
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}
+
+EXTERNPROTO TextureManupulator [
+eventIn SFVec3f set_point
+eventIn SFBool set_active
+field SFNode textureTransform 
+]"texture_manipulator.wrl"
+
+DEF TEXMANIP TextureManupulator {
+    textureTransform USE TTRANSFORM 
+}
+
+ROUTE SENSOR.hitPoint_changed TO TEXMANIP.set_point
+ROUTE SENSOR.isActive TO TEXMANIP.set_active

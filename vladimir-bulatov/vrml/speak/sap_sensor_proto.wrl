@@ -1,0 +1,162 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "SAPSensor PROTO"
+    info [
+    "author"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+PROTO SAP_Sensor [
+field MFNode children []
+field MFString description ["no description"]
+exposedField SFBool enabled FALSE 
+eventOut MFString text 
+]{
+    Group {
+	children [
+	DEF SENSOR TouchSensor {
+	    enabled IS enabled
+	}
+	Group {
+	    children IS children
+	}
+	Switch {
+	    choice [
+	    Shape {
+		geometry Text {
+		    string IS description
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    DEF SCRIPT Script {
+	eventOut MFString text IS text
+	eventIn SFTime touchTime 
+	field MFString description IS description
+	url [
+	"javascript:
+	function touchTime(value, time){
+	    text = description;
+	}
+	"
+	]
+    }
+    ROUTE SENSOR.touchTime TO SCRIPT.touchTime
+}
+
+PROTO SAP_Controller_1 [
+eventIn MFString say
+field MFNode children []
+field MFNode sensors []
+eventIn SFBool enableSpeech 
+]{
+    DEF SCRIPT Script{
+        directOutput TRUE
+        eventIn MFString say
+        eventIn SFBool enableSpeech IS enableSpeech
+
+        field SFNode myself USE SCRIPT
+        field MFNode children IS children
+        field MFNode sensors IS sensors
+
+        url [
+	"javascript:
+        function initialize(){
+
+            for(i=0; i < children.length; i++){
+                Browser.addRoute(children[i],'text',
+                                 myself,'say');
+            }
+
+        } 
+
+	function enableSpeech(value, time){
+
+	    trace(value);
+	    for(i=0; i < children.length; i++){
+		children[i].enabled = value;
+	    }
+	    for(i=0; i < sensors.length; i++){
+		sensors[i].enabled = !value;
+	    }	    	    
+	}
+
+        function say(value, time){
+	    Browser.setDescription(value[0]);
+        }
+        "
+	]
+    }
+}
+
+PROTO SAP_Controller [
+eventIn MFString say
+field MFNode children []
+field MFNode sensors []
+eventIn SFBool enableSpeech 
+]{
+
+    DEF BUM_SOUND Sound {
+	direction 0 0 1
+	intensity 1
+	location 0 0 0
+	maxBack  20
+	maxFront 20
+	minBack  5
+	minFront 5
+	priority 1
+	spatialize TRUE
+	source DEF CLIP AudioClip {
+	    url []
+	    pitch 1
+	    loop FALSE
+	}
+    }
+
+    DEF SCRIPT Script{
+        directOutput TRUE
+        eventIn MFString say
+        eventIn SFBool enableSpeech IS enableSpeech
+
+        field SFNode myself USE SCRIPT
+        field MFNode children IS children
+        field MFNode sensors IS sensors
+	field SFNode clip USE CLIP
+
+        url [
+	"javascript:
+        function initialize(){
+
+            for(i=0; i < children.length; i++){
+                Browser.addRoute(children[i],'text',
+                                 myself,'say');
+            }
+
+        } 
+
+	function enableSpeech(value, time){
+
+	    trace(value);
+	    for(i=0; i < children.length; i++){
+		children[i].enabled = value;
+	    }
+	    for(i=0; i < sensors.length; i++){
+		sensors[i].enabled = !value;
+	    }	    	    
+	}
+
+        function say(value, time){
+	    Browser.setDescription(value[0]);
+	    clip.set_url = new MFString(value[1]);
+	    clip.startTime = time+0.5;
+        }
+        "
+	]
+    }
+}
+
+

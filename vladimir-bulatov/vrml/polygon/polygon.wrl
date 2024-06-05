@@ -1,0 +1,118 @@
+#VRML V2.0 utf8
+
+PROTO Polygon [
+field MFVec3f vertices []
+eventIn MFVec3f set_vertices 
+] {
+
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	convex FALSE
+	coordIndex [0 1 2 3 -1]
+	coord Coordinate {
+	    point [-2 -1 0, 1 -1 0, 1 1 0, -1 1 0]
+	}
+    }
+    
+    DEF Polygon Script {
+
+	directOutput TRUE
+
+	eventIn MFVec3f set_vertices IS set_vertices 
+	field SFNode ifs USE IFS
+	field MFVec3f vertices IS vertices
+
+	field MFInt32 ci []
+	field MFVec3f vertex []
+	
+	url [
+	#"polygon.js"
+	"PolygonNode.class"
+	]	
+    }
+}
+
+Shape {
+    geometry DEF POLY Polygon {
+	vertices [2 0 0 , -1 1 0, 1 -1 0, 1 1 0, -1 -1 0]
+	#vertices [-1 -1 0, 1 -1 0, 1 1 0, -1 1 0]
+    }
+    appearance Appearance {
+	material Material {
+	    diffuseColor 1 0 0
+	}
+    }
+}
+
+NavigationInfo {
+	type "EXAMINE"
+	headlight TRUE
+}
+
+
+DEF TIMER TimeSensor {
+    loop TRUE
+    cycleInterval 50
+}
+
+DEF SCRIPT Script {
+
+    eventIn SFFloat set_fraction
+    field SFNode poly USE POLY
+    field SFInt32 order 7
+    field SFInt32 skip 3
+    url [
+    "javascript:
+    function initialize(){
+	rot = new MFRotation();
+	for(var i = 0; i < order; i++){
+	    rot[i] = new SFRotation(0,0,1,skip*i*Math.PI*2/order);
+	}
+    }
+    function set_fraction(v,t){
+	vert = new MFVec3f();
+	
+	f = v*2*Math.PI;
+	
+	vert[0] = new SFVec3f(Math.cos(f), Math.sin(f),0);
+	vert[2*order-1] = new SFVec3f(vert[0].x, -vert[0].y, vert[0].z);
+	
+	for(var i = 1; i < order; i++){
+	    vert[2*i-1] = rot[i].multVec(vert[2*order-1]);
+	    vert[2*i] = rot[i].multVec(vert[0]);	    
+	}
+	/*
+	vert[1] = rot1.multVec(vert[9]);
+	vert[2] = rot1.multVec(vert[0]);
+	
+	vert[3] = rot2.multVec(vert[9]);
+	vert[4] = rot2.multVec(vert[0]);
+	
+	vert[5] = rot3.multVec(vert[9]);
+	vert[6] = rot3.multVec(vert[0]);
+	
+	vert[7] = rot4.multVec(vert[9]);
+	vert[8] = rot4.multVec(vert[0]);
+	*/
+	poly.set_vertices = vert;
+
+	/*
+	vert[3] = new SFVec3f(vert[0].x, -vert[0].y, vert[0].z);
+	
+	vert[7] = rot1.multVec(vert[3]);
+	vert[4] = rot1.multVec(vert[0]);
+	
+	vert[1] = rot2.multVec(vert[3]);
+	vert[8] = rot2.multVec(vert[0]);
+	
+	vert[5] = rot3.multVec(vert[3]);
+	vert[2] = rot3.multVec(vert[0]);
+	
+	vert[9] = rot4.multVec(vert[3]);
+	vert[6] = rot4.multVec(vert[0]);
+	*/
+    }
+    "
+    ]
+}
+ROUTE TIMER.fraction_changed TO SCRIPT.set_fraction

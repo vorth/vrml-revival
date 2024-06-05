@@ -1,0 +1,94 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+NavigationInfo {
+	type "NONE"
+	headlight FALSE
+}
+
+EXTERNPROTO AntiPrism [ 
+eventIn SFVec3f set_point
+field SFVec3f point 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventIn SFInt32 set_visible 
+field SFInt32 order
+field SFInt32 sub_order
+eventOut MFNode faces_changed 
+]"prisms_proto.wrl#AntiPrism"
+
+
+Viewpoint {
+    position 0 0 7
+    fieldOfView 0.3
+}
+
+DirectionalLight {
+    direction 0.5 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+DirectionalLight {
+    direction -2 0 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+DEF TRANS Transform {
+    children 
+DEF POLY AntiPrism { point 0.5 0.1 0.3  order 5 sub_order 4} 
+}
+
+PROTO Animator1 [
+field SFNode poly NULL
+field SFNode transform NULL
+]{
+    
+    DEF TIMER TimeSensor {
+	loop TRUE
+	enabled TRUE
+    }
+    
+    DEF ANIMATOR Script {
+	directOutput TRUE
+	field SFNode poly IS poly
+	field SFNode transform IS transform 
+	
+	eventIn SFTime set_time
+	field SFTime t0 0
+	
+	field SFVec3f point 0.2 0.1 0.8 
+	url [
+	"javascript:
+	var rot;
+	function initialize(){
+	}
+
+	function set_time(v,t){
+	    if(t0 == 0){
+		t0 = t;
+	    }
+	    var dt = t - t0;
+	    var phi = dt*Math.PI/40;
+
+	    var v = new SFVec3f(Math.cos(phi),0.05, Math.sin(phi));
+	    tau = (Math.sqrt(5)+1)/2;
+	    v = (new SFRotation(-tau,0,1/tau,-2*Math.PI/3)).multVec(v);
+	    poly.set_point = v;
+	    transform.set_rotation = new SFRotation(0,1,0,0.1*dt);
+	}
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO ANIMATOR.set_time
+}
+
+Animator1 {
+    poly USE POLY
+    transform USE TRANS
+}

@@ -1,0 +1,65 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rotator [
+field MFNode object
+exposedField SFRotation rotation
+exposedField SFRotation offset
+]"rotator_proto.wrl#Rotator"
+
+Rotator{
+    object DEF World Transform {}
+}
+
+Transform {
+  children [
+    Transform {
+      translation -5 0 0
+      children [
+        DEF ClickToCreate TouchSensor {}
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0 1 0
+            }
+          }
+          geometry Box {
+            size 0.5 0.5 0.5
+          }
+        }
+      ]
+    }
+    Transform {
+      translation 5 0 0
+      children [
+        DEF ClickToRemove TouchSensor {}
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 1 0 0
+            }
+          }
+          geometry Box {
+            size 0.5 0.5 0.5
+          }
+        }
+      ]
+    } 
+  ]
+}
+
+DEF DynamicVrml Script {
+  url [ "VrmlParser.class" ]
+  field MFString target_url [ "u20.wrl" ]
+  directOutput TRUE
+  mustEvaluate TRUE
+  field SFNode node USE World
+  eventIn MFNode newChildren
+  eventIn SFTime timeToCreate 
+  eventIn SFTime timeToRemove
+  
+}
+
+ROUTE ClickToCreate.touchTime TO DynamicVrml.timeToCreate
+ROUTE ClickToRemove.touchTime TO DynamicVrml.timeToRemove
+
+    

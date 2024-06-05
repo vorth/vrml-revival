@@ -1,0 +1,1935 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+PROTO APP [
+exposedField SFColor color 0.87 0.54 0.30
+]{
+    Appearance {
+	material Material {
+	    diffuseColor IS color
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+
+PROTO SimplePolygon [
+field MFVec3f vertices []
+eventIn MFVec3f set_vertices 
+] {
+
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	convex FALSE
+	coordIndex []
+	coord Coordinate {
+	    point []
+	}
+    }
+    
+    DEF SimplePolygon Script {
+
+	eventIn MFVec3f set_vertices IS set_vertices 
+	field SFNode ifs USE IFS
+	field MFVec3f vertices IS vertices
+
+	field MFInt32 ci []
+	field MFVec3f vertex []
+	
+	url [	
+	"javascript:
+	function initialize(){
+	    init();
+	}
+	function set_vertices(v,t){
+	    vertex = v;
+	    init();
+	}
+	function init(){
+	    ci = new MFInt32();
+	    for(var i = 0; i < vertex.length; i++){
+		ci[i] = i;
+	    }
+	    ci[vertex.length] = -1;
+	    ifs.coord.set_point = vertex; 
+	    ifs.set_coordIndex = ci;
+	}
+	"
+	]	
+    }
+}
+
+PROTO DodecahedronFaces[
+# accepts pentagon centered at (1, 0, tau)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group{
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 0 1 3.1415926
+		children IS children 
+	    }	
+	    ]
+	}
+	Transform {
+	    rotation 1 1 1 2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 1 1 -2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation -1 1 1 -2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 -1 1 2.094395102
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1
+	}	
+	]
+    }    
+}
+PROTO IcosahedronFaces [
+# accepts triangle centered at (0, tau, 1/tau)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation 1 0 1.618034 -2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation -1 0 1.618034 1.2566370614
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation -1 0 1.618034 -2.51327412
+		children IS children 
+	    }	
+	    Transform {
+		rotation 0 1.618034 1 2.51327412  
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 -1 1 2.094395 
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926 
+	    children USE S1 
+	}	
+	]
+    }
+}
+
+PROTO IcosahedronEdges [
+# accepts edge centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 1.618034 -2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 -1.256637
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 0 1.618034 -2.51327412
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 1 1 -2.0943951
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation -1 -1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 -1.618034 2.618034 3.1415926
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1 
+	}
+	Transform {
+	    rotation 1 1 1 -2.0943951
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 -1 1 2.0943951
+	    children IS children 
+	}
+	]
+    }
+}
+
+PROTO TetrahedronEdges [
+# accept rectangle parallel to tetrahedron edge centered at (0 0 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 1 1 2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 1 1 1 -2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation -1 -1 1 2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation -1 -1 1 -2.0943951023
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 	    
+	}
+	]
+    }
+}
+
+PROTO TetrahedronHalfEdges [
+# accept rectangle parallel to tetrahedron edge centered at (0 0 1)
+exposedField MFNode children []
+]{
+    TetrahedronEdges {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 0 1 3.1415926
+	    children IS children 	    
+	}
+	]
+    }
+}
+
+PROTO TetrahedronFaces [
+# accepts hexagon centered at (1,1,1) or at (1,-1,1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 0 0 1 3.1415926
+	    children IS children 	    
+	}
+	Transform {
+	    rotation 1 0 0 3.1415926
+	    children IS children 	    
+	}
+	]
+    }    
+}
+
+
+
+PROTO OctahedronFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 1.5708
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 -1.5708
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 1 0 3.1415926
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 0 1 3.1415926
+	    children USE S 
+	}
+	]
+    }
+}
+
+PROTO CubeFaces [
+# accepts square face centered at (0, 0, 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Group {
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 -1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children IS children 
+	}
+	Transform {
+	    rotation 1 0 0 -1.5708
+	    children IS children 
+	}
+	]
+    }
+}
+
+PROTO CubeEdges [
+# accept rectangle parallel to cube edge centered at (0 1 1)
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	DEF S1 Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 0 1 1.5708
+		children IS children 	    
+	    }
+	    Transform {
+		rotation 0 0 1 3.1415
+		children IS children 	    
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 0 1 0 1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 -1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children USE S1
+	}
+	Transform {
+	    rotation 1 0 0 -1.5708
+	    children USE S1
+	}
+	]
+    }
+}
+
+PROTO SymmetryTetrahedral [
+# rotational symmetry of tetrahedron 
+exposedField MFNode children []
+]{
+    TetrahedronFaces {
+	children [
+	Group {children IS children}
+	Transform {rotation 1 1 1 2.0943951023 children IS children}
+	Transform {rotation 1 1 1 -2.0943951023 children IS children}
+	]
+    }
+}
+
+PROTO Symmetry_T [
+exposedField MFNode children []
+]{
+    Group {
+	children[
+	DEF F Group {
+	    children [
+	    Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 0 0 1 3.1415926 
+		children IS children 
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 1 1 2.094395102 
+	    children USE F
+	}
+	Transform {
+	    rotation 1 1 1 -2.094395102 
+	    children USE F
+	}
+	Transform {
+	    rotation -1 1 1 -2.094395102 
+	    children USE F
+	}
+	Transform {
+	    rotation 1 -1 1 2.094395102 
+	    children USE F
+	}
+	Transform {
+	    rotation 0 1 0 3.1415926 
+	    children USE F
+	}
+	] 
+    }    
+}
+
+
+PROTO SymmetryOctahedral [
+# rotational symmetry of tetrahedron 
+exposedField MFNode children []
+]{
+    CubeEdges {
+	children [
+	Group {children IS children}
+	Transform {rotation 0 1 1 3.1415926 children IS children}
+	]
+    }
+}
+
+PROTO SymmetryIcosahedral [
+# rotational symmetry of tetrahedron 
+exposedField MFNode children []
+]{
+    IcosahedronEdges {
+	children [
+	Group {children IS children}
+	Transform {rotation 0 0 1 3.1415926 children IS children}
+	]
+    }
+}
+
+PROTO Symmetry_Cn [
+
+# shape to be transformed
+  exposedField MFNode children []
+  field SFInt32 order 0
+  eventIn SFInt32 set_order 
+
+]{
+    Group {
+	children [
+	DEF PART Group {
+	    children IS children 
+	}
+	DEF GROUP Transform{
+	    children []
+	}
+	]
+    }
+
+    DEF SYMMETRY_P Script {
+	directOutput TRUE
+
+	eventIn SFInt32 set_order IS set_order
+	
+	field SFNode group USE GROUP
+	field MFNode part [USE PART]
+	field SFInt32 order IS order
+               # this should be declared here to stop Cosmo's crush
+	field MFNode nodes [] 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+	}
+	function set_order(v,t){
+	    order = v;
+	    init();
+	}
+	function init(){
+	    nodes = new MFNode();
+	    if(order == 0){
+		return;
+	    }	    	    
+	    var i = 0;
+	    var tr;
+	    for( n3 = 1; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		tr = new SFNode('Transform{rotation 0 0 1  '+fi +'}');
+		tr.addChildren = part;
+		nodes[i] = tr;
+		i++;
+	    }
+	    
+	    group.children = nodes;
+
+	}
+	"
+	]
+    }
+}
+
+PROTO Symmetry_Dn [
+
+# shape to be transformed
+  exposedField MFNode children []
+  field SFInt32 order 1
+  eventIn SFInt32 set_order 
+
+]{
+    Group {
+	children [
+	DEF PART Group {
+	    children [
+	    DEF P Group {
+		children IS children 
+	    }
+	    DEF TR Transform {
+		#rotation 1 0 0 3.1415926
+		children IS children 
+	    }
+	    ]
+	}	
+	DEF GROUP Transform{
+	    children []
+	}	
+	]
+    }
+
+    DEF SYMMETRY_DN Script {
+	directOutput TRUE
+
+	eventIn SFInt32 set_order IS set_order
+	
+	field SFNode group USE GROUP
+	field MFNode part USE PART
+	field SFInt32 order IS order
+             # this should be declared here to stop Cosmo's crush
+	field MFNode nodes [] 
+	field SFNode tr USE TR 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+	}
+	function set_order(v,t){
+	    order = v;
+	    init();
+	}
+	function init(){
+	    nodes = new MFNode();
+	    if(order == 0){
+		return;
+	    }	    	    
+	    var i = 0;
+	    var f = Math.PI/(2*order);
+	    tr.set_rotation = new SFRotation(Math.cos(f), Math.sin(f), 0, Math.PI );
+	    // first element is alredy there
+	    for( n3 = 1; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		var t = new SFNode('Transform{rotation 0 0 1  '+fi +'}');
+		t.addChildren = part;
+		nodes[i] = t;
+		i++;
+	    }	    
+	    group.children = nodes;
+	}
+	"
+	]
+    }
+}
+
+PROTO Symmetry_Dh [
+
+# shape to be transformed
+  exposedField MFNode children []
+  field SFInt32 order 1
+  eventIn SFInt32 set_order 
+
+]{
+    Group {
+	children [
+	DEF PART Group {
+	    children [
+	    DEF P Group {
+		children IS children 
+	    }
+	    DEF TR Transform {
+		rotation 1 0 0 3.1415926
+		children IS children 
+	    }
+	    ]
+	}	
+	DEF GROUP Transform{
+	    children []
+	}	
+	]
+    }
+
+    DEF SYMMETRY_DN Script {
+	directOutput TRUE
+
+	eventIn SFInt32 set_order IS set_order
+	
+	field SFNode group USE GROUP
+	field MFNode part USE PART
+	field SFInt32 order IS order
+	field MFNode nodes [] 
+	field SFNode tr USE TR 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+	}
+	function set_order(v,t){
+	    order = v;
+	    init();
+	}
+	function init(){
+	    nodes = new MFNode();
+	    if(order == 0){
+		return;
+	    }	    	    
+	    var i = 0;
+	    // first element is already there
+	    for( n3 = 1; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		var t = new SFNode('Transform{rotation 0 0 1  '+fi +'}');
+		t.addChildren = part;
+		nodes[i] = t;
+		i++;
+	    }	    
+	    group.children = nodes;
+	}
+	"
+	]
+    }
+}
+
+
+PROTO Circle [
+]{
+Shape {
+    geometry DEF ILS IndexedLineSet {
+	coord Coordinate{
+	}
+    }
+    appearance Appearance {
+	material Material {
+	    emissiveColor 1 1 1
+	}
+    }
+}
+    DEF Circle Script {
+	directOutput TRUE
+	field SFNode ils USE ILS
+	url [
+	"javascript:
+
+	function initialize(){
+
+	    var coord = new MFVec3f();
+	    var ci = new MFInt32();
+	    var n = 32;
+	    for(var i=0; i <= n; i++){
+		var phi = i*Math.PI*2/n;
+		coord[i] = new SFVec3f(Math.cos(phi),Math.sin(phi),0);
+		ci[i] = i;
+	    }
+	    ci[n+1] = -1;	   
+	    ils.coord.set_point = coord;
+	    ils.set_coordIndex = ci;
+	}
+	"
+	]
+    }
+}
+
+PROTO CirclesTetrahedral [
+]{
+    Group {
+	children [
+	Shape {
+	    geometry Sphere {
+		radius 0.99
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 0.5 0.3 0.3
+		}
+	    }
+	}
+	DEF C Transform {
+	    rotation 1 1 0 1.5708 #0.7853981
+	    children Circle {}
+	}
+	Transform {
+	    rotation 0 0 1 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation 1 1 1 -2.09439
+	    children USE C
+	}
+	Transform {
+	    rotation 1 1 1 2.09439
+	    children USE C
+	}
+	Transform {
+	    rotation -1 -1 1 -2.09439
+	    children USE C
+	}
+	Transform {
+	    rotation -1 -1 1 2.09439
+	    children USE C
+	}
+	]
+    }
+}
+
+PROTO CirclesOctagonal [
+]{
+    Group {
+	children [
+#	Shape {
+#	    geometry Sphere {
+#		radius 0.99
+#	    }
+#	    appearance Appearance {
+#		material Material {
+#		    diffuseColor 0.5 0.3 0.3
+#		}
+#	    }
+#	}
+	DEF C Transform {
+	    rotation 1 0 0 1.5708
+	    children Circle {}
+	}
+	Transform {
+	    rotation 0 0 1 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation 0 0 1 0.7854
+	    children USE C
+	}
+	Transform {
+	    rotation 0 0 1 -0.7854
+	    children USE C
+	}
+	Transform {
+	    rotation 1 0 1 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation -1 0 1 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation 1 0 0 0.7854
+	    children USE C
+	}
+	Transform {
+	    rotation 1 0 0 -0.7854
+	    children USE C
+	}
+	]
+    }
+}
+
+PROTO CirclesIcosahedral [
+]{
+    Group {
+	children [
+#	Shape {
+#	    geometry Sphere {
+#		radius 0.99
+#	    }
+#	    appearance Appearance {
+#		material Material {
+#		    diffuseColor 0.5 0.3 0.3
+#		}
+#	    }
+#	}
+	DEF C Transform {
+	    rotation 1 0 0 1.5708
+	    children Circle {}
+	}
+	Transform {
+	    rotation 0 0 1 1.5708
+	    children USE C
+	}
+	Transform {
+	    rotation 1 0 1.61803 0.628318
+	    children USE C	    
+	}
+	Transform {
+	    rotation 1 0 1.61803 -0.628318
+	    children USE C	    
+	}
+	Transform {
+	    rotation 1 0 1.61803 1.2566
+	    children USE C	    
+	}
+	Transform {
+	    rotation 1 0 1.61803 -1.2566
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1 0 1.61803 0.628318
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1 0 1.61803 -0.628318
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1 0 1.61803 1.2566
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1 0 1.61803 -1.2566
+	    children USE C	    
+	}
+
+	Transform {
+	    rotation 1.61803 0 0.61803 2.09439
+	    children USE C	    
+	}
+	Transform {
+	    rotation 1.61803 0 0.61803 -2.09439
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1.61803 0 0.61803 2.09439
+	    children USE C	    
+	}
+	Transform {
+	    rotation -1.61803 0 0.61803 -2.09439
+	    children USE C	    
+	}
+	Transform {
+	    rotation 1 0 0 1.5708
+	    children USE C	    
+	}
+	]
+    }
+}
+
+# Definition: 
+# Cage is edges of convex hull of all symmetrically equivalent points 
+
+PROTO Cage_Ih [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+]{
+
+    SymmetryIcosahedral {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point [ 0.1 0.1 1, -0.1 0.1 1]
+		}
+		coordIndex [ 0 1 -1]
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+    DEF ICOSACAGE Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+
+	    var c = 0;
+	    ci[c++] = 2; ci[c++] = 0; ci[c++] = 1; ci[c++] = 3; ci[c++] = -1;
+	    ci[c++] = 0;ci[c++] = 4;ci[c++] = -1;
+	    ci[c++] = 1;ci[c++] = 5;ci[c++] = -1;	    
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+
+	    point = p;
+	    var t= (Math.sqrt(5)+1)/2;
+	    var rot5 = new SFRotation(1,0,t,-2*Math.PI/5);
+	    coord[0] = p;
+	    coord[1] = new SFVec3f(p.x, -p.y, p.z);
+	    coord[2] = new SFVec3f(0, p.y, p.z);
+	    coord[3] = new SFVec3f(0, -p.y, p.z);
+	    coord[4] = coord[0].add(rot5.multVec(coord[1])).multiply(0.5);
+	    coord[5] = new SFVec3f(coord[4].x,-coord[4].y,coord[4].z);
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+
+	    planes[0] = new SFVec3f(0,1,0);
+	    planes[1] = new SFVec3f(1,0,0);
+	    var tau = (Math.sqrt(5)+1)/2;
+	    var g1 = (new SFVec3f(1,0,tau)).normalize();
+	    var g2 = (new SFVec3f(-1,0,tau)).normalize();
+	    var c7 = (new SFVec3f(tau,0,1/tau)).normalize();
+	    var c8 = (new SFVec3f(-tau,0,1/tau)).normalize();
+	    var p0 = planes[0];
+	    planes[2] = (new SFRotation(g1,-Math.PI/5)).multVec(p0);
+	    planes[3] = (new SFRotation(g2,Math.PI/5)).multVec(p0);
+	    planes[4] = (new SFRotation(g1,-2*Math.PI/5)).multVec(p0);
+	    planes[5] = (new SFRotation(g2,2*Math.PI/5)).multVec(p0);
+	    planes[6] = (new SFRotation(g1,-3*Math.PI/5)).multVec(p0);
+	    planes[7] = (new SFRotation(g2,3*Math.PI/5)).multVec(p0);
+	    planes[8] = (new SFRotation(g1,-4*Math.PI/5)).multVec(p0);
+	    planes[9] = (new SFRotation(g2,4*Math.PI/5)).multVec(p0);
+	    planes[10] = (new SFRotation(c7,-Math.PI/3)).multVec(p0);
+	    planes[11] = (new SFRotation(c8,Math.PI/3)).multVec(p0);
+	    planes[12] = (new SFRotation(c7,-2*Math.PI/3)).multVec(p0);
+	    planes[13] = (new SFRotation(c8,2*Math.PI/3)).multVec(p0);	    
+	    planes[14] = new SFVec3f(0,0,1);
+
+	    rot_c5_1 = new SFRotation(1,1,1,2*Math.PI/3);
+	    rot_c5_2 = new SFRotation(1,1,1,4*Math.PI/3);
+	    rot_g1_1 = new SFRotation(g1,2*Math.PI/5);
+	    rot_g1_2 = new SFRotation(g1,4*Math.PI/5);
+	}
+
+	function make_canonical_point(p){
+	    // trace('In: ' + p);
+	    p.x = Math.abs(p.x);
+	    p.y = Math.abs(p.y);
+	    p.z = Math.abs(p.z);
+
+	    var s10 = p.dot(planes[10]);
+	    var s6 = p.dot(planes[6]);
+	    var s3 = p.dot(planes[3]);
+	    if(s10 > 0 && s6 > 0){
+		p = rot_c5_2.multVec(p);
+	    } else if(s6 < 0 && s3 > 0) {
+		p = rot_c5_1.multVec(p);		
+	    }
+	    
+	    var s2 = p.dot(planes[2]);
+	    // var s4 = p.dot(planes[4]);
+	    var s6 = p.dot(planes[6]);
+	    // var s8 = p.dot(planes[8]);
+	    if(s6 > 0){
+		p = rot_g1_2.multVec(p);
+	    } else if( s2 > 0) {
+		p = rot_g1_1.multVec(p);		
+	    }
+	    p.y = Math.abs(p.y);
+	    //trace('Out: ' + p);
+	    return p;
+	}
+	"
+	]
+    }    
+}
+
+PROTO Cage_I [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+# these are just required events 
+# to put the cage into polydisplay 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventOut MFNode faces_changed 
+eventIn SFInt32 set_visible 
+]{
+    Group {
+	children [
+	#Cage_Ih {
+	#    point 0.618 0 1 
+	#    color 0 0 1
+	#}
+	#Shape {
+	#    geometry Sphere {
+	#	radius 0.82 
+	#    }
+	#    appearance APP{color 0.8 0.8 0.8 }
+	#}
+    SymmetryIcosahedral {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point []
+		}
+		coordIndex []
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+]
+}
+    DEF CAGE_I Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	eventOut SFVec3f point_changed IS point_changed 
+	field MFInt32 ci []
+	field MFVec3f qsides [1 0 0,0 1 0,0 0 1,-1 0 0,0 -1 0, 0 0 -1]
+	field SFRotation rot5_1 1 0 0 0 
+	field SFRotation rot51 1 0 0 0 
+	field SFRotation rot3_1 1 0 0 0 
+	field SFRotation rot31 1 0 0 0 
+
+	field MFVec3f planes []
+	field MFVec3f dfaces [] # dodecahedron faces 
+	field MFVec3f ifaces [] # 5 icodsahedron faces 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+	    point_changed = point;
+
+	    var c = 0;
+	    ci[c++] = 6; ci[c++] = 1; ci[c++] = -1;
+	    ci[c++] = 2; ci[c++] = 0; ci[c++] = 3; ci[c++] = -1;
+	    ci[c++] = 4; ci[c++] = 0; ci[c++] = 5; ci[c++] = -1;
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    
+	    point = p;
+	    coord[0] = p;
+	    coord[2] = p.add(rot5_1.multVec(p)).multiply(0.5);
+	    coord[3] = p.add(rot51.multVec(p)).multiply(0.5);
+	    coord[4] = p.add(rot31.multVec(p)).multiply(0.5);
+	    coord[5] = p.add(rot3_1.multVec(p)).multiply(0.5);
+	    if(planes[2].dot(p) > 0){
+		coord[6] = rot51.multVec(p);
+		coord[1] = new SFVec3f(0,0,coord[6].z);
+	    } else {
+		coord[6] = coord[0];
+		coord[1] = new SFVec3f(0,0,p.z);
+	    }
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+	    var tau = (Math.sqrt(5)+1)/2;
+	    rot51 = new SFRotation(1,0,tau,Math.PI*2/5);
+	    rot5_1 = new SFRotation(1,0,tau,-Math.PI*2/5);
+	    rot31 = new SFRotation(0,1/tau,tau,Math.PI*2/3);
+	    rot3_1 = new SFRotation(0,1/tau,tau,-Math.PI*2/3);
+
+
+	    planes[0] = new SFVec3f(0,1,0);
+	    planes[1] = new SFVec3f(1,0,0);
+	    var tau = (Math.sqrt(5)+1)/2;
+	    var g1 = (new SFVec3f(1,0,tau)).normalize();
+	    var g2 = (new SFVec3f(-1,0,tau)).normalize();
+	    var c7 = (new SFVec3f(tau,0,1/tau)).normalize();
+	    var c8 = (new SFVec3f(-tau,0,1/tau)).normalize();
+	    var p0 = planes[0];
+	    planes[2] = (new SFRotation(g1,-Math.PI/5)).multVec(p0);
+	    planes[3] = (new SFRotation(g2,Math.PI/5)).multVec(p0);
+	    planes[4] = (new SFRotation(g1,-2*Math.PI/5)).multVec(p0);
+	    planes[5] = (new SFRotation(g2,2*Math.PI/5)).multVec(p0);
+	    planes[6] = (new SFRotation(g1,-3*Math.PI/5)).multVec(p0);
+	    planes[7] = (new SFRotation(g2,3*Math.PI/5)).multVec(p0);
+	    planes[8] = (new SFRotation(g1,-4*Math.PI/5)).multVec(p0);
+	    planes[9] = (new SFRotation(g2,4*Math.PI/5)).multVec(p0);
+	    planes[10] = (new SFRotation(c7,-Math.PI/3)).multVec(p0);
+	    planes[11] = (new SFRotation(c8,Math.PI/3)).multVec(p0);
+	    planes[12] = (new SFRotation(c7,-2*Math.PI/3)).multVec(p0);
+	    planes[13] = (new SFRotation(c8,2*Math.PI/3)).multVec(p0);	    
+	    planes[14] = new SFVec3f(0,0,1);
+
+	    dfaces[0] = new SFVec3f(1,0,tau);
+	    dfaces[1] = new SFVec3f(-1,0,tau);
+	    dfaces[2] = new SFVec3f(1,0,-tau);
+	    dfaces[3] = new SFVec3f(-1,0,-tau);
+	    dfaces[4] = new SFVec3f(0,tau,1);
+	    dfaces[5] = new SFVec3f(0,tau,-1);
+	    dfaces[6] = new SFVec3f(0,-tau,1);
+	    dfaces[7] = new SFVec3f(0,-tau,-1);
+	    dfaces[8] = new SFVec3f(tau,1,0);
+	    dfaces[9] = new SFVec3f(tau,-1,0);
+	    dfaces[10] = new SFVec3f(-tau,1,0);
+	    dfaces[11] = new SFVec3f(-tau,-1,0);
+
+	    ifaces[0] = (new SFVec3f(0,1/tau,tau)).normalize();
+	    ifaces[1] = (new SFVec3f(1,1,1)).normalize();
+	    ifaces[2] = (new SFVec3f(tau,0,1/tau)).normalize();
+	    ifaces[3] = (new SFVec3f(1,-1,1)).normalize();
+	    ifaces[4] = (new SFVec3f(0,-1/tau,tau)).normalize();
+	    
+
+	    rot_c5_1 = new SFRotation(1,1,1,2*Math.PI/3);
+	    rot_c5_2 = new SFRotation(1,1,1,4*Math.PI/3);
+	    rot_g1_1 = new SFRotation(g1,2*Math.PI/5);
+	    rot_g1_2 = new SFRotation(g1,4*Math.PI/5);	    
+	}
+
+	function make_canonical_point(p){	    
+	    var len = 0;
+	    var side = 0; 
+	    // inside of which side of dodecahedron is the point ? 
+	    for(var i =0; i < dfaces.length; i++){
+		var len1 = dfaces[i].dot(p);
+		if(len1 > len){
+		    len = len1; 
+		    side = i;
+		}
+	    } 
+	    var t = (Math.sqrt(5)+1)/2;
+	    
+	    switch(side){
+
+	      case 0: 
+ 		 break;
+	      case 1: 
+		 p = (new SFRotation(0,0,1,Math.PI)).multVec(p);
+ 		 break;
+	      case 2: 
+		 p = (new SFRotation(1,0,0,Math.PI)).multVec(p);
+ 		 break;
+	      case 3: 
+		 p = (new SFRotation(0,1,0,Math.PI)).multVec(p);
+ 		 break;
+	      case 4: 
+		 p = (new SFRotation(0,1/t,t,-Math.PI*2/3)).multVec(p);
+ 		 break;
+	      case 5: 
+		 p = (new SFRotation(t,1,0,Math.PI*4/5)).multVec(p);
+ 		 break;
+	      case 6: 
+		 p = (new SFRotation(0,-1/t,t,Math.PI*2/3)).multVec(p);
+ 		 break;
+	      case 7: 
+		 p = (new SFRotation(t,-1,0,-Math.PI*4/5)).multVec(p);
+ 		 break;
+	      case 8: 
+		 p = (new SFRotation(1,1,1,-Math.PI*2/3)).multVec(p);
+ 		 break;
+	      case 9: 
+		 p = (new SFRotation(1,-1,1,Math.PI*2/3)).multVec(p);
+ 		 break;
+	      case 10: 
+		 p = (new SFRotation(0,t,1,Math.PI*4/5)).multVec(p);
+ 		 break;
+	      case 11: 
+		 p = (new SFRotation(0,-t,1,-Math.PI*4/5)).multVec(p);
+		break;
+	    }
+	    
+	    var len = 0;
+	    var side = 0; 
+	    // inside of which icosahedron's is the point ? 
+	    for(var i = 0; i < ifaces.length; i++){
+		var len1 = ifaces[i].dot(p);
+		if(len1 > len){
+		    len = len1; 
+		    side = i;
+		}
+	    } 
+	    
+	    // move into appropriate segment inside of the face
+	    if(side > 0){
+		p = (new SFRotation(1,0,t,side*2*Math.PI/5)).multVec(p);
+	    }
+	   
+	    return p;
+	}
+	"
+	]
+    }    
+}
+
+
+PROTO Cage_Oh [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+]{
+
+    SymmetryOctahedral {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point [ 0.1 0.1 1, -0.1 0.1 1]
+		}
+		coordIndex [ 0 1 -1]
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+    DEF OCTACAGE Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+	    
+	    var c = 0;
+	    ci[c++] = 2; ci[c++] = 0; ci[c++] = 1; ci[c++] = 3; ci[c++] = -1;
+	    ci[c++] = 0;ci[c++] = 4;ci[c++] = -1;
+	    ci[c++] = 1;ci[c++] = 5;ci[c++] = -1;
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    
+	    point = p;
+	    coord[0] = p;
+	    coord[1] = new SFVec3f(p.x, -p.y, p.z);
+	    coord[2] = new SFVec3f((p.x+p.z)/2,p.y, (p.x+p.z)/2);
+	    coord[3] = new SFVec3f(coord[2].x,-coord[2].y,coord[2].z);
+	    coord[4] = new SFVec3f((p.x+p.y)/2,(p.x+p.y)/2,p.z);
+	    coord[5] = new SFVec3f(coord[4].x,-coord[4].y,coord[4].z);
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+
+	}
+
+	function make_canonical_point(p){
+
+	    // trace('In: ' + p);
+	    p.x = Math.abs(p.x);
+	    p.y = Math.abs(p.y);
+	    p.z = Math.abs(p.z);
+	    if(p.x > p.z){
+		var t = p.z;
+		p.z = p.x;
+		p.x = t;
+	    }
+	    if(p.y > p.x){
+		var t = p.y;
+		p.y = p.x;
+		p.x = t;
+	    }
+	    if(p.x > p.z){ // once more 
+		var t = p.z;
+		p.z = p.x;
+		p.x = t;
+	    }
+
+	    return p;
+	}
+	"
+	]
+    }
+    
+}
+
+
+PROTO Cage_Td [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+]{
+
+    SymmetryTetrahedral {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point [ 0.1 0.1 1, -0.1 0.1 1]
+		}
+		coordIndex [ 0 1 -1]
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+    DEF Cage_Td Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+	    
+	    var c = 0;
+	    ci[c++] = 2; ci[c++] = 0; ci[c++] = 1; ci[c++] = 3; ci[c++] = -1;
+	    ci[c++] = 0;ci[c++] = 4;ci[c++] = -1;
+	    ci[c++] = 1;ci[c++] = 5;ci[c++] = -1;
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    
+	    point = p;
+	    coord[0] = new SFVec3f(p.y, p.x, p.z);
+	    coord[1] = p;
+	    coord[3] = new SFVec3f((p.x - p.y)/2, -(p.x - p.y)/2,p.z);
+	    coord[2] = new SFVec3f(coord[3].y, coord[3].x,coord[3].z);
+	    coord[5] = new SFVec3f((p.x+p.z)/2,p.y,(p.x+p.z)/2);
+	    coord[4] = new SFVec3f(coord[5].y, coord[5].x,coord[5].z);
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+
+	}
+
+	function make_canonical_point(p){
+
+	    // these are empirical rules 
+
+	    if(p.y > p.x){ // test X and Y 
+		var t = p.y; p.y = p.x; p.x = t;
+	    }
+	    if(p.y < -p.x){
+		var t = p.y; p.y = -p.x; p.x = -t;		
+	    }
+	    if(p.z < p.x){ // test X and Z 
+		var t = p.z; p.z = p.x; p.x = t;		
+	    }
+	    if(p.z < -p.x){
+		var t = p.z; p.z = -p.x; p.x = -t;		
+	    }
+	    if(p.y > p.x){  // test Y and Y (once more)
+		var t = p.y; p.y = p.x; p.x = t;
+	    }
+	    if(p.y < -p.x){
+		var t = p.y; p.y = -p.x; p.x = -t;		
+	    }
+
+	    return p;
+	}
+	"
+	]
+    }
+    
+}
+
+PROTO Cage_Th [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+# these are just required events 
+# to put the cage into polydisplay 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventOut MFNode faces_changed 
+eventIn SFInt32 set_visible 
+]{
+
+#    Symmetry_T {
+    SymmetryTetrahedral {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point [ 0.1 0.1 1, -0.1 0.1 1]
+		}
+		coordIndex [ 0 1 -1]
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+    DEF CAGE_TH Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	eventOut SFVec3f point_changed IS point_changed 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+	    point_changed = point;
+
+	    var c = 0;
+	    ci[c++] = 2; ci[c++] = 0; ci[c++] = 6; ci[c++] = -1;
+	    ci[c++] = 3;ci[c++] = 1;ci[c++] = 7;ci[c++] = -1;
+	    ci[c++] = 4;ci[c++] = 0;ci[c++] = 1;ci[c++] = 5;ci[c++] = -1;
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    
+	    point = p;
+	    coord[0] = p;
+	    coord[1] = new SFVec3f(-p.x, p.y, p.z);
+	    coord[2] = new SFVec3f(p.x, 0, p.z);
+	    coord[3] = new SFVec3f(-p.x, 0, p.z);
+	    coord[4] = new SFVec3f((p.x+p.z)/2, (p.y+p.x)/2, (p.z+p.y)/2);
+	    coord[5] = new SFVec3f(-coord[4].x,coord[4].y,coord[4].z);
+	    coord[6] = new SFVec3f((p.x+p.y)/2, (p.y+p.z)/2, (p.z+p.x)/2);
+	    coord[7] = new SFVec3f(-coord[6].x,coord[6].y,coord[6].z);
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+
+	}
+
+	function make_canonical_point(p){
+
+	    p.x = Math.abs(p.x);
+	    p.y = Math.abs(p.y);
+	    p.z = Math.abs(p.z);
+	    if(p.z < p.x){
+		var t = p.x; p.x = p.y; p.y = p.z; p.z = t;		
+	    }
+	    if(p.z < p.y){
+		var t = p.x; p.x = p.z; p.z = p.y; p.y = t;		
+	    }
+	    if(p.z < p.x){
+		var t = p.x; p.x = p.y; p.y = p.z; p.z = t;		
+	    }
+	    return p;
+	}
+	"
+	]
+    }
+    
+}
+
+PROTO Cage_T [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+exposedField SFColor color 1 1 1
+# these are just required events 
+# to put the cage into polydisplay 
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventOut MFNode faces_changed 
+eventIn SFInt32 set_visible 
+]{
+    Group {
+	children [
+	#Cage_Oh {
+	#    point 0.7 0.7 0.7 
+	#    color 0 0 1
+	#}
+
+    Symmetry_T {
+	children [
+	Shape {
+	    geometry DEF ILS IndexedLineSet {
+		coord Coordinate {
+		    point []
+		}
+		coordIndex []
+	    }
+	    appearance Appearance {
+		material Material {
+		    emissiveColor IS color 
+		}
+	    }
+	}
+	]
+    }
+]
+}
+    DEF CAGE_T Script {
+	directOutput TRUE
+	field SFNode ils USE ILS 
+	eventIn SFVec3f set_point IS set_point 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	eventOut SFVec3f point_changed IS point_changed 
+	field MFInt32 ci []
+	field MFVec3f qsides [1 0 0,0 1 0,0 0 1,-1 0 0,0 -1 0, 0 0 -1]
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+
+	    set_point(point,0);
+	    point_changed = point;
+
+	    var c = 0;
+	    ci[c++] = 1; ci[c++] = 0; ci[c++] = 2; ci[c++] = -1;
+	    ci[c++] = 3; ci[c++] = 0; ci[c++] = 4; ci[c++] = -1;
+	    ils.set_coordIndex = ci;
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    
+	    point = p;
+	    coord[0] = p;
+	    coord[1] = new SFVec3f(0,0,p.z);
+	    coord[2] = new SFVec3f((p.x+p.z)/2, (p.y+p.x)/2, (p.z+p.y)/2);
+	    coord[3] = new SFVec3f((p.x+p.y)/2, (p.y+p.z)/2, (p.z+p.x)/2);
+	    if(p.x > p.y ){
+		coord[4] = new SFVec3f(-p.y, -p.z, p.x);
+	    } else {
+		coord[4] = new SFVec3f(-p.z, -p.x, p.y);
+	    }
+	    ils.coord.set_point = coord;
+	}
+
+	function init(){
+	    
+	}
+
+	function make_canonical_point(p){
+	    
+	    var len = 0;
+	    var side = 0; 
+	    // inside of which side of cube is the point ? 
+	    for(var i =0; i< qsides.length; i++){
+		var len1 = qsides[i].dot(p);
+		if(len1 > len){
+		    len = len1; 
+		    side = i;
+		}
+	    } 
+	    switch(side){
+	      case 0: 
+		 p = (new SFRotation(1,1,1,-2*Math.PI/3)).multVec(p);
+ 		 break;
+	      case 1: 
+		 p = (new SFRotation(1,1,1,2*Math.PI/3)).multVec(p);
+ 		 break;
+	      case 2:
+		 break;
+	      case 3:
+		 p = (new SFRotation(-1,1,1,2*Math.PI/3)).multVec(p);
+		 break;
+	      case 4:
+		 p = (new SFRotation(-1,-1,1,2*Math.PI/3)).multVec(p);
+		 break;
+	      case 5:
+		 p = (new SFRotation(0,1,0,Math.PI)).multVec(p);
+		 break;
+	    }
+	    
+	    // move point into upper rigth half of fron side 
+	    if(p.x < - p.y){ // rotation 0 1 0 pi
+	       p.x = -p.x; p.y = -p.y; 
+	    }
+	    
+	    return p;
+	}
+	"
+	]
+    }
+    
+}
+
+
+PROTO Cage_Dnh [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+field SFInt32 order 2
+eventIn SFInt32 set_order
+exposedField SFColor color 1 1 1
+]{
+    Shape {
+	geometry DEF ILS IndexedLineSet {
+	    coord Coordinate {
+		point [ 0.1 0.1 1, -0.1 0.1 1]
+	    }
+	    coordIndex [ 0 1 -1]
+	}
+	appearance Appearance {
+	    material Material {
+		emissiveColor IS color 
+	    }
+	}
+    }
+
+    DEF Cage_Dnh Script {
+	directOutput TRUE
+
+	eventIn SFVec3f set_point IS set_point 
+	field SFInt32 order IS order 
+	eventIn SFInt32 set_order IS set_order 
+
+	field SFNode ils USE ILS 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+
+	url [
+	"javascript:
+
+	function initialize(){
+
+	    set_point(point,0);
+	    set_ci();
+	}
+
+	function set_ci(){
+	    var c = 0;
+	    var order2 = order*2;
+	    ci = new MFInt32();
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = i;
+	    }
+	    ci[c++] = 0;
+	    ci[c++] = -1;
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = (i+order2);
+	    }
+	    ci[c++] = order2;
+	    ci[c++] = -1;
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = i;
+		ci[c++] = i+order2;
+		ci[c++] = -1;
+	    }
+	    ils.set_coordIndex = ci;
+	}
+	
+	function set_order(v,t){
+	    order = v;
+	    set_ci();
+	    set_point(point,t);
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    point = p;
+
+	    var rot = new SFRotation(0,0,1,2*Math.PI/order);
+	    var coord = new MFVec3f();
+	    coord[0] = new SFVec3f(p.x,-p.y,p.z);
+	    coord[1] = p;
+	    var order2 = order*2;
+
+	    for(var i = 2; i < order2; i++){
+		coord[i] = rot.multVec(coord[i-2])
+	    }
+
+	    for(var i = 0; i < order2; i++){
+		var v = coord[i];
+		coord[i+order2] = new SFVec3f(v.x,v.y,-v.z);
+	    }
+	    ils.coord.set_point = coord;
+	}
+
+	function make_canonical_point(p){
+	    var f = Math.atan2(p.y,p.x);
+	    if(f < 0.){
+		f += 2*Math.PI;
+	    }
+	    // trace('f: '+ (f / Math.PI));
+	    var fi = (2*Math.PI/order);
+	    var ord = Math.floor(f/fi + 0.5);
+	    var rot = new SFRotation(0,0,1,-ord*fi);	
+	    var v = rot.multVec(p);		
+	    if(v.y  < 0 ){
+		v.y = -v.y;
+	    }	    
+	    return v;
+	}
+	"
+	]
+    }    
+}
+
+PROTO Cage_Dnd [
+field SFVec3f point 0.1 0.1 1
+eventIn SFVec3f set_point 
+field SFInt32 order 2
+eventIn SFInt32 set_order
+exposedField SFColor color 1 1 1
+]{
+    Shape {
+	geometry DEF ILS IndexedLineSet {
+	    coord Coordinate {
+		point [ 0.1 0.1 1, -0.1 0.1 1]
+	    }
+	    coordIndex [ 0 1 -1]
+	}
+	appearance Appearance {
+	    material Material {
+		emissiveColor IS color 
+	    }
+	}
+    }
+
+    DEF APRISMCAGE Script {
+	directOutput TRUE
+
+	eventIn SFVec3f set_point IS set_point 
+	field SFInt32 order IS order 
+	eventIn SFInt32 set_order IS set_order 
+
+	field SFNode ils USE ILS 
+	field MFVec3f coord []
+	field SFVec3f point IS point 
+	field MFInt32 ci []
+	field MFVec3f planes []
+	field MFInt32 sign []
+
+	url [
+	"javascript:
+
+	function initialize(){
+
+	    set_point(point,0);
+	    set_ci();
+	}
+
+	function set_ci(){
+	    var c = 0;
+	    var order2 = order*2;
+	    ci = new MFInt32();
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = i;
+	    }
+	    ci[c++] = 0;
+	    ci[c++] = -1;
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = (i+order2);
+	    }
+	    ci[c++] = order2;
+	    ci[c++] = -1;
+	    for(var i = 0; i < order2; i++){
+		ci[c++] = i;
+		ci[c++] = (i+order2-1)%order2+order2;
+		ci[c++] = -1;
+	    }
+	    ils.set_coordIndex = ci;
+	}
+	
+	function set_order(v,t){
+	    order = v;
+	    set_ci();
+	    set_point(point,t);
+	}
+
+	function set_point(p,time){
+
+	    p = make_canonical_point(p);
+	    point = p;
+
+	    var rot = new SFRotation(0,0,1,2*Math.PI/order);
+	    var coord = new MFVec3f();
+	    coord[0] = new SFVec3f(p.x,-p.y,p.z);
+	    coord[1] = p;
+	    var order2 = order*2;
+
+	    for(var i = 2; i < order2; i++){
+		coord[i] = rot.multVec(coord[i-2])
+	    }
+	    var rot1 = new SFRotation(0,0,1,Math.PI/order);
+	    for(var i = 0; i < order2; i++){
+		var v = coord[i];
+		coord[i+order2] = rot1.multVec(new SFVec3f(v.x,v.y,-v.z));
+	    }
+	    ils.coord.set_point = coord;
+	}
+
+	function make_canonical_point(p){
+	    var f = Math.atan2(p.y,p.x);
+	    if(f < 0.){
+		f += 2*Math.PI;
+	    }
+	    //trace('f: '+ (f / Math.PI));
+	    var fi = (2*Math.PI/order);
+	    var ord = Math.floor(f/fi + 0.5);
+	    var rot = new SFRotation(0,0,1,-ord*fi);	
+	    var v = rot.multVec(p);		
+	    if(v.y  < 0 ){
+		v.y = -v.y;
+	    }	    
+	    return v;
+	}
+	"
+	]
+    }    
+}

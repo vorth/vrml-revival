@@ -1,0 +1,971 @@
+#VRML V2.0 utf8
+WorldInfo{
+	title "Bruckner XXIX.2"
+	info[
+	"Author: Vladimir Bulatov - bulatov@dots.physics.orst.edu"
+	]
+}
+NavigationInfo {
+	type "NONE"
+	headlight FALSE
+}
+DirectionalLight {
+    direction 0.5 -0.5 -2
+}
+Viewpoint{position 0 0 10 fieldOfView 0.25}
+
+
+Background {
+    skyColor 0.9 0.9 0.9
+}
+
+EXTERNPROTO HUD [
+  exposedField SFVec3f size 
+  exposedField SFVec3f translation 
+  exposedField SFRotation rotation 
+  field MFNode children 
+]"hud_proto.wrl"
+
+EXTERNPROTO Roller [
+exposedField MFNode children 
+exposedField SFRotation rotation
+exposedField SFRotation offset  
+field SFBool automatic 
+field SFFloat radius
+]"roller_proto.wrl"
+
+EXTERNPROTO Symmetry_I [
+# shape to be transformed
+ exposedField MFNode children 
+]"symmetry_i.wrl"
+
+EXTERNPROTO Symmetry_C5 [
+# shape to be transformed
+ exposedField MFNode children 
+]"symmetry_c5.wrl"
+
+PROTO Symmetry_D5 [
+
+# shape to be transformed
+ exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	DEF P Group {
+	    children [
+	    Transform { children IS children}
+	    
+	    Transform {rotation 1 0 1.61803  1.25664 children IS children}
+	    Transform {rotation 1 0 1.61803 -1.25664 children IS children}
+	    Transform {rotation 1 0 1.61803  2.51327 children IS children}
+	    Transform {rotation 1 0 1.61803 -2.51327 children IS children}
+	    ]
+	}
+	Transform {rotation -1.61803  2.61803  1 3.1415 children USE P}
+    ]
+    }
+}
+
+PROTO UnitDisk [
+]{
+    DEF IFS IndexedFaceSet {
+	coord Coordinate {
+	    point [-1 -1 0, 1 -1 0, 1 1 0, -1 1 0]
+	}
+	coordIndex [0 1 2 3 -1]
+	texCoord TextureCoordinate {
+	    point [0 0, 1 0, 1 1, 0 1 ]
+	}
+	texCoordIndex [0 1 2 3 -1]
+    }
+    DEF DISK_SCRIPT Script {
+	directOutput TRUE
+	field SFNode ifs USE IFS
+	field MFVec3f coord []
+	field MFVec2f texCoord []
+	field MFInt32 coordIndex []
+	
+	field SFInt32 N 16 
+	url[
+	"javascript:
+
+	function initialize(){
+
+	    for(i =0 ; i <= N; i++){
+		coordIndex[i] = i;
+		var x = Math.cos(i*2*Math.PI/N);
+		var y = Math.sin(i*2*Math.PI/N);
+		texCoord[i] = new SFVec2f((x+1)/2,(y+1)/2);
+		coord[i] = new SFVec3f(x,y,0);
+	    }
+	    coord[N] = new SFVec3f(coord[0].x,coord[0].y,coord[0].z);
+	    texCoord[N] = new SFVec2f(texCoord[0].x,texCoord[0].y);
+	    coordIndex[N] = -1;
+	    ifs.coord.set_point = coord;
+	    ifs.texCoord.set_point = texCoord;
+	    ifs.set_coordIndex = coordIndex;
+	    ifs.set_texCoordIndex = coordIndex;
+	}
+	"
+	]
+    }
+}
+PROTO Plane [
+field MFVec3f points []
+]
+{
+    Shape {
+	
+	geometry DEF IFS IndexedFaceSet{
+	    ccw TRUE
+	    solid FALSE
+	    coord DEF COORD Coordinate{
+		point IS points
+	    }	    
+	    coordIndex [
+	    0, 1, 2,-1,
+	    ]
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 0.3 0.5 1
+	    }
+	}
+    }
+    DEF PLANE_SCRIPT Script {
+	directOutput TRUE
+	field SFNode ifs USE IFS
+	field MFVec3f point IS points
+	field SFFloat scale 1
+	url [
+	"javascript:
+	function initialize (){
+	    var center = new SFVec3f(0,0,0);
+	    for(i =0; i < point.length; i++){
+		center = center.add(point[i]);
+	    }
+	    center = center.multiply(1/point.length);
+	    var ci = new MFInt32();
+	    for(i =0; i < point.length; i++){
+		ci[i] = i;
+		point[i] = point[i].subtract(center).multiply(scale).add(center);
+	    }
+	    ci[point.length] = -1;
+
+	    ifs.coord.set_point = point;
+	    ifs.set_coordIndex = ci;
+	}
+	"
+	]
+    }
+    
+}
+
+PROTO MovingPlane [
+field MFVec3f axis [-1 1 0, 1 1 0]
+]{
+    DEF TRANSFORM Transform {
+	children [
+	DEF SENSOR CylinderSensor {
+	    diskAngle 0.1
+	}
+	DEF PLANE Transform {
+	    children Shape {
+		geometry Box {
+		    size 0.01 2 4
+		}
+		appearance Appearance {
+		    material Material {
+			diffuseColor 0.3 0.5 1
+		    }
+		}
+	    }
+	}
+	]
+    }
+    DEF MovingPlane_SCRIPT Script {
+	directOutput TRUE
+	field SFNode transform USE TRANSFORM
+	field MFVec3f axis IS axis
+	url[
+	"javascript:
+
+	function initialize (){
+	    transform.set_translation = axis[0].add(axis[1]).multiply(0.5);
+	    transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),axis[0].subtract(axis[1]));
+	}
+	"
+	]
+    }
+    ROUTE SENSOR.rotation_changed TO PLANE.set_rotation
+}
+
+PROTO B29_2_part [
+
+]{
+    Shape {
+	geometry IndexedFaceSet {
+	    solid FALSE
+	    colorPerVertex FALSE
+	    coord Coordinate {
+		point [
+		-0.131496 0.557026 0.820019
+		-0.769792 0.475757 0.42553
+		-0.901288 0.262992 -0.344261
+		-0.131496 0.131496 -0.982557
+		0.131496 0.131496 -0.982557
+		0.901288 0.262992 -0.344261
+		0.769792 0.475757 0.42553
+		0.131496 0.557026 0.820019
+		
+		-0.131496,0.394488, 0.131496
+		0.131496,0.394488, 0.131496
+		]
+	    }
+	    coordIndex [
+	    8 0 5 -1,
+	    8 3 1 -1,
+	    9 6 4 -1,
+	    9 2 7 -1
+	    ]
+	    colorIndex [0 0 1 1]
+	    color Color {
+		color [ 0.3 0.5 1, 1 0.5 0.3]
+	    }
+	}
+	appearance Appearance {
+	    material Material {
+		diffuseColor 0.3 0.8 1
+	    }
+	}
+    }
+}
+
+#B29_2_part {
+#}
+
+PROTO B29_2_part_1 [
+field SFVec3f point 0.131496 0.557026 0.820019
+#field SFVec3f point -0.131496 0.982557 -0.131496
+eventIn SFVec3f set_point
+eventOut MFVec3f coord_changed
+]{
+#    Group {
+#	children [
+#	Shape {
+#	    geometry 
+    IndexedFaceSet {
+		solid FALSE
+		colorPerVertex FALSE
+		coord DEF COORD Coordinate {
+		    point [
+		    
+		    ]
+		}
+		coordIndex [
+		4 0 2 -1,
+		4 3 1 -1,
+#		9 6 8 -1,
+#		9 7 5 -1
+		]
+#		colorIndex [0 0 1 1]
+#		color Color {
+#		    color [ 0.3 0.5 1, 1 0.5 0.3]
+#		}
+	    }
+#	    appearance Appearance {
+#		material Material {
+#		    diffuseColor 0.3 0.4 1
+#		}
+#	    }
+#	}
+#	Switch {
+#	    whichChoice -1
+#	    choice [
+#	    DEF GROUP Group {
+#		children [
+#		DEF T1 Transform {
+#		    children [
+#		    DEF S Shape {
+#			geometry Sphere {
+#			    radius 0.05
+#			}
+#			appearance Appearance {
+#			    material Material {
+#				diffuseColor 1 0.8 0.3
+#			    }
+#			}
+#			
+#		    }	
+#		    ]
+#		}
+#		Transform { children USE S }
+#		Transform { children USE S }
+#		Transform { children USE S }
+#		Transform { children USE S }
+#		#Transform { translation - 0.131496 0.131496 -0.982557
+#		#children USE S }
+#		]
+#	    }
+#	    ]
+#	}
+#	]
+#   }
+	
+    DEF B29_2_part_1 Script  {
+	directOutput TRUE
+	
+	eventIn SFVec3f set_point IS set_point
+	eventOut MFVec3f coord_changed IS coord_changed
+	field SFVec3f point IS point
+
+#	field SFNode group USE GROUP
+
+	field MFVec3f vertices []
+	field MFVec3f vertices2 []
+	field SFNode coord USE COORD
+	url [
+	"javascript:
+
+	function initialize(){
+	    vertices = new MFVec3f();
+	    vertices2 = new MFVec3f();
+	    init();	    
+	    for(i = i; i < 5;i++){
+		vertices2[i] = new SFVec3f(0,0,0);
+	    }
+	}
+
+	function set_point(val,time){
+	    point.x = val.x;
+	    point.y = val.y;
+	    point.z = val.z;
+	    init();
+	}
+
+
+	function init(){
+
+	    vertices[0] = point;
+
+	    var gam = (Math.sqrt(5)+1)/2;
+	    var rot = new SFRotation(1,0,gam ,-(Math.PI*2/5));	    
+	    vertices[1] = rot.multVec(point);
+
+	    rot = new SFRotation(1/gam,gam,0,2*Math.PI/3);	    
+	    vertices[2] = rot.multVec(point);
+	    vertices[2].x = -vertices[2].x;
+
+	    rot = new SFRotation(-gam,1,0,4*Math.PI/5);	    
+	    vertices[3] = rot.multVec(point);
+	    vertices[3].x = -vertices[3].x;
+	    
+	    vertices[4] = intersection(vertices[0],vertices[3],
+      	                                  vertices[1],vertices[2]); 
+	    /*
+	    for(i=0; i < 5; i++){
+		vertices[i+5].x = -vertices[i].x;
+		vertices[i+5].y = vertices[i].y;
+		vertices[i+5].z = vertices[i].z;
+	    }
+	    */
+	    
+	    var plane = new SFVec3f(1,0,gam);
+	    plane = plane.cross(new SFVec3f(0,gam,1));
+	    plane = plane.normalize();
+	    for(i=0; i < 5; i++){
+		vertices2[i] = reflect(plane, vertices[i]);
+	    }
+	    
+
+	    //for(i=0; i < 5; i++){
+	    //	group.children[i].set_translation = vertices[i];
+	    //  }
+	    coord.set_point = vertices;
+	    coord_changed = vertices2;
+	}
+
+	function reflect(plane, vect){
+	    var d = 2*plane.dot(vect);
+	    return vect.subtract(plane.multiply(d));
+	}
+
+	function intersection(p0,p1,q0,q1){
+
+	    var c = p0.add(p1).add(q0).add(q1);
+	    var pq = p0.add(p1).subtract(q0).subtract(q1);	    
+	    var p = p0.subtract(p1);
+	    var q = q0.subtract(q1);
+
+	    var QQ = q.dot(q);
+	    var PP = p.dot(p);
+	    var PQP = pq.dot(p);
+	    var PQ = p.dot(q);
+	    var PQQ = pq.dot(q);
+	    var r = p.multiply(PQP*QQ-PQ*PQQ).add(q.multiply(-PP*PQQ+PQ*PQP));
+	    var r = r.multiply(1/(PQ*PQ-PP*QQ));
+	    c = c.add(r);
+	    //trace(r);
+	    c = c.multiply(1/4);
+	    
+	    return c;
+	}
+
+	"
+	]
+    }
+}
+
+PROTO B29_2_part_2 [
+exposedField MFVec3f coord [
+		0.131496 0.131496 -0.982557
+		0.901288 0.262992 -0.344261
+		0.769792 0.475757 0.42553
+		0.131496 0.557026 0.820019
+]
+]{
+    IndexedFaceSet {
+	solid FALSE
+	colorPerVertex FALSE
+	coord DEF COORD Coordinate {
+	    point IS coord
+	}
+	coordIndex [
+	4 1 3 -1, #9 6 8 -1,
+	4 2 0 -1  #9 7 5 -1
+	]
+    }
+}
+
+
+PROTO B29_2_part_12 [
+field SFVec3f point 0.131496 0.557026 0.820019
+#field SFVec3f point -0.131496 0.982557 -0.131496
+eventIn SFVec3f set_point
+eventOut MFVec3f coord_changed
+]{
+    IndexedFaceSet {
+	solid FALSE
+	colorPerVertex FALSE
+	coord DEF COORD Coordinate {
+	    point [
+	    
+	    ]
+	}
+	coordIndex [
+	4 0 2 -1,
+	4 3 1 -1,
+	9 6 8 -1,
+	9 7 5 -1
+	]
+    }
+	
+    DEF B29_2_part_12 Script  {
+	directOutput TRUE
+	
+	eventIn SFVec3f set_point IS set_point
+	eventOut MFVec3f coord_changed IS coord_changed
+	field SFVec3f point IS point
+
+	field MFVec3f vertices []
+	field SFNode coord USE COORD
+	url [
+	"javascript:
+
+	function initialize(){
+	    vertices = new MFVec3f();
+	    init();	    
+	    for(i = i; i < 5;i++){
+		vertices[i+5] = new SFVec3f(0,0,0);
+	    }
+	}
+
+	function set_point(val,time){
+	    point.x = val.x;
+	    point.y = val.y;
+	    point.z = val.z;
+	    init();
+	}
+
+
+	function init(){
+
+	    vertices[0] = point;
+
+	    var gam = (Math.sqrt(5)+1)/2;
+	    var rot = new SFRotation(1,0,gam ,-(Math.PI*2/5));	    
+	    vertices[1] = rot.multVec(point);
+
+	    rot = new SFRotation(1/gam,gam,0,2*Math.PI/3);	    
+	    vertices[2] = rot.multVec(point);
+	    vertices[2].x = -vertices[2].x;
+
+	    rot = new SFRotation(-gam,1,0,4*Math.PI/5);	    
+	    vertices[3] = rot.multVec(point);
+	    vertices[3].x = -vertices[3].x;
+	    
+	    vertices[4] = intersection(vertices[0],vertices[3],
+      	                                  vertices[1],vertices[2]); 
+	    
+	    var plane = new SFVec3f(1,0,gam);
+	    plane = plane.cross(new SFVec3f(0,gam,1));
+	    plane = plane.normalize();
+	    for(i=0; i < 5; i++){
+		vertices[i+5] = reflect(plane, vertices[i]);
+	    }
+	    
+
+	    coord.set_point = vertices;
+	}
+
+	function reflect(plane, vect){
+	    var d = 2*plane.dot(vect);
+	    return vect.subtract(plane.multiply(d));
+	}
+
+	function intersection(p0,p1,q0,q1){
+
+	    var c = p0.add(p1).add(q0).add(q1);
+	    var pq = p0.add(p1).subtract(q0).subtract(q1);	    
+	    var p = p0.subtract(p1);
+	    var q = q0.subtract(q1);
+
+	    var QQ = q.dot(q);
+	    var PP = p.dot(p);
+	    var PQP = pq.dot(p);
+	    var PQ = p.dot(q);
+	    var PQQ = pq.dot(q);
+	    var r = p.multiply(PQP*QQ-PQ*PQQ).add(q.multiply(-PP*PQQ+PQ*PQP));
+	    var r = r.multiply(1/(PQ*PQ-PP*QQ));
+	    c = c.add(r);
+	    c = c.multiply(1/4);
+	    
+	    return c;
+	}
+
+	"
+	]
+    }
+}
+
+PROTO PointOnSphere [
+
+eventOut SFVec3f point_changed 
+field SFVec3f point 0 0 1
+
+]{
+    Group {
+	children [
+	DEF SENSOR PlaneSensor {
+	    autoOffset FALSE	    
+	}
+	DEF THUMB Transform {
+	    children [
+	    Shape {
+		geometry Box {
+		    size 0.05 0.05 0.05
+		}
+		appearance Appearance {
+		    material Material {
+			diffuseColor 0.9 0.2 0.3
+		    }
+		}
+	    }
+	    ]
+	}
+	Shape {
+	    geometry UnitDisk {
+	    }
+	    appearance Appearance {
+		texture ImageTexture{
+		    url["ico_2.gif"]
+		    #url["ico_5.gif"]
+		}
+		material Material {
+		    diffuseColor 0.9 0.9 0.9
+		}
+	    }
+	}
+	]
+    }
+
+    DEF POINT_ON_SPHERE_SCRIPT Script {
+	directOutput TRUE
+
+	eventIn SFVec3f set_translation 
+	eventOut SFVec3f point_changed IS point_changed
+	field SFNode thumb USE THUMB
+	field SFNode sensor USE SENSOR
+
+	field SFVec3f point3 IS point
+	field SFVec3f point2 0 0 0
+	field SFRotation rot5 1 0 0 0
+	url [
+	"javascript:
+	function initialize(){
+	    point2 = point2plane(point3);
+	    sensor.set_offset = point2;
+	    rot5 = new SFRotation(1,0,0,0);//Math.atan(1/((Math.sqrt(5)+1)/2)));
+	}
+
+	function set_translation(val, time){
+	    var tr = val;
+	    var len = Math.sqrt(tr.x*tr.x+tr.y*tr.y);
+	    if(len > 1){
+		tr.x /= len;
+		tr.y /= len;
+	    }
+
+	    thumb.set_translation = tr;
+	    sensor.set_offset = tr;
+	    point3 = plane2point(val);
+	    point_changed = point3;
+	    
+	}	
+	function point2plane(p3){
+	    return new SFVec3f(0,0,0);
+	}
+	function plane2point(p2){
+	    var px = p2[0]; 
+	    var py = p2[1];
+	    
+	    var fi = Math.atan2(px, py);
+	    var tet = Math.PI*Math.sqrt(px*px + py*py);
+	    
+	    var sinfi = Math.sin(fi);
+	    var cosfi = Math.cos(fi);
+	    var sintet = Math.sin(tet);
+	    var costet = Math.cos(tet);
+	    var p = new SFVec3f(sintet*cosfi,  sintet*sinfi, costet);
+	    trace(p);
+	    return rot5.multVec(p);
+	    
+	}
+
+	"
+	]
+    }
+
+    ROUTE SENSOR.translation_changed TO POINT_ON_SPHERE_SCRIPT.set_translation
+}
+
+PROTO Make_6Rings[
+exposedField MFNode children []
+]{
+    Group {
+	children [
+	Transform {children IS children}
+	Transform {rotation 0 0 1 3.1415926 children IS children}
+	Transform {rotation 1 1 1 2.094395 children IS children}
+	Transform {rotation 1 1 1 -2.094395 children IS children}
+	Transform {rotation 1 -1 1 2.094395 children IS children}
+	Transform {rotation 1 -1 1 -2.094395 children IS children}
+	]
+    }
+}
+
+PROTO NodesContainer [
+exposedField MFNode nodes []
+]{Group {
+}
+}
+
+NodesContainer {
+    
+    nodes [
+    DEF AP1 Appearance {
+	material Material {
+	    diffuseColor 0.3 0.5 1
+	}
+    }	   
+    DEF AP2 Appearance {
+	material Material {
+	    diffuseColor 1.0 0.8 0.3
+	}
+    }	    
+    ]
+}
+
+PROTO Ring2 [
+field SFVec3f point 0.131496 0.557026 0.820019
+eventIn SFVec3f set_point
+exposedField SFNode appearance1  Appearance {
+    material Material {
+	diffuseColor 0.3 0.5 1
+    }
+}	   
+exposedField SFNode appearance2  Appearance {
+    material Material {
+	diffuseColor 1.0 0.8 0.3
+    }
+}	   
+] {
+    Symmetry_C5 {
+	children [
+	Shape {
+	    geometry DEF PART1 B29_2_part_1{
+	    }
+	    appearance IS appearance1
+	}
+	Transform {
+	    rotation -1.61803  2.61803  1 3.1415 
+	    children [
+	    Shape {
+		geometry DEF PART2 B29_2_part_2{
+		}
+		appearance IS appearance1 
+	    }	    
+	    Shape {
+		geometry USE PART1 
+		appearance IS appearance2
+	    }
+	    ]
+	}
+	Shape {
+	    geometry USE PART2 
+	    appearance IS appearance2
+	}
+	]
+    }
+
+    DEF RING2 Script {
+
+	directOutput TRUE
+	field SFNode part1 USE PART1
+	field SFVec3f point IS point
+	eventIn SFVec3f set_point IS set_point
+
+	url[
+	"javascript:
+
+	function initialize(){
+	    part1.set_point = point;
+	}
+	
+	function set_point(val, time){
+	    part1.set_point = val;
+	}
+	"
+	]
+    }
+    ROUTE PART1.coord_changed TO PART2.set_coord     
+}
+
+PROTO Ring12 [
+field SFVec3f point 0.131496 0.557026 0.820019
+eventIn SFVec3f set_point
+exposedField SFNode appearance1  Appearance {
+    material Material {
+	diffuseColor 0.3 0.5 1
+    }
+}	   
+exposedField SFNode appearance2  Appearance {
+    material Material {
+	diffuseColor 1 1 0.5 
+    }
+}	   
+exposedField SFNode appearance3  Appearance {
+    material Material {
+	diffuseColor 1 0.7 0.3 
+    }
+}	   
+exposedField SFNode appearance4  Appearance {
+    material Material {
+	diffuseColor 0.3 1 0.7 
+    }
+}	   
+exposedField SFNode appearance5  Appearance {
+    material Material {
+	diffuseColor 1 0.3 0.3  
+    }
+}	   
+exposedField SFNode appearance6  Appearance {
+    material Material {
+	diffuseColor 0.8 0.3 1 
+    }
+}	   
+] {
+    Group {
+	children [
+	Transform {
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry DEF PART B29_2_part_12{
+		    }
+		    appearance IS appearance1
+		}	    
+		]
+	    }
+	    ]
+	}
+
+	Transform {
+	    rotation 0 0 1 3.1415926 
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry USE PART
+		    appearance IS appearance2
+		}	    
+		]
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 1 1 2.094395 
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry USE PART
+		    appearance IS appearance3
+		}	    
+		]
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 1 1 -2.094395 
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry USE PART
+		    appearance IS appearance4
+		}	    
+		]
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 -1 1 2.094395 
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry USE PART
+		    appearance IS appearance5
+		}	    
+		]
+	    }
+	    ]
+	}
+	Transform {
+	    rotation 1 -1 1 -2.094395 
+	    children [
+	    Symmetry_D5 {
+		children [
+		Shape {
+		    geometry USE PART
+		    appearance IS appearance6
+		}	    
+		]
+	    }
+	    ]
+	}
+	]
+    }
+
+    DEF RING12 Script {
+
+	directOutput TRUE
+	field SFNode part USE PART
+	field SFVec3f point IS point
+	eventIn SFVec3f set_point IS set_point
+
+	url[
+	"javascript:
+
+	function initialize(){
+	    part.set_point = point;
+	}
+	
+	function set_point(val, time){
+	    part.set_point = val;
+	}
+	"
+	]
+    }
+}
+
+Transform {
+    translation -0.5 0 0
+    children [
+    Roller {
+	children [
+#	Inline {
+#	    url["u29_cage.wrl"]
+#	}
+	DEF PART Ring2{
+	    point 0 0 1
+#	    point 1 0 1.61803398874
+#	    point -1.01 0 1.61803398874
+	    
+	}
+	]
+    }
+    ]
+}
+
+
+HUD {
+    translation 0.3 -0.1 -2.2
+    children [
+    Transform {
+	scale 0.125 0.125 0.125
+	children [
+	DEF POINT_ON_SPHERE PointOnSphere {
+	}
+	]
+    }
+    ]
+}
+
+DEF TIMER TimeSensor {    
+    loop TRUE
+}
+
+DEF MAIN Script {
+
+    directOutput TRUE
+    eventIn SFTime set_time 
+    field SFNode part USE PART
+    field SFTime t0 0
+    field SFFloat velocity 0.01
+    field SFVec3f vector 0 0 1
+    url [
+    "javascript:
+    function set_time(v,t){
+	if(t0 == 0){
+	    t0 = t;
+	}
+	dt = t - t0;
+	fi = Math.PI*2*dt*velocity;
+	
+	traj2(fi);
+	part.set_point = vector;
+    }
+
+    function traj1(fi){
+	vector[0] = Math.cos(fi);
+	vector[1] = 0;
+	vector[2] = Math.sin(fi);
+    }
+    function traj2(fi){
+	vector[0] = Math.cos(fi)*Math.sin(fi/5);
+	vector[1] = Math.sin(fi/5);
+	vector[2] = Math.sin(fi)*Math.sin(fi/5);
+    }
+    
+    "
+    ]
+}
+
+#ROUTE TIMER.time TO MAIN.set_time
+
+ROUTE POINT_ON_SPHERE.point_changed TO PART.set_point

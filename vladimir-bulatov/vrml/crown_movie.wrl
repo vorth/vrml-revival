@@ -1,0 +1,528 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+NavigationInfo {
+	type "EXAMINE"
+	headlight FALSE
+}
+
+PROTO APP [
+exposedField SFColor color 0.87 0.54 0.30
+]{
+    Appearance {
+	material Material {
+	    diffuseColor IS color
+	    ambientIntensity 0.5
+	}	
+    }
+}
+
+#EXTERNPROTO Polygon [
+#field MFVec3f vertices 
+#eventIn MFVec3f set_vertices 
+#eventOut SFBool isReady 
+#]"polygon.wrl#Polygon"
+
+PROTO SimplePolygon [
+field MFVec3f vertices []
+eventIn MFVec3f set_vertices 
+] {
+
+    DEF IFS IndexedFaceSet {
+	solid FALSE
+	convex FALSE
+	coordIndex []
+	coord Coordinate {
+	    point []
+	}
+    }
+    
+    DEF SimplePolygon Script {
+
+	eventIn MFVec3f set_vertices IS set_vertices 
+	field SFNode ifs USE IFS
+	field MFVec3f vertices IS vertices
+
+	field MFInt32 ci []
+	field MFVec3f vertex []
+	
+	url [	
+	"javascript:
+	function initialize(){
+	    init();
+	}
+	function set_vertices(v,t){
+	    vertex = v;
+	    init();
+	}
+	function init(){
+	    ci = new MFInt32();
+	    for(var i = 0; i < vertex.length; i++){
+		ci[i] = i;
+	    }
+	    ci[vertex.length] = -1;
+	    ifs.coord.set_point = vertex; 
+	    ifs.set_coordIndex = ci;
+	}
+	"
+	]	
+    }
+}
+
+PROTO Symmetry_Cn [
+
+# shape to be transformed
+  exposedField MFNode children []
+  field SFInt32 order 0
+  eventIn SFInt32 set_order 
+
+]{
+    Group {
+	children [
+	DEF PART Group {
+	    children IS children 
+	}
+	DEF GROUP Transform{
+	    children []
+	}
+	]
+    }
+
+    DEF SYMMETRY_P Script {
+	directOutput TRUE
+
+	eventIn SFInt32 set_order IS set_order
+	
+	field SFNode group USE GROUP
+	field MFNode part [USE PART]
+	field SFInt32 order IS order
+               # this should be declared here to stop Cosmo's crush
+	field MFNode nodes [] 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+	}
+	function set_order(v,t){
+	    order = v;
+	    init();
+	}
+	function init(){
+	    nodes = new MFNode();
+	    if(order == 0){
+		return;
+	    }	    	    
+	    var i = 0;
+	    var tr;
+	    for( n3 = 1; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		tr = new SFNode('Transform{rotation 0 0 1  '+fi +'}');
+		tr.addChildren = part;
+		nodes[i] = tr;
+		i++;
+	    }
+	    
+	    group.children = nodes;
+
+	}
+	"
+	]
+    }
+}
+
+PROTO Symmetry_Dn [
+
+# shape to be transformed
+  exposedField MFNode children []
+  field SFInt32 order 0
+  eventIn SFInt32 set_order 
+
+]{
+    Group {
+	children [
+	DEF PART Group {
+	    children [
+	    DEF P Group {
+		children IS children 
+	    }
+	    Transform {
+		rotation 1 0 0 3.1415926
+		children USE P
+	    }
+	    ]
+	}	
+	DEF GROUP Transform{
+	    children []
+	}	
+	]
+    }
+
+    DEF SYMMETRY_P Script {
+	directOutput TRUE
+
+	eventIn SFInt32 set_order IS set_order
+	
+	field SFNode group USE GROUP
+	field MFNode part USE PART
+	field SFInt32 order IS order
+             # this should be declared here to stop Cosmo's crush
+	field MFNode nodes [] 
+
+	url [
+	"javascript:
+
+	function initialize(){
+	    init();
+	}
+	function set_order(v,t){
+	    order = v;
+	    init();
+	}
+	function init(){
+	    nodes = new MFNode();
+	    if(order == 0){
+		return;
+	    }	    	    
+	    var i = 0;
+	    var tr;
+	    // first element is alredy there
+	    for( n3 = 1; n3 < order; n3++){
+		var fi = n3*Math.PI*2/order;
+		tr = new SFNode('Transform{rotation 0 0 1  '+fi +'}');
+		tr.addChildren = part;
+		nodes[i] = tr;
+		i++;
+	    }	    
+	    group.children = nodes;
+	}
+	"
+	]
+    }
+}
+
+PROTO Crown [ 
+# 
+eventIn MFVec3f set_points
+field MFVec3f points [0.2 3 -1 0.5 2 1 ]
+field SFInt32 order 2
+field SFInt32 sub_order 1
+
+eventOut MFVec3f points_changed 
+eventOut SFInt32 face_types
+eventIn SFInt32 set_visible 
+]{
+ Group {
+      children [
+      Switch {
+	  whichChoice -1 
+	  choice [
+	  DEF T0 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P0 
+		  #Polygon {vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ] }
+		  IndexedFaceSet{ solid FALSE coord Coordinate {}}
+		  appearance APP{
+		      color 0.16 0.2 0.97
+		  }
+	      }
+	      ]
+	  }
+	  DEF T1 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P1 
+		  #Polygon {vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ] }
+		  IndexedFaceSet{ solid FALSE coord Coordinate {}}
+		  appearance APP{
+		      color 0.87 0.5 0.05
+		  }
+	      }
+	      ]
+	  }
+	  DEF T2 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P2 
+		  #Polygon {vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ] }
+		  IndexedFaceSet{ solid FALSE coord Coordinate {}}
+		  appearance APP{
+		      color  0.4 0.20 0.70 
+		  }
+	      }
+	      ]
+	  }
+	  DEF T3 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P3 
+		  #Polygon {vertices [1 1 0, -1 1 0, -1 -1 0, 1 -1 0 ] }
+		  IndexedFaceSet{ solid FALSE coord Coordinate {}}
+		  appearance APP{
+		      color   0.87 0.2 0.2 
+		  }
+	      }
+	      ]
+	  }
+	  ]
+      }
+      
+      DEF CN Symmetry_Cn {
+	  children [
+	  USE T0 USE T1 USE T2 USE T3
+	  ]
+      }
+      ]
+  }
+
+  DEF CROWN Script {
+      eventIn MFVec3f set_points IS set_points
+      field MFVec3f points IS  points
+
+      eventOut MFVec3f points_changed IS points_changed
+      eventOut SFInt32 face_types IS face_types
+      eventIn SFInt32 set_visible IS set_visible
+
+      field MFNode poly [USE P0 USE P1 USE P2 USE P3]
+      field MFNode sw [USE T0 USE T1 USE T2  USE T3 ]
+      field MFVec3f base []
+      field SFNode cn USE CN 
+
+      field SFInt32 order IS order
+      field SFInt32 sub_order IS sub_order
+
+      url [
+
+      "javascript:
+
+      function initialize(){
+	  init();
+	  points[0] = points[0].normalize();
+	  points[1] = points[1].normalize();
+	  set_points(points,0);
+      }
+
+      function init(){
+	  face_types = 4;
+	  cn.set_order = order;
+	  ci0 = new MFInt32();
+	  ci0[0] = 0;ci0[1] = 1;ci0[2] = 4;ci0[3] = -1;
+	  ci0[4] = 2;ci0[5] = 3;ci0[6] = 4;ci0[7] = -1;
+
+	  ci1 = new MFInt32();
+	  ci1[0] = 1;ci1[1] = 2;ci1[2] = 4;ci1[3] = -1;
+	  ci1[4] = 0;ci1[5] = 3;ci1[6] = 4;ci1[7] = -1;
+      }
+      
+      function set_visible(v,t){
+	  if(v & 0x80000000){
+	      sw[v & 0x7FFFFFFF].whichChoice = 0;
+	  } else {
+	      sw[v].whichChoice = -1;
+	  }
+      }
+
+      function set_points(p,t){
+	  points = p; 
+	  var v0 = p[0];
+	  var v1 = p[1];
+	  var rot1 = new SFRotation(0,0,1,2*Math.PI/order);
+	  var rot_1 = new SFRotation(0,0,1,-2*Math.PI/order);
+
+	  var p0 = new MFVec3f();
+	  p0[0] = v0;
+	  p0[1] = rot1.multVec(new SFVec3f(v1.x, -v1.y, v1.z));
+	  p0[2] = new SFVec3f(v0.x, -v0.y, v0.z);
+	  p0[3] = rot_1.multVec(v1);
+	  //poly[0].set_vertices = p0;	  
+
+	  var p1 = new MFVec3f();
+	  p1[0] = v0;
+	  p1[1] = v1;
+	  p1[2] = p0[2];
+	  p1[3] = new SFVec3f(v1.x, -v1.y, v1.z);
+	  //poly[1].set_vertices = p1;	  
+	  
+	  var p2 = new MFVec3f();
+	  p2[0] = v1;
+	  p2[1] = v0;
+	  p2[2] = rot1.multVec(new SFVec3f(v1.x, -v1.y, v1.z));
+	  p2[3] = rot1.multVec(new SFVec3f(v0.x, -v0.y, v0.z));
+	  //poly[2].set_vertices = p2;	  
+
+	  var p3 = new MFVec3f();
+	  p3[0] = v1;
+	  p3[1] = new SFVec3f(v0.x, -v0.y, v0.z);
+	  p3[2] = rot1.multVec(new SFVec3f(v1.x, -v1.y, v1.z));
+	  p3[3] = rot1.multVec(v0);
+	  //poly[3].set_vertices = p3;	  
+
+	  make_intersection(p0,poly[0]);
+	  make_intersection(p1,poly[1]);
+	  make_intersection(p2,poly[2]);
+	  make_intersection(p3,poly[3]);
+
+	  points_changed = points;
+      }
+
+      function make_intersection(p,pl){
+	  var v1 = intersection(p[0],p[3],p[2],p[1]);	  
+	  if(is_out(v1.z,p[0].z,p[1].z)){
+	      v1 = intersection(p[0],p[1],p[2],p[3]);
+	      p[4] = v1;
+	      pl.coord.set_point = p;	  
+	      pl.set_coordIndex = ci1;
+	  } else {
+	      p[4] = v1;
+	      pl.coord.set_point = p;	  
+	      pl.set_coordIndex = ci0;
+	  }	  
+      }
+
+      function is_out(x,x1,x2){
+	  if(x2 > x1){
+	      if(x > x2 || x < x1){
+		  return TRUE;
+	      }
+	  } else {
+	      if(x > x1 || x < x2){
+		  return TRUE;
+	      }	      
+	  }
+	  return FALSE;
+      }
+
+      // intersection of two segments (p0,p1) and (q0,q1)
+      function intersection(p0,p1,q0,q1){
+	  
+	  var c = p0.add(p1).add(q0).add(q1);
+	  var pq = p0.add(p1).subtract(q0).subtract(q1);	    
+	  var p = p0.subtract(p1);
+	  var q = q0.subtract(q1);
+	  
+	  var QQ = q.dot(q);
+	  var PP = p.dot(p);
+	  var PQP = pq.dot(p);
+	  var PQ = p.dot(q);
+	  var PQQ = pq.dot(q);
+	  var r = p.multiply(PQP*QQ-PQ*PQQ).add(q.multiply(-PP*PQQ+PQ*PQP));
+	  r = r.multiply(1/(PQ*PQ-PP*QQ));
+	  c = c.add(r);
+	  c = c.multiply(1/4);
+	  
+	  return c;
+      }
+      
+      "
+      ]
+  }
+  
+}
+
+PROTO Animator2 [
+field SFNode poly NULL
+field SFNode transform1 NULL
+field SFNode transform2 NULL
+]{
+    
+    DEF TIMER TimeSensor {
+	loop TRUE
+	enabled TRUE
+    }
+    
+    DEF ANIMATOR Script {
+	directOutput TRUE
+	field SFNode poly IS poly
+	field SFNode transform1 IS transform1 
+	field SFNode transform2 IS transform2 
+	
+	eventIn SFTime set_time
+	field SFTime t0 0
+	field MFVec3f points [1 0 0, 2 3 4]
+	field SFFloat speed 0.25
+	field SFVec3f fi0 0 0 0
+	field SFVec3f fi1 0 0 0
+	field SFVec3f w0 0 0 0
+	field SFVec3f w1 0 0 0
+
+	url [
+	"javascript:
+	var rot;
+	function initialize(){
+	    for(var i = 0; i < 3; i++){
+		w0[i] = speed*(1+Math.random())/2;
+		w1[i] = speed*(1+Math.random())/2;
+		fi0[i] = Math.PI*2*Math.random();		
+		fi1[i] = Math.PI*2*Math.random();
+	    }
+	}
+
+	function set_time(v,t){
+	    if(t0 == 0){
+		t0 = t;
+	    }
+	    var dt = t - t0;
+	    for(var i =0; i < 3; i++){
+		points[0][i] = Math.sin(fi0[i]+w0[i]*dt);
+		points[1][i] = Math.sin(fi1[i]+w1[i]*dt);
+	    }
+	    poly.set_points = points;
+	    var l1 = 1/points[0].length();
+	    var l2 = 1/points[1].length();
+	    if(l1 > l2){
+		transform2.set_scale = new SFVec3f(l2,l2,l2);
+	    } else {
+		transform2.set_scale = new SFVec3f(l1,l1,l1);
+	    }
+	    transform2.set_translation = new SFVec3f(0,0,-(points[0].z + points[1].z)/2);
+//	    transform1.set_rotation = new SFRotation(0,1,0,0.15*dt);
+	}
+	"
+	]
+    }
+    
+    ROUTE TIMER.time TO ANIMATOR.set_time
+}
+
+
+Viewpoint {
+    position 0 0 6
+    fieldOfView 0.3
+}
+
+DirectionalLight {
+    direction 0.5 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+DirectionalLight {
+    direction -1 -1 -2
+    intensity 0.7
+    ambientIntensity 0.2
+}
+
+
+DEF T1 Transform {
+    rotation 0 0 1 1.5708
+    children 
+    DEF T2 Transform {
+	children 
+	DEF POLY Crown {
+	    order 7
+	}
+    }
+
+}
+
+Animator2 {
+    transform1 USE T1
+    transform2 USE T2
+    poly USE POLY 
+}
+

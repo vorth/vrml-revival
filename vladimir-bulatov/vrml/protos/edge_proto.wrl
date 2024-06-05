@@ -1,0 +1,89 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+    title "cylinder with ends"
+    info [
+    "Copyright 1997 - Vladimir Bulatov"
+    "   bulatov@dots.physics.orst.edu",
+    ]
+}
+
+NavigationInfo { 
+    type "EXAMINE" 
+    headlight TRUE
+} 
+
+Viewpoint {
+    position 0 0 10
+}
+
+
+PROTO Edge [
+field MFVec3f ends [0,0,0, 0, 1, 0]
+field SFFloat radius 0.01
+exposedField SFNode appearance Appearance {
+    material Material{
+        diffuseColor 0.6 0.4 0.4
+    }
+}
+eventIn MFVec3f set_ends 
+]{
+    DEF TRANSFORM Transform{
+        
+        children [
+        Shape{
+            geometry Box{
+                size 1 1 1
+            }
+            appearance IS appearance
+        }
+        ]
+    }
+    
+    Script {
+        directOutput TRUE
+        eventIn MFVec3f set_ends IS set_ends
+        field MFVec3f ends IS ends
+        field SFFloat radius IS radius
+        field SFNode transform USE TRANSFORM
+
+        url [
+        "javascript:
+
+        function initialize(){
+            init();
+        }
+
+        function set_ends(v,t){     
+            ends[0] = v[0];
+            ends[1] = v[1];
+            init();
+        }
+
+        function init(){
+            transform.set_rotation = new SFRotation(
+                            new SFVec3f(0,1,0),ends[0].subtract(ends[1]));
+            transform.set_translation = ends[0].add(ends[1]).multiply(0.5);
+            var len = ends[0].subtract(ends[1]).length();
+            transform.set_scale = new SFVec3f(radius, len, radius);
+        }       
+        "]
+
+    }
+}
+
+# tetrahedron
+Transform{
+    rotation 1 0 0 0.5
+    children[
+    Edge{ends [ 1 1 1, -1 1 -1] radius 0.1}
+    Edge{ends [ -1 -1 1, 1 -1 -1] radius 0.1}
+    Edge{ends [ 1 1 1, 1 -1 -1] radius 0.1}
+    Edge{ends [ -1 -1 1, -1 1 -1] radius 0.1}
+    Edge{ends [ 1 1 1, -1 -1 1] radius 0.1}
+    Edge{ends [ 1 -1 -1, -1 1 -1] radius 0.1}
+    ]
+}
+
+
+

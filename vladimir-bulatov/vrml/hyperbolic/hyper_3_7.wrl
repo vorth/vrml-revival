@@ -1,0 +1,185 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Hyperbolic Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+EXTERNPROTO Hyper_3_7 [
+exposedField MFVec2f point 
+exposedField SFNode texture 
+exposedField SFNode textureTransform 
+]"hyper_3_7_proto.wrz"
+
+
+Transform {
+    scale 1.5 1.5 1.5
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Transform {
+	translation 0 0 -0.1
+	children Shape {
+	    geometry Box {
+		size 5 5 0.01
+	    }
+	    appearance Appearance {
+		material Material {
+		    diffuseColor 0 0 0
+		    transparency 0
+		}
+	    }
+	}
+    }
+    DEF HYPER Hyper_3_7 {
+	point [0 0, 1 0, 0.5 0.5]
+	texture DEF TEXTURE ImageTexture {
+	    url [
+	    "b12.jpg"
+	    ]
+	}
+
+	textureTransform DEF TTRANSFORM TextureTransform {
+	    
+	}
+    }
+    ]
+}
+
+Viewpoint { 
+position 0 0 3
+description "view"
+}
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}
+
+DEF TIMER TimeSensor {
+    loop TRUE
+}
+
+DEF SCRIPT Script {
+    
+    directOutput TRUE
+
+    eventIn SFVec3f set_point
+    eventIn SFBool set_active
+    eventIn SFTime set_time
+    
+    field SFBool isActive FALSE
+    field SFBool start FALSE
+    field SFVec2f p_down 0 0 
+    field SFVec2f p_curr 0 0 
+    
+    field SFNode ttransform USE TTRANSFORM
+
+    field SFInt32 mode 0 # 0 - translation 1 - rotation, 2 - scale    
+    field SFVec2f curr_trans 0 0 
+    field SFFloat curr_rotation 0
+    field SFFloat curr_scale 1
+    field SFTime t0 0
+    field SFTime told 0
+    url[
+    "javascript:
+
+    function initialize(){
+    }
+    
+    function set_time(val, time){
+	if(t0 == 0.){
+	    t0 = val;
+	    told = t0;
+	}
+	t = val - t0;
+	dt = val - told;
+	if(!isActive) {
+	    curr_rotation += 0.05*dt;
+	    curr_trans[0] += 0.025*Math.sin(t/20)*dt;
+	    curr_trans[1] += 0.025*Math.cos(t/20)*dt;
+	    ttransform.set_rotation = curr_rotation;		    
+	    ttransform.set_translation = curr_trans;
+	    ttransform.set_center = curr_trans;
+	    
+	    //trace(ttransform.rotation);
+	}
+
+	told = val;
+    }
+
+    function set_active(value, time){
+	if(value){
+	    isActive = TRUE;
+	    start = TRUE;
+	    //trace('mouse down');
+	} else {	    
+	    isActive = FALSE;
+	    //trace('mouse up');
+	}
+	
+    }
+
+    function set_point(val, time){
+	if(start){
+	    p_down[0] = val[0];
+	    p_down[1] = val[1];
+	    start = FALSE;
+	    //trace('down: ' + val);
+	    drag = TRUE;
+	    var r = p_down.length();
+	    if(r < 0.5){
+		mode = 0;
+	    } else {
+		mode = 1; // rotation or scale
+	    }
+	    return;
+	}
+
+	if(isActive){
+
+	    p_curr = new SFVec2f( val[0], val[1]);
+	    // translation
+	    if(mode == 0){ 
+		var dist = p_curr.subtract(p_down);		
+		dist =  curr_trans.add(dist);
+		//trace('down: ' + val);
+		ttransform.set_translation = dist;
+		ttransform.set_center = dist;
+		curr_trans = dist;
+		p_down = p_curr;
+
+	    } else { // scale rotation
+		
+		var s = curr_scale;
+		var l_old = p_down.length();
+		var l_curr = p_curr.length();
+		s *= l_old/l_curr;
+		
+		ttransform.set_scale = new SFVec2f(s,s);
+		curr_scale = s;
+
+		var fi = p_down[0]*p_curr[1] - p_down[1]*p_curr[0];
+		if(l_old != 0.0 && l_curr != 0.0){
+		    fi /= (l_old*l_curr);
+		    fin = Math.asin(fi);
+		    curr_rotation += fi;
+		    ttransform.set_rotation = curr_rotation;		    
+		}
+		
+		p_down = p_curr;
+		
+	    }
+
+	}	
+    }    
+    
+    "
+    ]
+    
+}
+
+ROUTE SENSOR.hitPoint_changed TO SCRIPT.set_point
+ROUTE SENSOR.isActive TO SCRIPT.set_active
+ROUTE TIMER.time TO SCRIPT.set_time
+

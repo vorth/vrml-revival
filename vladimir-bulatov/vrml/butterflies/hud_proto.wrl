@@ -1,0 +1,56 @@
+#VRML V2.0 utf8
+
+
+PROTO HUD [
+  exposedField SFVec3f size 3.4e38 3.4e38 3.4e38
+  exposedField SFVec3f translation 0.0 0.0 -10
+  exposedField SFRotation rotation 0 0 0 0
+  field MFNode children [] 
+]
+{
+    Group {
+	children [
+	#
+	# Make the sensor large enough to cover world
+	#
+	DEF UserPosition ProximitySensor {
+            center 0 0 0
+            size IS size
+	}
+	# 
+	# Transform containing the HUD shape.
+	# Gets its translation and rotation values from HUDProx.  The
+	# origin of the transformed space will be at the Viewpoint.
+	# The HUD shape objects are offset to make them visible (outside
+	# the inner clipping plane).
+	#
+	DEF HUD Transform
+	{
+            children [
+	    Transform {
+		children [
+		# Offset HUD objects relative to viewpoint by a -ve Z
+		# value such that it is not clipped by near clipping
+		# plane and is inside the collision radius defined by the
+		# avatar size so the HUD does not get occluded by objects
+		# when you bump into them.
+		Transform {
+		    translation IS translation
+		    rotation IS rotation
+		    # The HUD shape itself
+		    children IS children 		    
+		}
+		]
+	    }
+	    ]
+	}		
+	#
+	# The UserPosition and orientation is routed to the HUD Transform
+	# thus HUD moves with  user.
+	#
+	# end of HUD	
+    ]
+    }
+    ROUTE UserPosition.position_changed TO HUD.translation
+    ROUTE UserPosition.orientation_changed TO HUD.rotation
+} # end of HUD PROTO

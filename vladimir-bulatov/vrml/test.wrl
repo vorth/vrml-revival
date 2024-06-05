@@ -1,0 +1,60 @@
+#VRML V2.0 utf8
+
+
+DEF entry Viewpoint {
+
+  position 0 0 6
+
+  orientation 0 1 0 0
+
+  #fieldOfView 0.7854
+
+  description "entry"
+
+}
+
+DEF back Viewpoint {
+
+  position 0 0 -6
+
+  orientation 0 1 0 3.14
+
+  description "back"
+
+}
+
+Transform {
+  children [
+
+    Transform { 
+      translation 0 0 0
+      children [
+        DEF MouseB TouchSensor {},
+        Shape {
+          geometry Box {}
+          appearance Appearance {
+            material Material { diffuseColor 0 0 1 }  # Blue
+         }
+        }
+      ]
+    }
+
+    Transform {    # fourth child - cylinder
+      translation -3 0 0
+      children [
+        DEF MouseY TouchSensor {},
+        Shape {
+          geometry Cylinder {height 2 radius 0.7}
+          appearance Appearance {
+            material Material { diffuseColor 1 1 0 }  # yellow
+         }
+        }
+      ]
+    }
+
+  ] # end of children for world
+}
+
+Script{
+    url "VrmlTest.class"
+}

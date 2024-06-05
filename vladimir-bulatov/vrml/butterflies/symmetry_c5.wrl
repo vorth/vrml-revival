@@ -1,0 +1,31 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "part of Icosaheral Symmetry"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+
+PROTO Symmetry_C5 [
+
+# shape to be transformed
+ exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	DEF P Group {
+	    children [
+	    Transform { children IS children}
+	    
+	    Transform {rotation 1 0 1.61803  1.25664 children IS children}
+	    Transform {rotation 1 0 1.61803 -1.25664 children IS children}
+	    Transform {rotation 1 0 1.61803  2.51327 children IS children}
+	    Transform {rotation 1 0 1.61803 -2.51327 children IS children}
+	    ]
+	}
+#	Transform {rotation -1.61803  2.61803  1 3.1415 children USE P}
+
+
+    ]
+    }
+}

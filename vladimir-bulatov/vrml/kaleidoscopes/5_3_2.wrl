@@ -1,0 +1,232 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+    title "Tetrahedral Kaleidoscope"
+    info "author: Vladimir Bulatov, bulatov@dots.physics.orst.edu"
+}
+PROTO Symmetry_I [
+
+# shape to be transformed
+ exposedField MFNode children []
+
+]{
+    Group{
+	children[
+	Transform { children IS children}
+
+	Transform {rotation 0 1.61803 1  1.25664 children IS children}
+	Transform {rotation 0 1.61803 1 -1.25664 children IS children}
+	Transform {rotation 0 1.61803 1  2.51327 children IS children}
+	Transform {rotation 0 1.61803 1 -2.51327 children IS children}
+
+	Transform {rotation 0 1.61803 -1  1.25664 children IS children}
+	Transform {rotation 0 1.61803 -1 -1.25664 children IS children}
+	Transform {rotation 0 1.61803 -1  2.51327 children IS children}
+	Transform {rotation 0 1.61803 -1 -2.51327 children IS children}
+
+	Transform {rotation 1.61803 1 0  1.25664 children IS children}
+	Transform {rotation 1.61803 1 0 -1.25664 children IS children}
+	Transform {rotation 1.61803 1 0  2.51327 children IS children}
+	Transform {rotation 1.61803 1 0 -2.51327 children IS children}
+
+	Transform {rotation 1.61803 -1 0  1.25664 children IS children}
+	Transform {rotation 1.61803 -1 0 -1.25664 children IS children}
+	Transform {rotation 1.61803 -1 0  2.51327 children IS children}
+	Transform {rotation 1.61803 -1 0 -2.51327 children IS children}
+
+	Transform {rotation 1 0 1.61803  1.25664 children IS children}
+	Transform {rotation 1 0 1.61803 -1.25664 children IS children}
+	Transform {rotation 1 0 1.61803  2.51327 children IS children}
+	Transform {rotation 1 0 1.61803 -2.51327 children IS children}
+
+	Transform {rotation -1 0 1.61803  1.25664 children IS children}
+	Transform {rotation -1 0 1.61803 -1.25664 children IS children}
+	Transform {rotation -1 0 1.61803  2.51327 children IS children}
+	Transform {rotation -1 0 1.61803 -2.51327 children IS children}
+
+	Transform {rotation 0.61803 1.61803 0 2.09439 children IS children}
+	Transform {rotation 0.61803 1.61803 0 -2.09439 children IS children}
+
+	Transform {rotation -0.61803 1.61803 0 2.09439 children IS children}
+	Transform {rotation -0.61803 1.61803 0 -2.09439 children IS children}
+
+	Transform {rotation 1.61803 0 0.61803  2.09439 children IS children}
+	Transform {rotation 1.61803 0 0.61803 -2.09439 children IS children}
+
+	Transform {rotation 1.61803 0 -0.61803  2.09439 children IS children}
+	Transform {rotation 1.61803 0 -0.61803 -2.09439 children IS children}
+
+	Transform {rotation 0 0.61803 1.61803 2.09439 children IS children}
+	Transform {rotation 0 0.61803 1.61803 -2.09439 children IS children}
+
+	Transform {rotation 0 -0.61803 1.61803 2.09439 children IS children}
+	Transform {rotation 0 -0.61803 1.61803 -2.09439 children IS children}
+
+	Transform {rotation  1 1 1 2.09439 children IS children}
+	Transform {rotation  1 1 1 -2.09439 children IS children}
+
+	Transform {rotation  1 -1 1 2.09439 children IS children}
+	Transform {rotation  1 -1 1 -2.09439 children IS children}
+
+	Transform {rotation  -1 -1 1 2.09439 children IS children}
+	Transform {rotation  -1 -1 1 -2.09439 children IS children}
+
+	Transform {rotation  -1 1 1 2.09439 children IS children}
+	Transform {rotation  -1 1 1 -2.09439 children IS children}
+
+	Transform {rotation  1 0 0 3.1415 children IS children}
+	Transform {rotation  0 1 0 3.1415 children IS children}
+	Transform {rotation  0 0 1 3.1415 children IS children}
+
+	# double gg1 = 1+g1, gg = 1+g;
+
+	Transform {rotation  1  1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation -1  1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation  1 -1.61803 2.61803 3.1415 children IS children}
+	Transform {rotation -1 -1.61803 2.61803 3.1415 children IS children}
+
+	Transform {rotation  2.61803  1 1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803 -1 1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803  1 -1.61803 3.1415 children IS children}
+	Transform {rotation  2.61803 -1 -1.61803 3.1415 children IS children}
+
+	Transform {rotation  1.61803  2.61803  1 3.1415 children IS children}
+	Transform {rotation  1.61803  2.61803 -1 3.1415 children IS children}
+	Transform {rotation -1.61803  2.61803  1 3.1415 children IS children}
+	Transform {rotation -1.61803  2.61803 -1 3.1415 children IS children}
+    ]
+    }
+}
+
+PROTO Triangle_I [
+exposedField MFVec2f point [0 0, 1 0, 0 1]
+exposedField SFNode texture ImageTexture {
+    url["t12.jpg"]
+}
+exposedField SFNode textureTransform TextureTransform {}
+]{
+Group {
+    children [
+
+    Switch {
+	choice [
+	DEF SHAPE Transform {
+	    children [
+	    Shape {
+		geometry IndexedFaceSet{
+		    ccw TRUE
+		    solid FALSE #TRUE
+		    coord DEF COORD Coordinate{
+			point [
+#			0 1.61803 0,  0 1.61803 1, 0.53934, 1.4120 0, 0 1.61803 -1
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			#                          1.61803/3, (2*1.61803+1)/3 0
+			]
+		    }
+		    
+		    coordIndex [
+		    0, 1, 2,-1,
+		    0, 2, 3,-1,
+		    ]
+		    texCoord DEF TEX_COORD TextureCoordinate {
+			point IS point
+		    }
+		    texCoordIndex [
+		    0, 1, 2, -1,
+		    0, 2, 1, -1,
+		    ]
+		    normal Normal {
+			vector [
+			0 1       0,  0 0.85065 0.52573, 0.35682 0.93417 0, 0 0.85065 -0.52573
+			]
+		    }
+		}
+		appearance Appearance{
+
+		    texture IS texture
+		    textureTransform IS textureTransform
+
+		    material Material{
+			diffuseColor  0.5 0.5 0.5
+			specularColor 0.3 0.3 0.3
+			shininess 0.1
+		    }
+		}
+	    }
+	    ]
+	}
+	]
+    }
+    
+    DEF TRANSFORM1 Transform {
+	children [
+	DEF TRANSFORM2 Transform {
+	    #scale 1.3 1.3 1.3
+	    children USE SHAPE
+	}
+	]
+    }
+    ]
+}
+
+}
+
+
+Group {
+    children [
+    DEF SENSOR TouchSensor {
+    }
+    Symmetry_I {
+	children [
+	DEF TRIANGLE Triangle_I {
+	    point [0 0, 0.5 0, 0 0.5]
+	    texture DEF TEXTURE ImageTexture {
+		url["tex/random2.jpg"]
+	    }	
+	    textureTransform DEF TTRANSFORM TextureTransform {	    
+	    }
+	}
+	]
+    }
+    ]
+}
+
+
+Viewpoint { 
+position 0 0 4
+description "view 2"
+}
+
+Viewpoint { 
+position 0 3.402 2.103 # 0 1.61803 1
+description "view 5"
+orientation -1 0 0 1.0172
+}
+
+Viewpoint { 
+position 0 1.498 3.922 #0 0.61803 1.61803
+description "view 3"
+orientation  -1 0 0 0.36486
+}
+
+
+
+NavigationInfo {
+    type "EXAMINE"
+    headlight TRUE
+}
+
+EXTERNPROTO TextureManupulator [
+eventIn SFVec3f set_point
+eventIn SFBool set_active
+field SFNode textureTransform 
+field SFFloat scale 
+field SFFloat speed 
+]"texture_manipulator.wrl"
+
+DEF TEXMANIP TextureManupulator {
+    textureTransform USE TTRANSFORM 
+}
+
+ROUTE SENSOR.hitPoint_changed TO TEXMANIP.set_point
+ROUTE SENSOR.isActive TO TEXMANIP.set_active

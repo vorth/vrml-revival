@@ -1,0 +1,679 @@
+#VRML V2.0 utf8
+WorldInfo {
+  info [
+    "author: Vladimir Bulatov bulatov@dots.physics.orst.edu"
+    ]
+}
+
+EXTERNPROTO Polygon [
+field MFVec3f vertices 
+eventIn MFVec3f set_vertices 
+eventOut SFBool isReady 
+]"polygon_proto.wrl#Polygon"
+
+EXTERNPROTO APP [
+exposedField SFColor color
+]"utils_proto.wrl#APP"
+
+EXTERNPROTO Symmetry_Cn [
+# shape to be transformed
+  exposedField MFNode children 
+  field SFInt32 order
+  eventIn SFInt32 set_order 
+]"utils_proto.wrl#Symmetry_Cn"
+
+EXTERNPROTO Symmetry_Dh [
+# shape to be transformed
+  exposedField MFNode children 
+  field SFInt32 order
+  eventIn SFInt32 set_order 
+]"utils_proto.wrl#Symmetry_Dh"
+
+EXTERNPROTO Symmetry_Dn [
+# shape to be transformed
+  exposedField MFNode children 
+  field SFInt32 order
+  eventIn SFInt32 set_order 
+]"utils_proto.wrl#Symmetry_Dn"
+
+PROTO Prism [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0 0 1 
+field SFInt32 order 2
+field SFInt32 sub_order 1
+field SFInt32 type 0
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventIn SFInt32 set_visible 
+eventOut MFNode faces_changed 
+]{
+  Group {
+      children [
+      Switch {
+	  whichChoice -1 
+	  choice [
+	  DEF T0 Switch { 
+	      whichChoice 0 choice [
+	      Group {
+		  children [
+		  DEF P0_0 Shape {
+		      geometry DEF P0 
+		      Polygon {vertices [] }
+		      appearance APP{
+			  color 0.36 0.36 0.97
+		      }
+		  }
+		  DEF P0_1 Transform { 
+		      #stuff for special compounds (4,2) (6,2) (6,3)
+		  }
+		  DEF P0_2 Transform {	  
+		  }
+		  ]
+	      }
+	      ]
+	  }
+	  DEF T1 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P1 
+		  Polygon {vertices [] }
+		  appearance APP{
+		      color 0.87 0.44 0.87
+		  }
+	      }
+	      ]
+	  }
+	  DEF T2 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P2 		  
+		  Polygon {vertices [] }
+		  appearance APP{
+		      color  0.87 0.80 0.30 
+		  }
+	      }
+	      ]
+	  }
+	  ]
+      }
+
+      Group {
+	  children [USE T0]
+      }
+      Transform { # lower base 
+	  rotation 1 0 0 3.1415
+	  children [USE T0]
+      }
+      DEF SYM_CN Symmetry_Cn {
+	  order IS order 
+	  #children [USE T1 USE T2]
+      }
+      DEF SYM_DH Symmetry_Dh {
+	  order IS order 
+	  #children [USE T1]
+      }
+      ]
+  }
+
+  DEF PRISM Script {
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+
+      eventOut SFVec3f point_changed IS point_changed
+      eventOut SFInt32 face_types IS face_types
+      eventOut MFNode faces_changed IS faces_changed
+      eventIn SFInt32 set_visible IS set_visible
+      field SFInt32 order IS order
+      field SFInt32 sub_order IS sub_order
+      field SFInt32 type IS type 
+
+      field MFNode poly [USE P0 USE P1 USE P2]
+      field MFNode sw [USE T0 USE T1 USE T2]
+      field MFNode faces [USE T0 USE T1 USE T2]
+      field MFNode trs [USE P0_1 USE P0_2]
+      field MFNode base_poly [USE P0_0]
+      field MFVec3f base []
+      field SFNode sym_cn USE SYM_CN
+      field SFNode sym_dh USE SYM_DH
+
+      field SFInt32 nvertices 2 # number of base veritices 
+
+      url [
+      "javascript:
+
+      function initialize(){
+	  point = point.normalize();	  
+	  if(type == 0 ){
+	      face_types = 3;
+	      sym_cn.children = new MFNode(sw[1],sw[2]);
+	  } else if (type == 1 ){
+	      face_types = 2;	      
+	      sym_dh.children = new MFNode(sw[1]);
+	  }
+	  faces_changed = faces;
+
+	  if(order == 4 && sub_order ==2){ // fast hack for special compounds 
+	      nvertices = 4;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/2);
+	  } else if(order == 6 && sub_order == 2){
+	      nvertices = 6;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/3);
+	  } else if(order == 6 && sub_order == 3){
+	      nvertices = 4;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/3);
+	      trs[1].addChildren = base_poly; 
+	      trs[1].set_rotation = new SFRotation(0,0,1,2*Math.PI/3);
+	  } else {
+	      nvertices = order*2;
+	  }
+	  set_point(point,0);
+      }
+
+      function set_visible(v,t){
+	  if(v & 0x80000000){
+	      sw[v & 0x7FFFFFFF].whichChoice = 0;
+	      set_point(point,t);
+	  } else {
+	      sw[v].whichChoice = -1;
+	  }
+      }
+
+      function set_point(p,t){
+	  point = p;
+	  var axis = new SFVec3f(0,0,1);
+	  var phi = sub_order*Math.PI/(order);
+	  var mirr1 = new SFVec3f(1,0,0);
+	  var mirr2 = new SFVec3f(Math.cos(phi),Math.sin(phi),0);
+	  make_reflections(p,axis, mirr1, mirr2, nvertices, base);
+	  if(sw[0].whichChoice == 0){
+	      poly[0].set_vertices = base;	  
+	  }
+	  if(type == 0){
+	      if(sw[1].whichChoice == 0){
+		  var base2 = new MFVec3f();
+		  base2[0] = base[0];
+		  base2[1] = base[1];
+		  base2[2] = reflect_z(base2[1]);
+		  base2[3] = reflect_z(base2[0]);
+		  poly[1].set_vertices = base2;
+	      }
+
+	      if(sw[2].whichChoice == 0){
+		  var base3 = new MFVec3f();
+		  base3[0] = base[1];
+		  base3[1] = base[2];
+		  base3[2] = reflect_z(base3[1]);
+		  base3[3] = reflect_z(base3[0]);
+		  poly[2].set_vertices = base3;
+	      }
+	  } else if (type == 1){
+	      if(sw[1].whichChoice == 0){
+		  var base2 = new MFVec3f();
+		  base2[0] = base[1];
+		  base2[1] = base[0];
+		  base2[2] = reflect_z(base[order]);
+		  base2[3] = reflect_z(base[order+1]);
+		  poly[1].set_vertices = base2;
+	      }
+	  }
+
+	  point_changed = point;
+      }
+
+      // intersection of two segments (p0,p1) and (q0,q1)
+      function intersection(p0,p1,q0,q1){
+	  
+	  var c = p0.add(p1).add(q0).add(q1);
+	  var pq = p0.add(p1).subtract(q0).subtract(q1);	    
+	  var p = p0.subtract(p1);
+	  var q = q0.subtract(q1);
+	  
+	  var QQ = q.dot(q);
+	  var PP = p.dot(p);
+	  var PQP = pq.dot(p);
+	  var PQ = p.dot(q);
+	  var PQQ = pq.dot(q);
+	  var r = p.multiply(PQP*QQ-PQ*PQQ).add(q.multiply(-PP*PQQ+PQ*PQP));
+	  r = r.multiply(1/(PQ*PQ-PP*QQ));
+	  c = c.add(r);
+	  c = c.multiply(1/4);
+	  
+	  return c;
+      }
+      function reflect_z(p){
+	  return new SFVec3f(p.x,p.y,-p.z);
+      }
+      // calculates centroid of array vert
+      function get_center(vert, length){
+	  var x = 0; var y = 0; var z = 0;
+	  for(var i = 0; i < length; i++){
+	      x += vert[i].x;
+	      y += vert[i].y;
+	      z += vert[i].z;
+	  }
+	  return new SFVec3f(x/length, y/length, z/length);
+      }
+
+      // makes mirroring in two mirrors, which intersects along axis
+      // axis, mirr1, mirr2 are assumed normalized
+      // and mirr1 and mirr2 are orthogonal to axis
+      // vert - array of resulting vertices
+      function make_reflections(pnt,axis, mirr1, mirr2, order, vert){
+	  // projection on axis
+	  var PA = axis.multiply(axis.dot(pnt));
+	  // part orthogonal to axis
+	  var P = pnt.subtract(PA);
+	  var Q = new SFVec3f(mirr1.x,mirr1.y,mirr1.z);
+	  var R = new SFVec3f(mirr2.x,mirr2.y,mirr2.z);
+	  var rq = R.dot(Q);
+	  var pq = P.dot(Q);
+	  var pq_old = P.dot(R);
+	  
+	  vert[0].x = pnt.x;
+	  vert[0].y = pnt.y;
+	  vert[0].z = pnt.z;
+	  for(var i = 1; i < order; i++){
+	      var x, y, z;
+	      P.x = 2*Q.x*pq-P.x;
+	      P.y = 2*Q.y*pq-P.y;
+	      P.z = 2*Q.z*pq-P.z;
+
+	      vert[i].x = P.x + PA.x;
+	      vert[i].y = P.y + PA.y;
+	      vert[i].z = P.z + PA.z;
+	      R.x = 2*Q.x*rq-R.x;
+	      R.y = 2*Q.y*rq-R.y;
+	      R.z = 2*Q.z*rq-R.z;
+	      
+	      var t = pq;
+	      pq = pq_old;
+	      pq_old = t;
+
+	      var T = Q;
+	      Q = R;
+	      R = T;
+	  }
+      }
+      "
+      ]
+  }
+  
+}
+
+PROTO AntiPrism [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0 0 1 
+field SFInt32 order 2
+field SFInt32 sub_order 1
+
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventIn SFInt32 set_visible 
+eventOut MFNode faces_changed 
+]{
+  Group {
+      children [
+      Switch {
+	  whichChoice -1 
+	  choice [
+	  DEF T0 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P0 
+		  Polygon {}
+		  appearance APP{
+		      color 0.36 0.36 0.97
+		  }
+	      }
+	      ]
+	  }
+	  DEF T1 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P1 
+		  Polygon {}
+		  appearance APP{
+		      color 0.87 0.44 0.87
+		  }
+	      }
+	      ]
+	  }
+	  DEF T2 Transform {
+	      children USE T1 
+	  }
+	  ]
+      }
+      Group {
+	  children [USE T0]	  
+      }
+      DEF TR Transform {
+	  rotation 1 0 0 3.1415
+	  children [USE T0]
+      }
+      DEF SYM Switch {
+	  whichChoice -1 
+	  choice [
+	  DEF SYM_DN Symmetry_Dn {
+	      order IS order 
+	      children [USE T1]
+	  }
+	  DEF SYM_DH Symmetry_Dh {
+	      order IS order 
+	      children [USE T1]
+	  }
+	  ]
+      }
+      ]
+  }
+
+  DEF ANTIPRISM Script {
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+
+      eventOut SFVec3f point_changed IS point_changed
+      eventOut SFInt32 face_types IS face_types
+      eventOut MFNode faces_changed IS faces_changed 
+
+      eventIn SFInt32 set_visible IS set_visible
+
+      field MFNode poly [USE P0 USE P1]
+      field MFNode sw [USE T0 USE T1]
+
+      field MFNode faces [USE T0 USE T1]
+
+      field SFNode tr USE TR
+      field SFNode sym USE SYM
+      field MFVec3f base []
+
+      field SFInt32 order IS order
+      field SFInt32 sub_order IS sub_order
+
+      url [
+      "javascript:
+
+      function initialize(){
+	  init();
+	  point = point.normalize();
+	  set_point(point,0);
+	  if(sub_order % 2 == 0){
+	      sym.set_whichChoice = 1; // symmetry D_nh
+	  } else {
+	      sym.set_whichChoice = 0; // symmetry D_nd
+	  }
+	  faces_changed = faces;	  
+      }
+
+      function init(){
+	  base = new MFVec3f();
+	  for(var i =0; i < 2*order; i++){
+	      base[i] = new SFVec3f(0,0,0);
+	  }
+	  face_types = 2;
+	  var f = sub_order*Math.PI/(2*order);
+	  tr.set_rotation = new SFRotation(Math.cos(f), Math.sin(f), 0, Math.PI);
+      }
+      
+      function set_visible(v,t){
+	  if(v & 0x80000000){
+	      sw[v & 0x7FFFFFFF].whichChoice = 0;
+	      set_point(point,t);
+	  } else {
+	      sw[v].whichChoice = -1;
+	  }
+      }
+
+      function set_point(p,t){
+	  point = p;
+	  var axis = new SFVec3f(0,0,1);
+	  var phi = sub_order*Math.PI/(order);
+	  var mirr1 = new SFVec3f(1,0,0);
+	  var mirr2 = new SFVec3f(Math.cos(phi),Math.sin(phi),0);
+	  var order2 = order*2;
+	  make_reflections(p,axis, mirr1, mirr2, order2, base);
+	  if(sw[0].whichChoice == 0){
+	      poly[0].set_vertices = base;	  
+	  }
+	  
+	  var side = new MFVec3f();
+	  side[0] = base[0];
+	  side[1] = base[1];
+	  side[2] = (new SFRotation(Math.cos(phi/2), -Math.sin(phi/2),0,Math.PI)).multVec(side[1]);
+	  side[3] = new SFVec3f(side[2].x,-side[2].y,side[2].z);
+	  if(sw[1].whichChoice == 0){
+	      poly[1].set_vertices = side;	  
+	  }
+	  point_changed = point;
+      }
+
+      // makes mirroring in two mirrors, which intersects along axis
+      // axis, mirr1, mirr2 are assumed normalized
+      // and mirr1 and mirr2 are orthogonal to axis
+      // vert - array of resulting vertices
+      function make_reflections(pnt,axis, mirr1, mirr2, order, vert){
+	  // projection on axis
+	  var PA = axis.multiply(axis.dot(pnt));
+	  // part orthogonal to axis
+	  var P = pnt.subtract(PA);
+	  var Q = new SFVec3f(mirr1.x,mirr1.y,mirr1.z);
+	  var R = new SFVec3f(mirr2.x,mirr2.y,mirr2.z);
+	  var rq = R.dot(Q);
+	  var pq = P.dot(Q);
+	  var pq_old = P.dot(R);
+	  
+	  vert[0].x = pnt.x;
+	  vert[0].y = pnt.y;
+	  vert[0].z = pnt.z;
+	  for(var i = 1; i < order; i++){
+	      var x, y, z;
+	      P.x = 2*Q.x*pq-P.x;
+	      P.y = 2*Q.y*pq-P.y;
+	      P.z = 2*Q.z*pq-P.z;
+
+	      vert[i].x = P.x + PA.x;
+	      vert[i].y = P.y + PA.y;
+	      vert[i].z = P.z + PA.z;
+	      R.x = 2*Q.x*rq-R.x;
+	      R.y = 2*Q.y*rq-R.y;
+	      R.z = 2*Q.z*rq-R.z;
+	      
+	      var t = pq;
+	      pq = pq_old;
+	      pq_old = t;
+
+	      var T = Q;
+	      Q = R;
+	      R = T;
+	  }
+      }
+      "
+      ]
+  }  
+}
+
+
+PROTO SimplePrism [ 
+# 
+eventIn SFVec3f set_point
+field SFVec3f point 0 0 1 
+field SFInt32 order 2
+field SFInt32 sub_order 1
+
+eventOut SFVec3f point_changed 
+eventOut SFInt32 face_types
+eventIn SFInt32 set_visible 
+eventOut MFNode faces_changed 
+]{
+  Group {
+      children [
+      Switch {
+	  whichChoice -1 
+	  choice [
+	  DEF T0 Switch { 
+	      whichChoice 0 choice [
+	      Group {
+		  children [
+		  DEF P0_0 Shape {
+		      geometry DEF P0 
+		      Polygon {vertices [] }
+		      appearance APP{
+			  color 0.36 0.36 0.97
+		      }
+		  }
+		  DEF P0_1 Transform { 
+		      #stuff for special compounds (4,2) (6,2) (6,3)
+		  }
+		  DEF P0_2 Transform {	  
+		  }
+		  ]
+	      }
+	      ]
+	  }
+	  DEF T1 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P1 
+		  Polygon {vertices [] }
+		  appearance APP{
+		      color 0.87 0.44 0.87
+		  }
+	      }
+	      ]
+	  }
+	  DEF T2 Switch { 
+	      whichChoice 0 choice [
+	      Shape {
+		  geometry DEF P2 		  
+		  Polygon {vertices [] }
+		  appearance APP{
+		      color  0.87 0.80 0.30 
+		  }
+	      }
+	      ]
+	  }
+	  ]
+      }
+
+      Group {
+	  children [USE T0]
+      }
+      Transform { # lower base 
+	  rotation 1 0 0 3.1415
+	  children [USE T0]
+      }
+      DEF SYM Symmetry_Dh {
+	  order IS order 
+	  children [USE T1 USE T2]
+      }
+      ]
+  }
+
+  DEF SIMPLEPRISM Script {
+
+      eventIn SFVec3f set_point IS set_point
+      field SFVec3f point IS  point
+
+      eventOut SFVec3f point_changed IS point_changed
+      eventOut SFInt32 face_types IS face_types
+      eventOut MFNode faces_changed IS faces_changed
+      eventIn SFInt32 set_visible IS set_visible
+      field SFInt32 order IS order
+      field SFInt32 sub_order IS sub_order
+
+      field MFNode poly [USE P0 USE P1 USE P2]
+      field MFNode sw [USE T0 USE T1 USE T2]
+      field MFNode faces [USE T0 USE T1 USE T2]
+      field MFNode trs [USE P0_1 USE P0_2]
+      field MFNode base_poly [USE P0_0]
+      field MFVec3f base []
+
+      field SFInt32 nvertices 2 # number of base veritices 
+
+      url [
+      "javascript:
+
+      function initialize(){
+	  point = point.normalize();	  
+	  face_types = 2;
+	  faces_changed = faces;
+	  nvertices = order;
+
+	  if(order == 6 && sub_order == 2){
+	      nvertices = 3;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/3);
+	  } else if(order == 6 && sub_order == 3){
+	      nvertices = 2;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/3);
+	      trs[1].addChildren = base_poly; 
+	      trs[1].set_rotation = new SFRotation(0,0,1,2*Math.PI/3);
+	  } else if(order == 4 && sub_order == 2){
+	      nvertices = 2;
+	      trs[0].addChildren = base_poly; 
+	      trs[0].set_rotation = new SFRotation(0,0,1,Math.PI/2);
+	  }
+	  set_point(point,0);
+      }
+
+      function set_visible(v,t){
+	  if(v & 0x80000000){
+	      sw[v & 0x7FFFFFFF].whichChoice = 0;
+	      set_point(point,t);
+	  } else {
+	      sw[v].whichChoice = -1;
+	  }
+      }
+
+      function set_point(p,t){
+	  point = p;
+	  var axis = new SFVec3f(0,0,1);
+	  var phi = sub_order*2*Math.PI/(order);
+	  var rot = new SFRotation(0,0,1,phi);
+	  base[0] = p;
+	  for(var i = 1; i < nvertices; i++){
+	      base[i] = rot.multVec(base[i-1]);
+	  }
+	  if(sw[0].whichChoice == 0){
+	      poly[0].set_vertices = base;
+	  }	  
+	  
+	  var v1 = new MFVec3f();
+	  v1[0] = base[0];
+	  v1[1] = base[1];
+	  v1[2] = new SFVec3f(p.x,-p.y,-p.z);
+	  if(sw[1].whichChoice == 0){
+	      poly[1].set_vertices = v1;
+	  }	  	  
+	  
+	  point_changed = point;
+      }
+
+      function reflect_z(p){
+	  return new SFVec3f(p.x,p.y,-p.z);
+      }
+      "
+      ]
+  }
+  
+}
+
+
+#DEF TRANS Transform  {
+#    children [
+#    DEF POLY AntiPrism { order 3  sub_order -1 point 0.5 0.1 0.3}
+#    ]
+#}
+#Viewpoint {
+#    position 0 0 5
+#}
+
+
+#NavigationInfo {
+#	type ["EXAMINE","ANY"]
+#	headlight TRUE
+#}

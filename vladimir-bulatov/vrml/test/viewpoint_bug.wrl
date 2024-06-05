@@ -1,0 +1,72 @@
+#VRML V2.0 utf8
+
+Viewpoint {
+    position 0 0 10
+    description "front"
+}
+
+DEF MOVING_VIEW Viewpoint {
+    position 0 0 5
+    orientation 0 0 1 0
+    description "moving"
+}  
+
+NavigationInfo {
+  type "EXAMINE"
+  headlight TRUE
+}
+
+DEF SHAPE Transform {
+    children [
+    DEF PART Shape {
+	geometry  Sphere {
+	}
+	appearance DEF APPEARANCE Appearance {
+	    material Material {
+		diffuseColor 1 0 0
+		specularColor 1 1 0
+	    }
+	}
+    }    
+    ]
+}
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF VIEWPOINT_SCRIPT Script {
+
+  directOutput TRUE
+
+  eventIn SFTime set_time
+  eventIn SFBool set_bound
+  field SFNode viewpoint USE MOVING_VIEW
+  field SFTime t0 0
+  field SFVec3f position 0 0 10
+  field SFRotation orientation 0 0 1 0
+
+  url [
+
+  "javascript:
+ 
+  function set_time(val,time){
+      if(t0 == 0){
+	  t0 = time;
+      }
+    dt = time-t0;
+    position.z = 5+Math.sin(dt);
+    viewpoint.set_position = position;
+    viewpoint.set_orientation = orientation;    
+  }
+
+  function set_bound(val, time){
+    trace('set_bound(' + val + ') ');
+  }
+  "
+  ]
+}
+
+ROUTE TIMER.time TO VIEWPOINT_SCRIPT.set_time
+ROUTE MOVING_VIEW.isBound TO VIEWPOINT_SCRIPT.set_bound

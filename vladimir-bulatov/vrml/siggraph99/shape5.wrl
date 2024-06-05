@@ -1,0 +1,498 @@
+#VRML V2.0 utf8
+
+Viewpoint {
+    position 0 0 10
+    description "front"
+}
+
+DEF RIGHT Viewpoint {
+    position 7 0 7
+    orientation 0 1 0 0.785
+    description "right_front"
+}
+
+DEF RIGHT Viewpoint {
+    position 10 0 0
+    orientation 0 1 0 1.57
+    description "right"
+}
+
+DEF RIGHT Viewpoint {
+    position 7 0 -7
+    orientation 0 1 0 2.356
+    description "right_back"
+}
+
+
+Viewpoint {
+    position 0 0 -10
+    description "back"
+    orientation 0 1 0 3.1415
+}
+
+DEF LEFT Viewpoint {
+    position -10 0 0
+    orientation 0 1 0 -1.57
+    description "left"
+}
+
+DEF BOTTOM Viewpoint {
+    position 0 -10 0
+    orientation 1 0 0 1.57
+    description "bottom"
+}
+
+
+NavigationInfo {
+  type "EXAMINE"
+  headlight TRUE
+}
+
+#DirectionalLight {
+#direction 0.2 -0.3 -1
+#}
+
+PROTO Shape99 [
+  eventOut SFRotation orientation_changed
+  eventOut SFVec3f position_changed
+]{
+  DEF EXT Extrusion  {
+    creaseAngle 1
+    crossSection [
+         0.1 0.1, 0.1 -0.1, -0.1  -0.1, -0.1 0.1, 0.1 0.1
+    ]        
+  }
+
+  DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+  }
+  
+  DEF INTERP CoordinateInterpolator {
+      key [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1]
+      keyValue [0 0 0  0.1 0.1 0.1 0.2 0.2 0.2 0.3 0.3 0.3 
+                0.4 0.4 0.4 0.5 0.5 0.5 0.6 0.6 0.6 0.7 0.7 0.7 
+                0.8 0.8 0.8 0.9 0.9 0.9 1 1 1]
+  }
+  
+  DEF SHAPE_SCRIPT Script {
+    
+     directOutput TRUE
+    
+     eventOut SFRotation orientation_changed IS orientation_changed
+     eventOut SFVec3f position_changed IS position_changed
+
+     eventIn SFTime set_time
+     eventIn MFVec3f set_spine
+     
+     field SFNode ext USE EXT
+     field SFNode interp USE INTERP 
+
+     field MFInt32 index []
+     field MFVec3f coord []
+     field MFVec3f coord_a []
+     field MFVec2f scale []
+     field MFVec3f coeff [
+        1, 1.00000, 0,
+       -3, 0.74326, 1.11184,
+        5,-0.12904,-0.16920,
+       -7,-0.80680,-0.62710,
+#        9,-0.02629,-0.04701, 
+      -11,-0.28189,-0.17907,
+      -15,-0.06295, 0.04387,
+#      -19,-0.02658, 0.03689,
+#      -23,-0.02739, 0.00581
+      ]
+      field SFInt32 N 128
+      field SFInt32 n 4
+      field SFFloat r  0.3
+      field MFVec2f cs []
+      field SFFloat delay 0
+      field SFTime t0 0
+
+      field SFBool isCosmo TRUE
+      
+      field SFVec3f position 0 0 10
+      field SFRotation orientation 0 0 1 0
+      field SFVec3f dir0 0 0 -1 
+      field SFVec3f up0 0 1 0
+      field SFVec3f up 0 0 1 
+      field SFVec3f look_at 0 0 0 
+      field SFFloat y0 0
+      field SFFloat z0 0 
+      #  animated fourier coefficient 
+      field SFInt32 variable 3 # 0 1 2 3 - good
+      field SFInt32 Nkeys 17
+     url[
+      "javascript:
+
+      // makes camera orientation from 
+      // camera position, look_at point and up-vector
+
+      function getOrientation(pos, look, up){
+	  var dir = look.subtract(pos).normalize();
+	  var rot0 = new SFRotation(dir0,dir);
+	  var up1 = rot0.multVec(up0);
+	  var axis = dir.normalize();
+	  var up_n = up.subtract(dir.multiply(dir.dot(up)));
+	  var rot1 = new SFRotation(up1,up_n);
+	  var rot2;  
+	  // disagreement between browsers
+	  if(isCosmo) { 
+	      rot2 = rot0.multiply(rot1); // Cosmo
+	  } else {  // WorldView ?
+	      rot2 = rot1.multiply(rot0);  // WorldView
+	  }
+	  return rot2;
+      }
+      
+       function makeVector1(t, c){
+	   ro = 2;
+	   c.x = ro*Math.cos(t);
+	   c.y = ro*Math.sin(t);
+	   c.z = 0;
+       }
+
+        function makeVector(t, c){
+          var i;
+	  c.x = c.y = c.z = 0;
+          for(i=0; i < coeff.length; i++){
+	      cosfi = Math.cos(coeff[i][0]*t);
+	      sinfi = Math.sin(coeff[i][0]*t);
+	      c.x += coeff[i][1]*cosfi-coeff[i][2]*sinfi;
+	      c.y += coeff[i][2]*cosfi+coeff[i][1]*sinfi;
+          }
+	  c.z = -Math.sin(2*t+delay);
+        }
+
+        function makeVector2(t, c){
+          var i;
+	  c.x = c.y = c.z = 0;
+          for(i=0; i < coeff.length; i++){
+	      if(i != variable){
+		  cosfi = Math.cos(coeff[i][0]*t);
+		  sinfi = Math.sin(coeff[i][0]*t);
+		  c.x += coeff[i][1]*cosfi-coeff[i][2]*sinfi;
+		  c.y += coeff[i][2]*cosfi+coeff[i][1]*sinfi;
+	      }
+          }
+	  c.z = -Math.sin(2*t+delay);
+        }
+
+        function initialize(time){
+
+	    if(Browser.getName().indexOf(\"Cosmo\") != -1){
+		isCosmo = true;
+	    } else {
+		isCosmo = false;
+	    }
+          y0 = coeff[variable].y;
+          z0 = coeff[variable].z;
+
+          index = new MFInt32();
+          coord = new MFVec3f();
+          coord_a = new MFVec3f();
+          scale = new MFVec2f();
+          var i;
+
+          for(i = 0; i <=N/2; i++){
+
+            t = i/N*Math.PI*2-0.2;
+            coord[i] = new SFVec3f(0,0,0);
+            makeVector2(t,coord[i]);
+	    var s = (Math.cos(4*t+4)+1.5)/2;
+	    scale[i] = new SFVec2f(s,s);
+          }
+	  
+	  var keys = new MFFloat();
+	  
+          for( j = 0; j < Nkeys; j++){
+
+	      dt = j*Math.PI*2/(Nkeys-1);
+	      keys[j] = j/(Nkeys-1);
+	      cosfi = Math.cos(dt);
+	      sinfi = Math.sin(dt);
+	      
+	      coeff[variable].y = y0*cosfi + z0*sinfi;
+	      coeff[variable].z = -y0*sinfi + z0*cosfi;
+
+	      cv2 = coeff[variable][2];
+	      cv1 = coeff[variable][1];
+	      cv0 = coeff[variable][0];
+	      var offset = j*(N/2+1);
+
+	      for(i = 0; i <= N/2; i++){
+		  t = i/N*Math.PI*2-0.2;
+		  
+		  cosfic = Math.cos(cv0*t);
+		  sinfic = Math.sin(cv0*t);
+		  coord_a[i+offset] = new SFVec3f(coord[i].x + cv1*cosfic-cv2*sinfic,
+		                                coord[i].y + cv2*cosfic+cv1*sinfic,
+		                                -Math.sin(2*t+dt));
+	      }            
+	  }
+	  interp.set_key = keys;
+	  interp.set_keyValue = coord_a;
+
+          ext.set_spine = coord;
+          ext.set_scale = scale;
+          cs = new MFVec2f();
+          for(i =0; i <= n; i++){
+            fi = i*2*Math.PI/n+0.3;
+            cs[i] = new SFVec2f(r*Math.cos(fi), -r*Math.sin(fi));
+          }
+          ext.set_crossSection = cs;           
+	  trace('initialize');
+        }
+        
+       function init(){
+          for(i = 0; i <=N; i++){
+            t = i/N*Math.PI*2;
+            makeVector(t,coord[i]);
+          }        
+          ext.set_spine = coord;
+       }
+
+       function set_time(val){
+	   if(t0 == 0){
+	       t0 = val;
+	   }
+	   dt = val - t0;
+	   /*
+	   var fi = Math.PI*2*dt*0.005;
+	   var delta_fi = 0.1;
+	   var height = (Math.cos(4*fi+4)+1.5)/2+0.1;
+
+	   makeVector(fi + delta_fi,look_at);
+	   makeVector(fi,position);
+	   position.z += height;
+	   look_at.z += height-0.2;
+
+	   position_changed = position;
+	   orientation_changed = getOrientation(position, look_at, up); 
+	   */
+           //delay = 2*Math.PI*dt*0.05;
+           // delay = 2*Math.PI*dt*0.025; // for 0
+           delay = dt*0.1; // for 1
+	   interp.set_fraction = delay - Math.floor(delay);
+       }
+
+       function set_spine(value){
+	   //trace(value[0]);
+       }
+
+      "
+     ]
+  }
+
+  ROUTE TIMER.time TO SHAPE_SCRIPT.set_time
+
+  ROUTE INTERP.value_changed TO EXT.set_spine 
+  ROUTE INTERP.value_changed TO SHAPE_SCRIPT.set_spine 
+
+}
+
+DEF SHAPE Transform {
+  children [
+    DEF PART Shape {
+    geometry  DEF SHAPE99 Shape99{     
+    }
+    appearance DEF APPEARANCE Appearance {
+       material Material {
+          diffuseColor 1 1 1
+          specularColor 1 1 0
+       }
+       texture ImageTexture {        
+	url ["texture11.jpg"]
+	#url ["texture3.jpg"]
+        #url ["texture12.jpg"]
+       }
+       textureTransform DEF TTRANS TextureTransform{
+        rotation 1.57
+        scale 1 1
+        #scale 4 1
+        translation 0. 0.2
+       }
+    }
+  }
+
+  Transform {
+      rotation 0 0 1 3.1415
+      children USE PART
+  }
+
+  DEF MOVING_VIEW Viewpoint {
+      position 0 0 10
+      orientation 0 0 1 0
+      description "moving"
+  }  
+  ]
+}
+
+PROTO Axes [
+] {
+  Group {
+      children [
+      DEF Y Transform {
+	  translation 0 0.2 0
+	  children Shape {
+	      geometry Cylinder {
+		  radius 0.05 height 0.4
+	      }
+	      appearance Appearance {
+		  material Material {
+		      diffuseColor 1 1 0
+		      specularColor 1 1 0
+		  }
+	      }	  
+	  }
+      }
+      Transform {
+	  rotation 0 0 1 -1.5708
+	  children USE Y
+      }
+      Transform {
+	  rotation 1 0 0 1.5708
+	  children USE Y
+      }
+      ]
+  }
+}
+
+#DEF CAMERA Transform {
+#    children [
+#    DEF CAMERA_ORIENT Transform {
+#	children [
+#	Axes {}
+#	]
+#    }
+#    ]
+#}
+
+Transform {
+    rotation 1 0 0 1.5708
+    children Shape {
+	#geometry Cylinder {
+	#    radius 1
+	#    height 1
+	#}
+	appearance USE APPEARANCE 	
+    }
+    
+}
+
+DEF PROXI ProximitySensor {
+    size 1000 1000 1000
+}
+
+DEF PROXI_SCRIPT Script {
+    eventIn SFRotation set_orientation 
+    eventIn SFVec3f set_position 
+    url [
+    "javascript:
+    function set_position(v){
+	//trace('pos: ' + v);
+    }
+    function set_orientation(v){
+	//trace('orient: '+ v);
+    }
+    "
+    ]
+}
+ROUTE PROXI.position_changed TO PROXI_SCRIPT.set_position 
+ROUTE PROXI.orientation_changed TO PROXI_SCRIPT.set_orientation 
+
+
+DEF TIMER TimeSensor {
+    enabled TRUE
+    loop TRUE
+}
+
+DEF VIEWPOINT_SCRIPT Script {
+  directOutput TRUE
+
+  eventIn SFTime set_time
+  eventIn SFBool set_bound
+  field SFNode viewpoint USE MOVING_VIEW
+  field SFTime t0 0
+  field SFVec3f position 0 0 10
+  field SFRotation orientation 0 0 1 0
+  field SFVec3f dir0 0 0 -1 
+  field SFVec3f up0 0 1 0
+  field SFVec3f direction 0 0 -1 
+  field SFVec3f look_at 0 0 0 
+  field SFVec3f up 0 0 0 
+  field SFBool isActive FALSE  
+
+  field SFBool isCosmo TRUE
+  url [
+  "javascript:
+  
+
+  function set_time(val,time){
+      if(t0 == 0){
+	  t0 = time;
+      }
+    dt = val - t0;
+    delay = 0.1; height = 0.3;
+    look_at = getPosition(dt);
+    position = getPosition(dt-delay);
+    position.z += height;
+    up.x = 0; up.y = 0; up.z = 1;
+
+    viewpoint.set_position = position;
+    var rot = getOrientation(position, look_at, up);
+    viewpoint.set_orientation = rot;    
+  }
+
+  function set_bound(val, time){
+    trace('set_bound(' + val + ') ');
+    isActive = val;
+    t0 = time;
+  }
+  "
+  ]
+}
+
+#ROUTE TIMER.time TO VIEWPOINT_SCRIPT.set_time
+#ROUTE MOVING_VIEW.isBound TO VIEWPOINT_SCRIPT.set_bound
+
+ROUTE SHAPE99.position_changed TO MOVING_VIEW.set_position
+ROUTE SHAPE99.orientation_changed TO MOVING_VIEW.set_orientation
+
+#ROUTE SHAPE99.position_changed TO CAMERA.set_translation
+#ROUTE SHAPE99.orientation_changed TO CAMERA_ORIENT.set_rotation
+
+
+
+DEF MAIN Script {
+  directOutput TRUE
+
+  eventIn SFTime set_time
+  field SFNode ttrans USE TTRANS
+  field SFTime t0 0
+  field SFNode shape USE SHAPE 
+
+  field SFRotation rotation 0 0 1 0
+
+  url [
+  "javascript:
+  function set_time(val){
+    if(t0 == 0){
+      t0 = val;
+    }
+    dt = val - t0;
+    var fi = -dt*0.2-0.2;
+    ttrans.set_translation = new SFVec2f(0,fi);
+    //rotation.angle = -Math.PI*fi;
+    //shape.set_rotation = rotation;
+  }
+  "
+  ]
+}
+
+ROUTE TIMER.time TO MAIN.set_time
+
+Inline {
+    url "zonohedron2.wrl"
+}
