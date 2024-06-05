@@ -2,67 +2,83 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="../css/global.css" rel="stylesheet" type="text/css" />
 
+  <link href="/vrml-revival/vrml-revival.css" rel="stylesheet" type="text/css" />
+  <script type="module" src="./vrml-support.js"></script>
+  
   <title>Vladimir Bulatov VRML corner</title>
-
 </head>
 
 <body>
 
+  <div id="container">
 
-  <h1><img src="../images/spacer.gif" width="38" height="1" alt="" border="0">Vladimir Bulatov <span><img
+    <div id="title">
+
+      <h1><img src="../images/spacer.gif" width="38" height="1" alt="" border="0">Vladimir Bulatov <span><img
         src="../images/spacer.gif" width="200" height="1">abstract creations </span></h1><br>
 
+        <div id="global_nav">
+          <ul {margin: 12px 12px 12px 12px;}>
+            <li><a href="../index.html"> home</a> </li>
+            <li><a href="../shop.html" target="_self">galleries</a> </li>
+            <li class="last"><a href="../contact.html" target="_self">contact</a> </li>
+          </ul>
+        </div>
+        <!-- #EndLibraryItem -->
+        <center>
+          <H1>VRML corner</H1>
+        </center>
+  
+    </div>
 
-  <br>
+    <figure id="figure" class="safe-grid-item no-margin">
+      <div id="figDiv" class="scroller-content inset-block">
+        <x3d-canvas></x3d-canvas>
+      </div>
+    </figure>
 
-  <div id="global_nav">
-    <ul {margin: 12px 12px 12px 12px;}>
-      <li><a href="../index.html"> home</a> </li>
-      <li><a href="../shop.html" target="_self">galleries</a> </li>
-      <li class="last"><a href="../contact.html" target="_self">contact</a> </li>
-    </ul>
-  </div>
-  <!-- #EndLibraryItem -->
-  <center>
-    <H1>VRML corner</H1>
-    <br><br><br>
-    This is my collection of small, useless and curious 3D VRML constructions.
-    </p>
-    <p>
-      To see them you need browser with WebGL support.
-    </p>
+    <div id="scroller">
 
-    <div id="listc">
+        This is my collection of small, useless and curious 3D VRML constructions.
+        </p>
+        <p>
+          To see them you need browser with WebGL support.
+        </p>
+
+        <div id="listc">
 
           <table cellpadding="0" cellspacing="0" border="1" width="100%" class="border">
 
             <tr border="1" align="center" valign="top">
               <td>
-                <a href="psycho.html"><img src="psycho.gif" width=100 height=64 border="0" color="red" class="border"
-                    alt="Psychodelic"></a>
+                <span class="model-3d-img" data-vrml="psycho.wrl"> <img src="psycho.gif" width=100 height=64 border="0" color="red" class="border"
+                    alt="Psychodelic">
+                </span>
               </td>
               <td>
-                <a href="psycho3.html"><img src="psycho3.gif" width=100 height=84 border="0" class="border"
-                    alt="psycho3"></a>
+                <span class="model-3d-img" data-vrml="psycho3.wrl"> <img src="psycho3.gif" width=100 height=84 border="0" class="border"
+                    alt="psycho3"></span>
               </td>
               <td>
-                <a href="icosahedron.html"><img src="icosahedron.gif" width=100 height=94 border="0" class="border"
-                    alt="icosahedron"></a>
+                <span class="model-3d-img" data-vrml="icosahedron.wrl"> <img src="icosahedron.gif" width=100 height=94 border="0" class="border"
+                    alt="icosahedron"></span>
               </td>
               <td>
-                <a href="dodecahedron.html"><img src="dodecahedron.gif" width=100 height=98 border="0" class="border"
-                    alt="dodecahedron"></a>
+                <span class="model-3d-img" data-vrml="dodecahedron.wrl"> <img src="dodecahedron.gif" width=100 height=98 border="0" class="border"
+                    alt="dodecahedron"></span>
               </td>
               <td>
-                <a href="great_dodecahedron.html"><img src="great_dodecahedron.gif" width=100 height=97 border="0"
-                    class="border" alt="Great Dodecahedron"></a>
+                <span class="model-3d-img" data-vrml="great_dodecahedron.wrl"> <img src="great_dodecahedron.gif" width=100 height=97 border="0"
+                    class="border" alt="Great Dodecahedron"></span>
               </td>
               <td>
-                <a href="motion.html"><img src="motion.gif" width=100 height=73 border="0" border="0" class="border"
-                    alt="kaleido_tmb"></a>
+                <span class="model-3d-img" data-vrml="motion.wrl"> <img src="motion.gif" width=100 height=73 border="0" border="0" class="border"
+                    alt="kaleido_tmb"></span>
               </td>
             </tr>
             <tr align="center">
@@ -77,26 +93,27 @@
 
             <tr align="center" valign="top">
               <td>
-                <a href="poly_movie/poly_movie.html"><img src="poly_movie/poly_movie.gif" width=100 height=73 class="border"
-                    alt="Poly_movie"></a>
+                <span class="model-3d-img" data-vrml="poly_movie/poly_movie.wrl"><img src="poly_movie/poly_movie.gif" width=100 height=73
+                    class="border" alt="Poly_movie"></span>
               </td>
               <td>
-                <a href="trefolink.html"><img src="trefolink.gif" width=100 height=100 class="border" alt="trefolink" /></a>
+                <span class="model-3d-img" data-vrml="trefolink.wrl"> <img src="trefolink.gif" width=100 height=100 class="border"
+                    alt="trefolink" /></span>
               </td>
               <td>
-                <a href="evert.html"><img src="evert.gif" width=100 height=83 class="border" alt="evert" /></a>
+                <span class="model-3d-img" data-vrml="evert.wrl"> <img src="evert.gif" width=100 height=83 class="border" alt="evert" /></span>
               </td>
               <td>
-                <a href="evert_movie.html"><img src="evert_movie.gif" width=100 height=83 class="border"
-                    alt="evert movie" /></a>
+                <span class="model-3d-img" data-vrml="evert_movie.wrl"><img src="evert_movie.gif" width=100 height=83 class="border"
+                    alt="evert movie" /></span>
               </td>
               <td>
-                <p><a href="icosa_kaleido.html"><img src="icosa_kaleido.gif" width=100 height=73 class="border"
-                      alt="icosa_kaleido" /></a>
+                <span class="model-3d-img" data-vrml="icosa_kaleido.wrl"> <img src="icosa_kaleido.gif" width=100 height=73 class="border"
+                      alt="icosa_kaleido" /></span>
               </td>
               <td>
-                <a href="icosa_ball.html"><img src="icosa_ball.gif" width=100 height=95 class="border"
-                    alt="icosa_ball" /></a>
+                <span class="model-3d-img" data-vrml="icosa_ball.wrl"> <img src="icosa_ball.gif" width=100 height=95 class="border"
+                    alt="icosa_ball" /></span>
               </td>
             </tr>
 
@@ -113,12 +130,12 @@
 
             <tr align="center" valign="top">
               <td>
-                <a href="easter/egg_c12.html"><img src="easter/egg_c12.gif" width=100 height=105 border="0" class="border"
-                    alt="easter egg"></a>
+                <span class="model-3d-img" data-vrml="easter/egg_c12.wrl"> <img src="easter/egg_c12.gif" width=100 height=105 border="0"
+                    class="border" alt="easter egg"></span>
               </td>
               <td colspan="2" valign="middle">
-                <a href="easter/index.html"><img src="easter/eggs_tmb1.gif" width=170 height=62 border="0" class="border"
-                    alt="easter" /></a>
+                <span class="model-3d-img" data-vrml="easter/index.wrl"><img src="easter/eggs_tmb1.gif" width=170 height=62 border="0"
+                    class="border" alt="easter" /></span>
               </td>
               <td class="text" colspan=3></td>
             </tr>
@@ -130,28 +147,27 @@
 
             <tr align="center" valign="top">
               <td>
-                <p><a href="hyperbolic/hyper_3_7.html"><img src="hyperbolic/hyper_3_7.gif" width=100 height=83
-                      class="border" alt="hyperbolic3.7"></a><br><br></p>
+                <p><span class="model-3d-img" data-vrml="hyperbolic/hyper_3_7.wrl"><img src="hyperbolic/hyper_3_7.gif" width=100 height=83
+                      class="border" alt="hyperbolic3.7"></span><br><br></p>
                 <p>&nbsp;</p>
               </td>
               <td>
-                <a href="hyperbolic/hyper_5_4.html"><img src="hyperbolic/hyper_5_4.gif" width=100 height=83 class="border"
-                    alt="hyperbolic5_4" /></a><br>
+                <span class="model-3d-img" data-vrml="hyperbolic/hyper_5_4.wrl"><img src="hyperbolic/hyper_5_4.gif" width=100 height=83
+                    class="border" alt="hyperbolic5_4" /></span><br>
               </td>
               <td>
-                <a href="hyperbolic/hyper_6_4.html"><img src="hyperbolic/hyper_6_4.gif" width=100 height=83 class="border"
-                    alt="hyperbolic6_4" /></a><br>
+                <span class="model-3d-img" data-vrml="hyperbolic/hyper_6_4.wrl"><img src="hyperbolic/hyper_6_4.gif" width=100 height=83
+                    class="border" alt="hyperbolic6_4" /></span><br>
               </td>
               <td>
-                <a href="hyperbolic/hyper_7_4.html"><img src="hyperbolic/hyper_7_4.gif" width=100 height=83 class="border"
-                    alt="hyperbolic7_4" /></a><br>
+                <span class="model-3d-img" data-vrml="hyperbolic/hyper_7_4.wrl"><img src="hyperbolic/hyper_7_4.gif" width=100 height=83
+                    class="border" alt="hyperbolic7_4" /></span><br>
               </td>
               <td>
-                <a href="dkaleido/index.html"><img src="dkaleido/5_4_5_tmb.gif" width=100 height=98 class="border"
-                    alt="dkaleido5_4_5" /></a>
+                <a href="dkaleido/index.html"><img src="dkaleido/5_4_5_tmb.gif" width=100 height=98 class="border" alt="dkaleido5_4_5" /></a>
               </td>
               <td>
-                <p><a href="kaleidoscopes/index.html"><img src="kaleidoscopes/kaleido_tmb.gif" width=100 height=94
+                <a href="kaleidoscopes/index.html"><img src="kaleidoscopes/kaleido_tmb.gif" width=100 height=94
                       class="border" alt="kaleido_tmb" /></a>
               </td>
 
@@ -169,24 +185,24 @@
                 </a>
               </td>
               <td>
-                <a href="polytrans/index.html"><img src="polytrans/w06.gif" width=100 height=97 border="0" class="border"
-                    alt="transformation"></a>
+                <span class="model-3d-img" data-vrml="polytrans/index.wrl"><img src="polytrans/w06.gif" width=100 height=97 border="0"
+                    class="border" alt="transformation"></span>
               </td>
               <td>
-                <a href="crown_movie.html"><img src="crown_movie.gif" width=100 height=99 border="0" class="border"
-                    alt="crowm_movie"></a>
+                <span class="model-3d-img" data-vrml="crown_movie.wrl"><img src="crown_movie.gif" width=100 height=99 border="0" class="border"
+                    alt="crowm_movie"></span>
               </td>
               <td>
-                <a href="i2_2_2.html"><img src="i2_2_2.gif" width=100 height=80 border="0" class="border"
-                    alt="isohedral flower"></a>
+                <span class="model-3d-img" data-vrml="i2_2_2.wrl"><img src="i2_2_2.gif" width=100 height=80 border="0" class="border"
+                    alt="isohedral flower"></span>
               </td>
               <td>
-                <a href="dkaleido/index.html"><a href="poly_movie1/movie_th.html"><img src="poly_movie1/movie_th.gif"
-                      width=100 height=100 class="border" border="0" alt="Tetrahedral transformations."></a>
+                <span class="model-3d-img" data-vrml="poly_movie1/movie_th.wrl"><img src="poly_movie1/movie_th.gif"
+                      width=100 height=100 class="border" border="0" alt="Tetrahedral transformations."></span>
               </td>
               <td>
-                <a href="poly_movie1/movie_o.html"><img src="poly_movie1/movie_o.gif" width=100 height=94 border="0"
-                    class="border" alt="poly_movie"></a>
+                <span class="model-3d-img" data-vrml="poly_movie1/movie_o.wrl"><img src="poly_movie1/movie_o.gif" width=100 height=94 border="0"
+                    class="border" alt="poly_movie"></span>
               </td>
 
             </tr>
@@ -203,28 +219,28 @@
 
             <tr align="center" valign="top">
               <td>
-                <a href="poly_movie1/movie_dh5.html"><img src="poly_movie1/movie_dh5.gif" width=100 height=100 border="0"
-                    class="border" alt="movie_dh5"></a>
+                <span class="model-3d-img" data-vrml="poly_movie1/movie_dh5.wrl"><img src="poly_movie1/movie_dh5.gif" width=100 height=100
+                    border="0" class="border" alt="movie_dh5"></span>
               </td>
               <td>
-                <a href="poly_movie1/movie_compl.html"><img src="poly_movie1/movie_compl.gif" width=100 height=95 border="0"
-                    class="border" alt="movie_compl" /></a>
+                <span class="model-3d-img" data-vrml="poly_movie1/movie_compl.wrl"><img src="poly_movie1/movie_compl.gif" width=100 height=95
+                    border="0" class="border" alt="movie_compl" /></span>
               </td>
               <td>
-                <a href="siggraph99/shape5_a.html"><img src="siggraph99/siggraph99.gif" width=100 height=80 border="0"
-                    class="border" alt="siggraph99" /></a>
+                <span class="model-3d-img" data-vrml="siggraph99/shape5_a.wrl"><img src="siggraph99/siggraph99.gif" width=100 height=80 border="0"
+                    class="border" alt="siggraph99" /></span>
               </td>
               <td>
-                <a href="siggraph98/siggraph98_b.html"><img src="siggraph98/siggraph98.gif" width=100 height=48 border="0"
-                    class="border" alt="siggraph98" /></a>
+                <span class="model-3d-img" data-vrml="siggraph98/siggraph98_b.wrl"><img src="siggraph98/siggraph98.gif" width=100 height=48
+                    border="0" class="border" alt="siggraph98" /></span>
               </td>
               <td>
-                <a href="flex/tetra_flex8.html"><img src="flex/tetra_flex8.gif" width=100 height=84 border="0"
-                    class="border" alt="" /></a>
+                <span class="model-3d-img" data-vrml="flex/tetra_flex8.wrl"><img src="flex/tetra_flex8.gif" width=100 height=84 border="0"
+                    class="border" alt="" /></span>
               </td>
               <td>
-                <a href="butterflies/b_ico.html"><img src="butterflies/b_ico.jpg" width=100 height=100 border="0"
-                    class="border" alt="b_ico" /></a>
+                <span class="model-3d-img" data-vrml="butterflies/b_ico.wrl"><img src="butterflies/b_ico.jpg" width=100 height=100 border="0"
+                    class="border" alt="b_ico" /></span>
               </td>
 
             </tr>
@@ -239,12 +255,12 @@
 
             <tr align="center" valign="top">
               <td>
-                <a href="butterflies/b_ico_face.html"><img src="butterflies/b_ico_face.jpg" width=100 height=100 border="0"
-                    class="border" alt="b_ico_face"></a>
+                <span class="model-3d-img" data-vrml="butterflies/b_ico_face.wrl"><img src="butterflies/b_ico_face.jpg" width=100 height=100
+                    border="0" class="border" alt="b_ico_face"></span>
               </td>
               <td>
-                <a href="butterflies/b_ico_ring.html"><img src="butterflies/b_ico_ring.jpg" width=100 height=100 height=95
-                    border="0" class="border" alt="b_ico_ring" /></a>
+                <span class="model-3d-img" data-vrml="butterflies/b_ico_ring.wrl"><img src="butterflies/b_ico_ring.jpg" width=100 height=100
+                    height=95 border="0" class="border" alt="b_ico_ring" /></span>
               </td>
               <td colspan=4 noborder></td>
             </tr>
@@ -255,28 +271,31 @@
               <td colspan=4 noborder></td>
             </tr>
           </table>
-    </div>
-    <hr>
+        </div>
+        <hr>
 
-    <p>&nbsp;&nbsp;&nbsp;&nbsp; Comments, opinions, suggestions, questions are <a
-        href="mailto:vladimir@bulatov.org">welcome.</a>
-    <h4>July 15, 2023 update.</h4>
-    <p>
-      This page was done in late 1990s when VRML (Virtiual Reality Modeling Language) was a buzz word.
-      In just few years following 2000 dotcom crash VRML becomes mostly dead. All VRML plugins for browsers have
-      disappeared. I was sad and kept the page alive for myself
-      by maintaining the last working VRML plugin Cortona for Internet Explorer. Finally Internet Explorer was removed
-      from Windows 11 and I had no way to
-      display any of my VRML files. Few days ago I've learned about existence of <a
-        href="https://create3000.github.io/x_ite/">X-ITE</a> - javascript library
-      which is capable to display VRML files in any browser with WebGL support. Initially I was sceptical, but after
-      minor tweaking of the code I found, that
-      X-ITE actually works and is pretty capable. Most of the files on that page now work again (after 20 yeast of not
-      working). I would cal this a miracle!
-    </p>
-    <p>
-      Now I have a task to adapt 8000+ VRML files scattered on that website.
-    </p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp; Comments, opinions, suggestions, questions are <a
+            href="mailto:vladimir@bulatov.org">welcome.</a>
+        <h4>July 15, 2023 update.</h4>
+        <p>
+          This page was done in late 1990s when VRML (Virtiual Reality Modeling Language) was a buzz word.
+          In just few years following 2000 dotcom crash VRML becomes mostly dead. All VRML plugins for browsers have
+          disappeared. I was sad and kept the page alive for myself
+          by maintaining the last working VRML plugin Cortona for Internet Explorer. Finally Internet Explorer was
+          removed
+          from Windows 11 and I had no way to
+          display any of my VRML files. Few days ago I've learned about existence of <a
+            href="https://create3000.github.io/x_ite/">X-ITE</a> - javascript library
+          which is capable to display VRML files in any browser with WebGL support. Initially I was sceptical, but after
+          minor
+          tweaking of the code I found, that
+          X-ITE actually works and is pretty capable. Most of the files on that page now work again (after 20 yeast of
+          not
+          working). I would cal this a miracle!
+        </p>
+        <p>
+          Now I have a task to adapt 8000+ VRML files scattered on that website.
+        </p>
 
     </div>
     <br><br>
@@ -297,6 +316,8 @@
         </address>
         <br><br>
     </p>
+  </div>
+  </div>
 
 </body>
 
