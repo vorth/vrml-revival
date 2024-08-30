@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="../css/global.css" rel="stylesheet" type="text/css" />
+  <link href="../css/vrml-corner.css" rel="stylesheet" type="text/css" />
 
-  <link href="/vrml-revival/vrml-revival.css" rel="stylesheet" type="text/css" />
   <script type="module" src="./vrml-support.js"></script>
   
   <title>Vladimir Bulatov VRML corner</title>
@@ -15,12 +15,13 @@
 
 <body>
 
-  <div id="container">
+  <div class="full-height-margin-auto">
+  <div class="absolute-inset rows-grid">
 
     <div id="title">
 
       <h1><img src="../images/spacer.gif" width="38" height="1" alt="" border="0">Vladimir Bulatov <span><img
-        src="../images/spacer.gif" width="200" height="1">abstract creations </span></h1><br>
+        src="../images/spacer.gif" width="200" height="1">abstract creations </span></h1>
 
         <div id="global_nav">
           <ul {margin: 12px 12px 12px 12px;}>
@@ -36,18 +37,16 @@
   
     </div>
 
-    <figure id="figure" class="safe-grid-item no-margin">
-      <div id="figDiv" class="scroller-content inset-block">
+    <div class="container-rel">
+      <div class="inset-block">
         <x3d-canvas></x3d-canvas>
       </div>
-    </figure>
+    </div>
 
-    <div id="scroller">
+    <div class="scroller">
 
-        This is my collection of small, useless and curious 3D VRML constructions.
-        </p>
         <p>
-          To see them you need browser with WebGL support.
+        This is my collection of small, useless and curious 3D VRML constructions.
         </p>
 
         <div id="listc">
@@ -298,7 +297,7 @@
         </p>
 
     </div>
-    <br><br>
+
     <div id="global_nav">
       <ul {margin: 12px 12px 12px 12px;}>
         <li><a href="../index.html"> home</a> </li>
@@ -307,15 +306,15 @@
       </ul>
     </div>
 
-    <br>
-
-    <hr>
-    <P>
-      <FONT SIZE=1>&nbsp;&nbsp;&nbsp;&nbsp; Copyright 1996-2023 Vladimir Bulatov</FONT>
-      <font size="-1">&nbsp;&nbsp;&nbsp;&nbsp; e-mail:<a href="mailto:vladimir@bulatov.org">vladimir@bulatov.org</a>
-        </address>
-        <br><br>
-    </p>
+    <div>
+      <hr>
+      <p>
+        <FONT SIZE=1>&nbsp;&nbsp;&nbsp;&nbsp; Copyright 1996-2023 Vladimir Bulatov</FONT>
+        <font size="-1">&nbsp;&nbsp;&nbsp;&nbsp; e-mail:<a href="mailto:vladimir@bulatov.org">vladimir@bulatov.org</a>
+          </address>
+          <br><br>
+      </p>
+    </div>
   </div>
   </div>
 
